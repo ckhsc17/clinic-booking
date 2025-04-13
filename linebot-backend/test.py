@@ -16,6 +16,9 @@ app = Flask(__name__)
 line_bot_api = LineBotApi(os.environ.get('CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.environ.get('CHANNEL_SECRET'))
 
+app.logger.info("Channel Access Token: " + os.environ.get('CHANNEL_ACCESS_TOKEN'))
+app.logger.info("Channel Secret: " + os.environ.get('CHANNEL_SECRET'))
+
 # 監聽來自 /callback 的 POST 請求
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -23,14 +26,14 @@ def callback():
     if not signature:
         abort(408, description="Missing X-Line-Signature header")
     print("🔍 LINE Signature:", signature)
+    app.logger.info("LINE Signature: " + signature)
     body = request.get_data(as_text=True)
     print("🔍 Body:", body)
     app.logger.info("Request body: " + body)
     try:
         handler.handle(body, signature)
     except InvalidSignatureError:
-        print("❌ Invalid signature!")
-        abort(400)
+        abort(400, description="Invalid signature. Please check your channel access token/channel secret.")
     return 'OK', 200
 
 # ✅ 改成 v1 SDK 的事件處理方式
