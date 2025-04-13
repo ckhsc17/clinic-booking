@@ -43,6 +43,7 @@ async def callback(request: Request):
 
     # 轉成 str，handler.handle 需要 str 格式
     body_str = body_bytes.decode("utf-8")
+    print("🔍 Body:", body_str)
 
     # Debug log（可移除）
     print("🔍 LINE Signature:", signature)
