@@ -32,7 +32,7 @@ steps:
 #substitutions:
 # _API_URL: "https://ticketease-frontend-staging-396633212684.asia-east1.run.app/"
 images:
-  - 'gcr.io/$PROJECT_ID/linebot-backend'
+  - 'gcr.io/$PROJECT_ID/clinicbooking/linebot-backend'
 
 options:
   logging: CLOUD_LOGGING_ONLY

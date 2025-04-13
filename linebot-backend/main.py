@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import PlainTextResponse
+from linebot.exceptions import InvalidSignatureError
 from linebot import LineBotApi, WebhookHandler
 from linebot.models import (
     MessageEvent, TextMessage, FlexSendMessage
@@ -28,16 +29,33 @@ print(f"Channel ID: {channel_id}")
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
+@app.get("/")
+def root():
+    return {"status": "welcome to the clinic booking LINE bot backend"}
+
 @app.post("/callback")
 async def callback(request: Request):
-    signature = request.headers["X-Line-Signature"]
-    body = await request.body()
-    body = body.decode("utf-8")
+    # 取得 X-Line-Signature
+    signature = request.headers.get("X-Line-Signature")
+
+    # 原始 body（bytes）
+    body_bytes = await request.body()
+
+    # 轉成 str，handler.handle 需要 str 格式
+    body_str = body_bytes.decode("utf-8")
+
+    # Debug log（可移除）
+    print("🔍 LINE Signature:", signature)
+    print("🔍 Body snippet:", body_str[:100])
 
     try:
-        handler.handle(body, signature)
+        # 傳入 str，handler 自動比對 signature（基於 str 的 UTF-8 編碼）
+        handler.handle(body_str, signature)
+    except InvalidSignatureError:
+        print("❌ InvalidSignatureError：簽章驗證失敗")
+        return PlainTextResponse("Invalid signature", status_code=400)
     except Exception as e:
-        print("handle error:", e)
+        print("❌ handle error:", e)
         return PlainTextResponse("Bad Request", status_code=400)
 
     return PlainTextResponse("OK", status_code=200)
