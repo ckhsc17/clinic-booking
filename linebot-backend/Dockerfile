@@ -1,5 +1,5 @@
 # backend/Dockerfile
-FROM python:3.9.13-slim
+FROM python:3.8.16-slim
 
 # 設定工作目錄
 WORKDIR /linebot-backend

@@ -6,14 +6,14 @@ steps:
     args:
       - build
       - '-t'
-      - 'asia-east1-docker.pkg.dev/$PROJECT_ID/clinicbooking/backend:latest'
+      - 'asia-east1-docker.pkg.dev/$PROJECT_ID/clinicbooking/linebot-backend:latest'
       - '.'
 
   # 🚚 Push Backend
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - push
-      - 'asia-east1-docker.pkg.dev/$PROJECT_ID/clinicbooking/backend:latest'
+      - 'asia-east1-docker.pkg.dev/$PROJECT_ID/clinicbooking/linebot-backend:latest'
 
   # 🚀 Deploy Backend to Cloud Run
   #--set-env-vars=API_URL=${_API_URL} \
@@ -22,8 +22,8 @@ steps:
     args:
       - -c
       - |
-        gcloud run deploy clinicbooking-backend-prod \
-          --image=asia-east1-docker.pkg.dev/$PROJECT_ID/clinicbooking/backend:latest \
+        gcloud run deploy linebot-backend-prod \
+          --image=asia-east1-docker.pkg.dev/$PROJECT_ID/clinicbooking/linebot-backend:latest \
           --region=asia-east1 \
           --platform=managed \
           --allow-unauthenticated \
