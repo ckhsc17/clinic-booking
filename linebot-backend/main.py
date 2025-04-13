@@ -9,6 +9,8 @@ import json
 import os
 from dotenv import load_dotenv
 
+import hmac, hashlib, base64
+
 app = FastAPI(
     title="愛惟美診所",
     description="一個用於管理預約系統linebot後端服務。",
@@ -36,7 +38,7 @@ def root():
 @app.post("/callback")
 async def callback(request: Request):
     # 取得 X-Line-Signature
-    signature = request.headers.get("X-Line-Signature")
+    signature = request.headers.get("x-line-signature") or request.headers.get("X-Line-Signature")
 
     # 原始 body（bytes）
     body_bytes = await request.body()
@@ -49,6 +51,17 @@ async def callback(request: Request):
     print("🔍 LINE Signature:", signature)
     print("🔍 Body snippet:", body_str[:100])
 
+    # 🧮 自己手動重算簽章
+    h = hmac.new(channel_secret.encode("utf-8"), body_bytes, hashlib.sha256)
+    computed_signature = base64.b64encode(h.digest()).decode()
+
+    print("🔐 LINE Signature:", signature)
+    print("🧮 Local Signature:", computed_signature)
+    print("📦 body preview:", body_str[:100])
+
+    if signature != computed_signature:
+        print("❌ 簽章不一致！")
+        return PlainTextResponse("Invalid signature", status_code=400)
     try:
         # 傳入 str，handler 自動比對 signature（基於 str 的 UTF-8 編碼）
         handler.handle(body_str, signature)
