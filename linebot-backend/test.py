@@ -16,12 +16,13 @@ app = Flask(__name__)
 line_bot_api = LineBotApi(os.environ.get('CHANNEL_ACCESS_TOKEN'))
 handler = WebhookHandler(os.environ.get('CHANNEL_SECRET'))
 
-app.logger.info("Channel Access Token: " + os.environ.get('CHANNEL_ACCESS_TOKEN'))
-app.logger.info("Channel Secret: " + os.environ.get('CHANNEL_SECRET'))
+
 
 # 監聽來自 /callback 的 POST 請求
 @app.route("/callback", methods=['POST'])
 def callback():
+    app.logger.info("Channel Access Token: " + os.environ.get('CHANNEL_ACCESS_TOKEN'))
+    app.logger.info("Channel Secret: " + os.environ.get('CHANNEL_SECRET'))
     signature = request.headers['X-Line-Signature']
     if not signature:
         abort(408, description="Missing X-Line-Signature header")
