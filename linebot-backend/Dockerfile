@@ -17,7 +17,7 @@ ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_ENV=development
 
 # 開放 port 5000 給外部訪問
-EXPOSE 5000
+EXPOSE 8080
 
 # 若使用 .env，可以用 docker run -v 掛進來
 #CMD ["uvicorn", "test:app", "--host", "0.0.0.0", "--port", "8080"]
