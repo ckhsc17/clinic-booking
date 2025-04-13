@@ -27,6 +27,8 @@ channel_secret = os.getenv("CHANNEL_SECRET")
 channel_access_token = os.getenv("CHANNEL_ACCESS_TOKEN")
 
 print(f"Channel ID: {channel_id}")
+print(f"Channel Secret: {channel_secret}")
+print(f"Channel Access Token: {channel_access_token}")
 
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
