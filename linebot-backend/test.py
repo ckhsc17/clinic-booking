@@ -5,6 +5,10 @@ from linebot.models import *
 from linebot.models import MessageEvent, TextMessage, TextSendMessage
 
 import os
+import logging
+
+# 全域設定 logging 等級為 INFO
+logging.basicConfig(level=logging.INFO)
 
 app = Flask(__name__)
 
@@ -17,7 +21,7 @@ handler = WebhookHandler(os.environ.get('CHANNEL_SECRET'))
 def callback():
     signature = request.headers['X-Line-Signature']
     if not signature:
-        abort(400, description="Missing X-Line-Signature header")
+        abort(408, description="Missing X-Line-Signature header")
     print("🔍 LINE Signature:", signature)
     body = request.get_data(as_text=True)
     print("🔍 Body:", body)
