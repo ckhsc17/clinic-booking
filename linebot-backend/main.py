@@ -1,61 +1,102 @@
-# 📦 FastAPI Backend Sample
+from fastapi import FastAPI, Request
+from fastapi.responses import PlainTextResponse
+from linebot import LineBotApi, WebhookHandler
+from linebot.models import (
+    MessageEvent, TextMessage, FlexSendMessage
+)
+import json
+import os
+from dotenv import load_dotenv
 
-from fastapi import FastAPI, Request, Form
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from datetime import datetime, timedelta
-from google.oauth2 import service_account
-from googleapiclient.discovery import build
-import uvicorn
-
-app = FastAPI()
-
-# CORS settings (for connecting with Next.js frontend)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+app = FastAPI(
+    title="愛惟美診所",
+    description="一個用於管理預約系統linebot後端服務。",
+    version="1.0.0"
 )
 
-# Google Calendar settings
-SCOPES = ['https://www.googleapis.com/auth/calendar']
-SERVICE_ACCOUNT_FILE = 'your-credentials.json'
-CALENDAR_ID = 'your_calendar_id@group.calendar.google.com'
+# 讀取 .env 檔案；本地測試使用
+# 如果有多個.env檔他怎麼知道要讀哪一個？
+load_dotenv()
 
-credentials = service_account.Credentials.from_service_account_file(
-    SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+# 使用環境變數
+channel_id = os.getenv("CHANNEL_ID")
+channel_secret = os.getenv("CHANNEL_SECRET")
+channel_access_token = os.getenv("CHANNEL_ACCESS_TOKEN")
 
-calendar_service = build('calendar', 'v3', credentials=credentials)
+print(f"Channel ID: {channel_id}")
 
-class BookingRequest(BaseModel):
-    name: str
-    phone: str
-    treatment: str
-    datetime: str  # ISO format
+line_bot_api = LineBotApi(channel_access_token)
+handler = WebhookHandler(channel_secret)
 
-@app.post("/book")
-async def book_treatment(data: BookingRequest):
-    # Parse and validate datetime
-    start_time = datetime.fromisoformat(data.datetime)
-    end_time = start_time + timedelta(minutes=30)
+@app.post("/callback")
+async def callback(request: Request):
+    signature = request.headers["X-Line-Signature"]
+    body = await request.body()
+    body = body.decode("utf-8")
 
-    event = {
-        'summary': f"{data.treatment} - {data.name}",
-        'description': f"Phone: {data.phone}",
-        'start': {
-            'dateTime': start_time.isoformat(),
-            'timeZone': 'Asia/Taipei',
-        },
-        'end': {
-            'dateTime': end_time.isoformat(),
-            'timeZone': 'Asia/Taipei',
-        },
-    }
+    try:
+        handler.handle(body, signature)
+    except Exception as e:
+        print("handle error:", e)
+        return PlainTextResponse("Bad Request", status_code=400)
 
-    created_event = calendar_service.events().insert(calendarId=CALENDAR_ID, body=event).execute()
-    return {"message": "Booking successful", "eventLink": created_event.get('htmlLink')}
+    return PlainTextResponse("OK", status_code=200)
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    if event.message.text in ["預約", "預約療程", "我要預約"]:
+        flex_message = FlexSendMessage(
+            alt_text="立即預約療程",
+            contents={
+                "type": "bubble",
+                "hero": {
+                    "type": "image",
+                    #"url": "https://your-clinic.com/logo.png",
+                    "size": "full",
+                    "aspectRatio": "20:13",
+                    "aspectMode": "cover"
+                },
+                "body": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "contents": [
+                        {
+                            "type": "text",
+                            "text": "歡迎預約療程",
+                            "weight": "bold",
+                            "size": "xl"
+                        },
+                        {
+                            "type": "text",
+                            "text": "立即線上預約，專人為您服務",
+                            "size": "sm",
+                            "color": "#999999",
+                            "margin": "md"
+                        }
+                    ]
+                },
+                "footer": {
+                    "type": "box",
+                    "layout": "vertical",
+                    "spacing": "sm",
+                    "contents": [
+                        {
+                            "type": "button",
+                            "style": "primary",
+                            "action": {
+                                "type": "uri",
+                                "label": "立即預約",
+                                #"uri": "https://your-nextjs-frontend.com/booking"
+                            }
+                        }
+                    ],
+                    "flex": 0
+                }
+            }
+        )
+        line_bot_api.reply_message(event.reply_token, flex_message)
+    else:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text="您好，請輸入「預約」來開始預約療程 💆‍♀️")
+        )

@@ -2,7 +2,7 @@ steps:
   # 🔧 Build Backend
   - name: 'gcr.io/cloud-builders/docker'
     id: Build Backend
-    dir: 'app'
+    dir: 'linebot-backend'
     args:
       - build
       - '-t'
@@ -31,6 +31,8 @@ steps:
 
 #substitutions:
 # _API_URL: "https://ticketease-frontend-staging-396633212684.asia-east1.run.app/"
+images:
+  - 'gcr.io/$PROJECT_ID/linebot-backend'
 
 options:
   logging: CLOUD_LOGGING_ONLY
