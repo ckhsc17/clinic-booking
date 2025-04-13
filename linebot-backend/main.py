@@ -40,8 +40,10 @@ def root():
 @app.post("/callback")
 async def callback(request: Request):
     # 取得 X-Line-Signature
+
     signature = request.headers.get("x-line-signature") or request.headers.get("X-Line-Signature")
 
+    '''
     # 原始 body（bytes）
     body_bytes = await request.body()
 
@@ -73,7 +75,7 @@ async def callback(request: Request):
     except Exception as e:
         print("❌ handle error:", e)
         return PlainTextResponse("Bad Request", status_code=400)
-
+    '''
     return PlainTextResponse("OK", status_code=200)
 
 @handler.add(MessageEvent, message=TextMessage)
