@@ -1,0 +1,38 @@
+steps:
+  # 🔧 Build Backend
+  - name: 'gcr.io/cloud-builders/docker'
+    id: Build Backend
+    dir: 'app'
+    args:
+      - build
+      - '-t'
+      - 'asia-east1-docker.pkg.dev/$PROJECT_ID/clinicbooking/backend:latest'
+      - '.'
+
+  # 🚚 Push Backend
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - 'asia-east1-docker.pkg.dev/$PROJECT_ID/clinicbooking/backend:latest'
+
+  # 🚀 Deploy Backend to Cloud Run
+  #--set-env-vars=API_URL=${_API_URL} \
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - -c
+      - |
+        gcloud run deploy clinicbooking-backend-prod \
+          --image=asia-east1-docker.pkg.dev/$PROJECT_ID/clinicbooking/backend:latest \
+          --region=asia-east1 \
+          --platform=managed \
+          --allow-unauthenticated \
+          --update-secrets=CHANNEL_ID=CHANNEL_ID:latest,CHANNEL_SECRET=CHANNEL_SECRET:latest,CHANNEL_ACCESS_TOKEN=CHANNEL_ACCESS_TOKEN:latest
+
+#substitutions:
+# _API_URL: "https://ticketease-frontend-staging-396633212684.asia-east1.run.app/"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: 1200s
