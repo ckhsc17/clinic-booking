@@ -66,6 +66,7 @@ async def callback(request: Request):
         print("❌ 簽章不一致！")
         return PlainTextResponse("Invalid signature", status_code=400)
     try:
+        print("trying handler")
         # 傳入 str，handler 自動比對 signature（基於 str 的 UTF-8 編碼）
         handler.handle(body_str, signature)
     except InvalidSignatureError:
