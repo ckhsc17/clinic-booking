@@ -20,5 +20,5 @@ ENV FLASK_ENV=development
 EXPOSE 8080
 
 # 若使用 .env，可以用 docker run -v 掛進來
-CMD ["uvicorn", "test:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
 #CMD ["flask", "run", "--host=0.0.0.0", "--port=8080"]
