@@ -33,6 +33,8 @@ print(f"Channel Access Token: {channel_access_token}")
 line_bot_api = LineBotApi(channel_access_token)
 handler = WebhookHandler(channel_secret)
 
+line_bot_api.push_message('Ub8de59324e70133461f9788aec4e68d9', TextSendMessage(text='你可以開始了'))
+
 @app.get("/")
 def root():
     return {"status": "welcome to the clinic booking LINE bot backend"}
