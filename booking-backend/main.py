@@ -47,7 +47,13 @@ async def root():
 async def book_treatment(data: BookingRequest):
     # Parse and validate datetime
     start_time = datetime.fromisoformat(data.datetime)
-    end_time = start_time + timedelta(minutes=30)
+    end_time = start_time + timedelta(minutes=120) # Assuming 2 hours for treatment
+    if start_time < datetime.now():
+        return {"error": "預約時間必須在未來"}
+    if start_time.hour < 9 or start_time.hour > 17:
+        return {"error": "預約時間必須在診所營業時間內（09:00 - 17:00）"}
+    if start_time.weekday() >= 5:
+        return {"error": "預約時間必須在工作日（週一至週五）"}
 
     event = {
         'summary': f"{data.treatment} - {data.name}",
