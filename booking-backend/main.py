@@ -26,7 +26,7 @@ app.add_middleware(
 # Google Calendar settings
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 SERVICE_ACCOUNT_FILE = '.secrets/clinicbooking-456701-2a94b2bc683d.json'
-CALENDAR_ID = 'your_calendar_id@group.calendar.google.com'
+CALENDAR_ID = '013a6e4dfe869895b7d585e7f2529930cafe13554c8991f616a415cdecdc355b@group.calendar.google.com'
 
 credentials = service_account.Credentials.from_service_account_file(
     SERVICE_ACCOUNT_FILE, scopes=SCOPES)
