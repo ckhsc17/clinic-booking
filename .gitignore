@@ -4,8 +4,11 @@ __pycache__/
 *.pyo
 *.pyd
 
+
+
 # Python virtual env（針對兩個 backend）
 booking-backend/.venv/
+booking-backend/.secrets/
 linebot-backend/.venv/
 
 # === Node.js frontend ===

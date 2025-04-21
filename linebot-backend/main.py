@@ -4,6 +4,13 @@ import requests
 import os
 from dotenv import load_dotenv
 
+from linebot.exceptions import InvalidSignatureError
+from linebot import LineBotApi, WebhookHandler
+from linebot.models import (
+    MessageEvent, TextMessage, FlexSendMessage
+)
+import json
+
 app = FastAPI(
     title="愛惟美診所 Echo Bot",
     description="使用 FastAPI 與 requests 自行實作的 LINE Echo Bot。",
@@ -18,6 +25,12 @@ HEADERS = {
     "Content-Type": "application/json",
     "Authorization": f"Bearer {CHANNEL_ACCESS_TOKEN}"
 }
+
+line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
+#handler = WebhookHandler(channel_secret)
+
+line_bot_api.push_message('Ub8de59324e70133461f9788aec4e68d9', TextSendMessage(text='你可以開始了'))
+
 
 @app.get("/")
 def root():
@@ -48,3 +61,4 @@ async def callback(request: Request):
             print(f"🟢 回傳狀態：{r.status_code} | 回應訊息：{r.text}")
 
     return PlainTextResponse("OK", status_code=200)
+
