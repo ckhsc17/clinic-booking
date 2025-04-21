@@ -8,7 +8,11 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 import uvicorn
 
-app = FastAPI()
+app = FastAPI(
+    title="愛惟美診所預約系統",
+    description="一個用於管理預約系統的後端服務。",
+    version="1.0.0"
+)
 
 # CORS settings (for connecting with Next.js frontend)
 app.add_middleware(
@@ -21,7 +25,7 @@ app.add_middleware(
 
 # Google Calendar settings
 SCOPES = ['https://www.googleapis.com/auth/calendar']
-SERVICE_ACCOUNT_FILE = 'your-credentials.json'
+SERVICE_ACCOUNT_FILE = '.secrets/clinicbooking-456701-2a94b2bc683d.json'
 CALENDAR_ID = 'your_calendar_id@group.calendar.google.com'
 
 credentials = service_account.Credentials.from_service_account_file(
@@ -34,6 +38,10 @@ class BookingRequest(BaseModel):
     phone: str
     treatment: str
     datetime: str  # ISO format
+
+@app.get("/")
+async def root():
+    return {"status": "愛惟美診所預約系統運行中"}
 
 @app.post("/book")
 async def book_treatment(data: BookingRequest):
