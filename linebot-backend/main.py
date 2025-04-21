@@ -12,7 +12,7 @@ app = FastAPI(
 
 # 載入 .env 環境變數
 load_dotenv()
-CHANNEL_ACCESS_TOKEN = os.getenv("CHANNEL_ACCESS_TOKEN")
+CHANNEL_ACCESS_TOKEN = os.getenv("CHANNEL_ACCESS_TOKEN").strip()
 
 HEADERS = {
     "Content-Type": "application/json",
