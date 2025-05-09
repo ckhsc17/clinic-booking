@@ -4,8 +4,11 @@ import { useState } from 'react';
 import Modal from '@/components/Modal';
 
 const doctorData = {
-  '1': { name: '陳醫師' },
-  '2': { name: '林醫師' },
+  '1': { name: '劉淳熙' },
+  '2': { name: '孫立惠' },
+  '3': { name: '林孟穎' },
+  '4': { name: '張峯瑞' },
+  '5': { name: '余德毅' },
   // 可以再擴充其他醫師
 };
 
@@ -21,7 +24,7 @@ export default function ConfirmPage() {
     setConfirmed(true);
     setTimeout(() => {
       router.push('/');
-    }, 1500);
+    }, 3500);
   };
 
   // 格式化日期字串（從 ISO 或 Date 轉成 yyyy-mm-dd）
@@ -38,13 +41,13 @@ export default function ConfirmPage() {
   const niceDate = formatDate(date);
 
   return (
-    <Modal onClose={() => router.push('/')}>
+    <Modal onClose={() => router.push('/')} showCloseButton = {false} >
       {confirmed ? (
         <h2 className="text-lg font-semibold text-green-600">預約成功！</h2>
       ) : (
         <div>
           <p className="mb-4 text-gray-800 text-center">
-            確認預約 {niceDate} {time} 與 {doctorName}？
+            確認預約 {niceDate} {time} {doctorName}醫師？
           </p>
           <button
             onClick={handleConfirm}

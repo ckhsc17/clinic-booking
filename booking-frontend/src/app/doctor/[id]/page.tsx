@@ -4,15 +4,33 @@ import Modal from "@/components/Modal";
 
 const doctorData = {
   "1": {
-    name: "陳醫師",
+    name: "劉淳熙",
     avatar: "/avatar1.png",
     lastVisit: "5天前",
     tags: ["#抽脂", "#眼皮"],
   },
   "2": {
-    name: "林醫師",
+    name: "孫立惠",
     avatar: "/avatar2.jpg",
     lastVisit: "10天前",
+    tags: ["#拉皮", "#隆鼻"],
+  },
+  "3": {
+    name: "林孟穎",
+    avatar: "/avatar3.jpg",
+    lastVisit: "20天前",
+    tags: ["#拉皮", "#隆鼻"],
+  },
+  "4": {
+    name: "張峯瑞",
+    avatar: "/avatar4.jpg",
+    lastVisit: "90天前",
+    tags: ["#拉皮", "#隆鼻"],
+  },
+  "5": {
+    name: "余德毅",
+    avatar: "/avatar5.jpg",
+    lastVisit: "1000天前",
     tags: ["#拉皮", "#隆鼻"],
   },
 };
