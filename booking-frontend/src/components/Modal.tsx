@@ -1,8 +1,9 @@
 export default function Modal({ children, onClose, showCloseButton = true }) {
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black/40  flex justify-center items-center z-50">
+      {/* 模糊效果：backdrop-blur-sm */}
       <div
-        className="bg-white p-6 rounded-2xl shadow-xl border-2 relative max-w-md w-full text-center"
+        className="bg-white p-6 rounded-3xl shadow-xl border-2 relative max-w-md w-full text-center"
         style={{ borderColor: "#e1cac2" }}
       >
         {showCloseButton && (

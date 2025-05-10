@@ -64,7 +64,7 @@ export default function HomePage() {
             <h2 className="text-xl font-semibold text-black">歡迎 OOO</h2>
             <p className="text-black">🍆請選擇預約醫師🍆</p>
             <button
-              className="mt-4 w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transform hover:scale-101 transition duration-200"
+              className="mt-4 w-full bg-green-500 text-white py-2 rounded-full hover:bg-green-600 transform hover:scale-101 transition duration-200"
               onClick={() => setShowWelcome(false)}
             >
               開始預約
@@ -103,7 +103,7 @@ export default function HomePage() {
                 </span>
               </div>
               <button
-                className="mt-6 bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition" //hover:scale-101 transition duration-200
+                className="mt-6 bg-green-500 w-100px text-white px-6 py-2 rounded-full hover:bg-green-600 transition" //hover:scale-101 transition duration-200
                 onClick={() => {
                   router.push(`/doctor/${selectedDoctor.id}/schedule`);
                 }}
