@@ -63,7 +63,7 @@ export default function TimeSelectPage() {
       <button
         disabled={!selectedTime}
         onClick={handleConfirm}
-        className="mt-6 w-full bg-blue-600 text-white py-2 rounded disabled:bg-gray-300"
+        className="mt-4 w-full bg-green-500 text-white py-2 rounded-full hover:bg-green-600 transform hover:scale-101 transition duration-200"
       >
         確認
       </button>
