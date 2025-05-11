@@ -2,12 +2,12 @@
 
 from fastapi import APIRouter, HTTPException
 from supabase_client import supabase
-from schemas import PatientInfo
+from schemas import PatientCreate
 
 router = APIRouter()
 
 @router.post("/patients")
-async def create_patient(info: PatientInfo):
+async def create_patient(info: PatientCreate):
     response_id = supabase.table("patients").select("patient_id").order("patient_id", desc=True).limit(1).execute()
 
     if not response_id.data:

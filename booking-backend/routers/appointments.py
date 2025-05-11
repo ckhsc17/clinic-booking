@@ -3,12 +3,12 @@
 from fastapi import APIRouter, HTTPException
 from uuid import uuid4
 from supabase_client import supabase
-from schemas import AppointmentInfo
+from schemas import AppointmentCreate
 
 router = APIRouter()
 
 @router.post("/appointments")
-async def create_appointment(info: AppointmentInfo):
+async def create_appointment(info: AppointmentCreate):
     new_id = str(uuid4())
 
     response = supabase.table("appointments").insert({

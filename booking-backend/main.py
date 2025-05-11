@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import booking, patients, appointments
+from routers import patients, appointments
 
 app = FastAPI(title="愛惟美診所預約系統", version="1.0.0")
 
@@ -12,7 +12,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(booking.router, prefix="/api")
 app.include_router(patients.router, prefix="/api")
 app.include_router(appointments.router, prefix="/api")
 
