@@ -14,7 +14,10 @@ class PatientBase(BaseModel):
 
 class PatientCreate(PatientBase):
     user_id: str
-
+class PatientRecordResponse(BaseModel):
+    last_visit_time: Optional[str]
+    last_treatment: Optional[str]
+    medication_left: Optional[str]
 class DoctorBase(BaseModel):
     name: str
     specialty: str

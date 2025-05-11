@@ -5,7 +5,7 @@ from uuid import uuid4
 from supabase_client import supabase
 from schemas import AppointmentCreate
 
-router = APIRouter()
+router = APIRouter(tags=["Appointments"])
 
 @router.post("/appointments")
 async def create_appointment(info: AppointmentCreate):

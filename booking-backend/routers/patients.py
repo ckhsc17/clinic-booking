@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 from supabase_client import supabase
 from schemas import PatientCreate
 
-router = APIRouter()
+router = APIRouter(tags=["Patients"])
 
 @router.post("/patients")
 async def create_patient(info: PatientCreate):
