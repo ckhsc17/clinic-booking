@@ -78,3 +78,11 @@ class TreatmentMedicineUsageCreate(BaseModel):
     record_id: int
     medicine_id: int
     used_amount: float
+
+# --- 輸入資料模型 ---
+class BookingInfo(BaseModel):
+    user_name: str
+    treatment: str
+    start_time: str  # e.g. '2025-04-22T15:00:00+08:00'
+    end_time: str    # e.g. '2025-04-22T15:30:00+08:00'
+    note: str = ""
