@@ -26,6 +26,7 @@ CREATE TABLE Doctor_Availability (
     doctor_id INT,
     available_start DATETIME,
     available_end DATETIME,
+    is_bookable BOOLEAN DEFAULT TRUE,
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id)
 );
 
@@ -61,7 +62,7 @@ CREATE TABLE Appointments (
     doctor_id INT,
     treatment_id INT,
     appointment_time DATETIME,
-    status VARCHAR(50),
+    status VARCHAR(50) CHECK (status IN ('Pending', 'Confirmed', 'Completed', 'Cancelled')),
     notes TEXT,
     FOREIGN KEY (user_id) REFERENCES Patients(user_id),
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id),
