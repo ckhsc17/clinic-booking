@@ -5,6 +5,7 @@ from pydantic import BaseModel
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 import os
+from schemas import BookingInfo
 
 # --- Google Calendar 基本設定 ---
 SCOPES = ['https://www.googleapis.com/auth/calendar']
