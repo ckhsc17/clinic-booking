@@ -1,0 +1,23 @@
+bill_id,appointment_id,amount,paid,payment_date,payment_method
+1,1,7974.43,False,2025-01-07,Credit Card
+2,2,45777.27,True,2025-04-20,Cash
+3,3,10670.5,False,2025-04-30,Cash
+4,4,8725.19,False,2025-03-10,LINE Pay
+5,5,39012.7,True,2025-05-12,Cash
+6,6,17426.48,False,2025-01-01,LINE Pay
+7,7,2970.82,True,2025-01-09,Cash
+8,8,10317.48,False,2025-02-19,Credit Card
+9,9,32959.04,True,2025-04-02,Credit Card
+10,10,1202.07,True,2025-04-22,Credit Card
+11,11,46957.05,True,2025-04-04,Credit Card
+12,12,46077.3,True,2025-02-26,Cash
+13,13,24769.21,False,2025-02-04,LINE Pay
+14,14,15112.36,True,2025-01-05,LINE Pay
+15,15,18519.23,False,2025-03-22,Credit Card
+16,16,21623.57,True,2025-04-20,LINE Pay
+17,17,37297.26,False,2025-01-20,LINE Pay
+18,18,4794.88,False,2025-03-03,LINE Pay
+19,19,8854.47,True,2025-04-13,Cash
+20,20,41038.17,True,2025-01-14,Credit Card
+21,21,37150.89,True,2025-02-08,Cash
+22,22,39183.67,True,2025-04-18,Cash

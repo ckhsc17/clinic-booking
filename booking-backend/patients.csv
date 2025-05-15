@@ -1,0 +1,101 @@
+user_id,name,gender,birthdate,phone,email,address,role
+3ffd8b4d-09d3-45b6-aa4e-2e5df560a92f,陳志偉,女,1959-07-24,03-12036882,xiuying10@example.com,96600 竹北縣長春巷4段6號之3,Normal
+dcfec52f-90ae-4d13-b0cb-8f9c5fccdbe7,左馨儀,男,1983-01-28,07-68090546,kangjing@example.net,156 板橋新店路959號0樓,Normal
+90630126-e8ae-4967-b7b8-c0c33180855b,王佳樺,男,1997-11-11,00 7239959,ashao@example.org,24463 中壢中興街3號8樓,VIP
+62727bd5-938b-461b-a333-cd78709ccce5,黃龍,男,1969-05-09,0989-505499,zhujun@example.org,640 太平大同路81號9樓,VIP
+4f636a49-fc01-4e47-b1c4-0fef44a92325,劉俊賢,女,1990-07-12,(05) 37457539,emo@example.net,51866 頭份市信義巷3段884號之0,VIP
+04753c73-d05c-4d9b-a1cb-75457fd8aef4,石靜宜,女,1966-03-30,0981018979,bren@example.org,351 台北新北投路5號之1,Normal
+f4d25181-4e2e-4710-8b5d-af80c3d8ec10,哈郁婷,男,1999-06-23,0939025985,jingqin@example.com,52816 竹北縣莒光路477號之6,Normal
+9655724f-8ce7-4390-b306-3afc4ca907c8,李美琪,女,1973-11-25,01-24513989,dingming@example.org,914 基隆縣新生路9號之8,Normal
+777c0f10-6643-4ab1-906c-feced0eed0c2,徐冠宇,女,1964-12-11,0965-652977,xfeng@example.org,40919 永和市頂福州街8號之2,VIP
+27701588-b759-41b6-9587-06be4d3fdbb8,侯怡君,男,2001-08-27,0947206567,jie73@example.net,55537 楊梅長春巷266號之6,Normal
+14c3ac59-de3c-49e6-bc99-33a510984400,韓佳慧,女,1966-12-16,05 8548538,jiehuang@example.org,98557 連江文昌巷52號4樓,VIP
+dea31691-7398-40a0-a233-241fcf837b01,趙家瑜,女,1973-01-17,0952869186,majuan@example.org,480 古坑正義路25號之0,Normal
+79d85e3e-842b-4886-a7bb-9941f3c02727,王哲瑋,男,1989-11-11,0960-244486,tao70@example.com,108 大里市光華街90號8樓,VIP
+0ae64ab6-334a-4696-b0d1-d0c43699cf9c,劉瑋婷,女,1993-10-03,06 1250823,qiangmeng@example.com,858 桃園南路854號之0,VIP
+c70cc768-2613-4a54-8d4c-aeca3778d1fe,林佳玲,男,1972-11-11,05-1160749,yangfu@example.net,442 朴子文昌街3號之8,VIP
+cc162657-813a-4e98-b72a-440322164aaa,劉飛,男,1998-02-08,03-91300920,axiang@example.org,76919 八德縣明德巷4段6號1樓,Normal
+2301979d-fb89-47e2-b335-32d3e2e5491d,卿佳蓉,男,1959-05-16,0986-288630,juan01@example.com,712 朴子市民族路91號之8,VIP
+800910ce-6431-4806-ac72-771c9678440e,鞏佳蓉,女,1992-06-16,(02) 82538751,kguo@example.org,865 褒忠大勇街873號之3,Normal
+f25403e3-e8ee-440d-846d-35b0486c6869,劉慧君,女,1983-02-04,05 1480603,taoyin@example.com,243 基隆縣永和街311號之3,VIP
+e31c932d-a20b-4c27-90bd-2acf8350e108,吳建宏,女,2006-08-20,0986106826,minjin@example.net,98942 台北市中山街7號之7,VIP
+dc6e8403-959a-47b6-b4f8-1ad815c66b6b,薛美琪,男,1989-12-25,04 5677407,min10@example.net,981 臺中天母巷2號之1,VIP
+bdd15aad-605b-4502-ae2a-d4fa617d7566,楊志偉,女,1998-12-13,03-75906875,ming24@example.com,10089 蘆竹新埔巷313號之9,Normal
+c01673a7-04ce-4683-a985-ef9a3f570d83,聶志宏,女,1966-06-20,09 1155283,zhe@example.org,27754 卑南市南巷550號8樓,VIP
+cefb648c-284e-4ea9-877d-fe922ffcaf67,顧雅涵,男,1968-03-25,060 11728218,vhou@example.org,901 汐止頂福州巷4號8樓,Normal
+9ca55878-265d-4701-8dee-def44f65a971,趙志豪,男,1965-05-28,(06) 95895436,xiulangu@example.com,32495 樹林縣中正路46號之3,VIP
+e5104366-ecce-4f34-9d1b-df487a2ddb03,雲怡婷,男,1979-02-05,(03) 92198959,xiuying01@example.com,739 南投學府街579號之1,VIP
+858d6652-592a-4f9c-b287-ac64c38a26ef,黃庭瑋,男,1963-11-13,00 2307929,shenna@example.net,23386 板橋縣民富街189號9樓,Normal
+4f98e37f-8b95-44a5-87a5-c94150f5649a,王佳玲,女,1976-06-24,0986-624169,dengyang@example.com,68888 橫山小碧潭路994號之3,VIP
+7dccd52e-f16c-4589-b3f7-150607705930,張淑玲,男,1962-04-17,(05) 91531288,chao50@example.com,62992 南投大仁街99號之6,VIP
+b1488583-ebe7-496f-ad1a-06121b587099,管家瑜,女,1961-02-27,08 7277341,zhongfang@example.org,78338 新營市學府巷90號之2,VIP
+540c216b-b05a-4c0a-8bd2-9b886dbc7573,褚庭瑋,女,2006-06-08,07 8843878,fufang@example.com,371 宜蘭縣文山街5號5樓,VIP
+79c44846-a1cd-47f7-995c-f84ce9d4a1e9,戎彥廷,女,1961-06-26,0971-952589,yan66@example.org,22468 褒忠水源路61號之9,Normal
+adc308e7-48fa-4752-b14b-c3702816d561,張佳穎,女,1983-03-14,042 55079695,rxie@example.net,380 新營三民街4號6樓,Normal
+88901bed-4624-49bd-b677-da1bd9a3ae08,張冠宇,男,1997-09-06,03-9117124,minsun@example.com,700 永和東興街316號0樓,Normal
+d9565bef-6ff0-43fb-a62b-050831478995,趙宇軒,女,1985-03-14,015 33808617,tao45@example.net,440 雲林縣自由路8號之9,VIP
+413f1475-1419-4df9-ba5e-1f6685dfb6ec,王家瑜,男,1990-10-16,0902567183,fangsu@example.com,77674 古坑長安巷7段8號之5,Normal
+75a5fd96-7f72-453c-befa-ff062daf4e0f,張家瑋,男,1986-12-04,077 18747817,yonglong@example.com,46149 牡丹長春巷5號之6,Normal
+9e856d8e-fcd3-4821-a3a6-44be2bd57bdb,趙雅玲,男,1962-09-01,00 8805881,hpan@example.com,85333 屏東信義路676號1樓,VIP
+8980da52-41d2-44e1-86b0-5f821f59cad4,丁淑貞,男,1994-01-14,0918105811,mingxiang@example.org,78394 台中大同巷375號5樓,VIP
+aed0c33b-643f-4e93-80e3-afca58fd49fa,鐘惠婷,女,1964-11-30,046 90001898,weilei@example.com,377 朴子大坪街453號7樓,Normal
+7d4466f1-2164-4842-bff0-ad0351f340eb,慕飛,女,1978-06-19,044 29886426,wei27@example.com,381 北竿縣新生街57號之8,Normal
+7b32a327-8ab5-45dd-93e2-3f7c4694af17,廖俊賢,女,1982-10-12,0990178242,lei43@example.com,18113 新竹市府中街51號8樓,VIP
+5e3debcd-917f-48d1-b30a-4c3f099f50d7,莫惠雯,女,1995-07-05,04-48576773,hanyan@example.net,21728 桃園縣仁愛路75號之6,Normal
+a400029f-6e40-4904-8299-94f2173929a5,張雅芳,女,1980-12-27,(09) 59173624,mzhou@example.com,95666 白沙水源巷6段1號之6,Normal
+0dc6d3a0-df2b-4a4d-b722-5b8fd908a0e0,郭庭瑋,女,1987-04-21,0988167422,yang03@example.com,91227 卑南自由巷4號5樓,Normal
+246e58d8-e97e-4db1-a130-77db8e67f096,劉怡伶,男,1992-09-08,062 18035570,yong39@example.com,11388 彰化德巷4號7樓,VIP
+bfe68f1c-5cbc-4101-a861-9de71b69a61c,張家瑜,女,1983-08-25,04-3355011,yong18@example.net,836 豐原縣國凱八德街3段59號之4,VIP
+4c7cd4ec-f423-489b-af4e-644bba7d32d7,劉志宏,女,2001-12-20,055 95860700,gutao@example.com,817 臺東土城巷16號之2,Normal
+fc9b9731-2e4f-43ea-a55c-c2c4ed9db6e3,羅佳慧,女,2000-07-09,02 6618927,mingcao@example.org,294 古坑市大勇巷29號2樓,Normal
+1860062c-bf5f-4018-a39f-9d455d1be6d4,蘇家瑜,女,2005-07-13,03-77111254,tding@example.com,10151 新竹市永和路34號之0,Normal
+17c39989-4c28-4407-a6ed-b0a1068785eb,盧雅玲,女,1989-07-22,09-89637834,kqian@example.com,38857 蘆竹新北投路7號之0,VIP
+34f93b10-2db3-470c-877b-3359fd22761c,孟宗翰,女,1991-10-18,091 31601336,lei92@example.net,46945 北竿新生街628號之0,VIP
+d0f2c75e-d0c8-406c-9ede-097037762aec,李柏翰,男,1961-09-06,(02) 67168122,fuxia@example.com,508 斗六市新生街3段658號3樓,Normal
+4c7fb5ea-e1be-44f3-9c22-2e5087f45244,淩俊賢,男,1982-08-27,06-48131551,minlei@example.com,803 屏東市光華街961號之2,Normal
+8612588e-3f2e-4603-9d31-d7d4e5cf2255,賈雅惠,男,1987-05-22,08 1835077,bshao@example.org,885 橫山市中華路2段3號0樓,Normal
+a7e970d3-8e49-4ae6-bd52-a9ea6e21e97c,姚佳穎,女,1961-02-27,05-86270178,wcao@example.com,33110 員林市福安街81號0樓,Normal
+cb566f19-efe7-40bb-97bd-fd7fcd10412e,孫怡伶,女,1970-08-03,0981390467,pengjuan@example.com,926 汐止市民族路11號2樓,VIP
+54462cc5-3856-47c3-944b-babb75aa3e86,葉建宏,女,1999-05-04,07-42352528,oxue@example.com,402 新營縣永安巷4號5樓,Normal
+8df5eb6f-5177-4d95-ab5a-1caec792e442,張冠廷,女,1996-05-18,06-81616195,guogang@example.net,77651 鳳山新生路896號之0,Normal
+c60b8ca1-e78a-4151-beec-4fc0f410fc67,李淑惠,男,1971-07-02,04 9135458,wyang@example.com,424 澎湖勝利路147號1樓,Normal
+2ab41521-a2a7-4bee-b974-a84228edcc8a,郭佳樺,女,1964-04-20,09-8362698,ohao@example.net,80538 太保縣萬隆路18號9樓,VIP
+9978a913-078a-4266-b16e-236f96c2445b,王雅芳,女,2004-02-15,0926765754,qiang67@example.com,42691 永和縣中央街214號2樓,Normal
+bfec933d-3831-4b47-9065-8f23d0678afa,徐家豪,男,1972-05-10,020 14351733,xiazhong@example.net,34072 新營縣公園巷27號之3,Normal
+440dbb31-057d-4503-ab7c-68577f54d30a,任筱涵,男,1974-04-11,0949181810,gang63@example.org,44013 卑南縣仁愛路144號4樓,VIP
+6189c557-1fa9-4ab8-8354-d7bd1b59d6d3,胡信宏,男,1983-01-03,06-86240464,leiwei@example.com,75008 北竿市府中巷74號5樓,Normal
+4e2ebd58-de97-4787-a7ef-5633e90a915b,周信宏,男,1989-04-02,00-9289814,dqiu@example.com,77846 金門縣劍潭街2號之5,VIP
+0acfb166-4abd-44c2-adea-855fb472b1ce,張婷婷,男,2005-08-28,04-67773692,zyan@example.com,649 卑南市長安街4號之0,Normal
+d5c6c0ba-af89-4351-b95f-01b917e17576,段瑋婷,女,1968-03-30,066 73219597,yangcui@example.org,321 基隆縣石牌街6段515號9樓,VIP
+08313003-b013-4e41-8b7d-4792d1010919,張淑芬,女,2000-04-13,0965-259228,caifang@example.net,56278 豐原縣大安街644號1樓,Normal
+8d968479-35a7-4e8f-96cc-6d0a9a2ec5ee,王筱涵,女,1982-06-19,07-4676641,longtao@example.com,51487 橫山縣建國巷45號之1,Normal
+913f7908-ce96-4445-b06a-d722b257174e,蔣婷婷,女,1994-02-25,03 6796733,juanliu@example.org,54021 臺東長安巷6號之9,VIP
+0bb2dc78-197a-4f20-ba12-408c1c0ab4d2,梁傑克,女,2004-02-05,016 48666645,mingmao@example.org,66453 桃園市忠孝巷98號6樓,Normal
+13c20dd9-97e5-45d3-8916-a5f93cea6965,朱靜怡,女,1991-06-22,07 4880246,yinchao@example.org,231 彰化市復興街9號9樓,VIP
+116ced9e-9aae-457f-a232-db566c9f3d5e,龔建宏,女,2003-09-18,(00) 14826590,xiuyinghuang@example.org,58434 屏東長春路765號之8,Normal
+3ba82277-8e60-4606-b56a-4aaad8fe0ff7,陳靜宜,男,1971-10-13,090 98864416,yong85@example.net,273 桃園新生巷296號之7,Normal
+ac2b544a-017d-426b-947b-2ccb452f8945,方詩婷,女,2003-12-19,09 3875766,jiejiang@example.org,951 連江市土城巷9號1樓,VIP
+5302b476-ed15-4d12-91ac-c7f15d69db00,王宇軒,男,1982-10-25,(02) 58373223,kongxiuying@example.com,39863 新北新興街4段8號6樓,Normal
+64a6230f-c547-417a-bc3c-b4331fa484ed,孔詩涵,男,2006-10-22,06-75598899,qianqiang@example.net,153 永和自立街62號7樓,Normal
+cc0da4d2-d004-4952-a673-5d2b8c7fada5,王慧君,女,2006-07-10,0942853827,jun79@example.org,692 高雄學府路3號3樓,VIP
+e1a21abc-5280-4982-9c57-d4d19317cabc,邵依婷,男,2000-11-26,06-5687377,hanyong@example.net,303 朴子市育英路3段991號之2,Normal
+07ddb77c-d0a3-420a-9834-6366e86a6d5e,賀家瑋,女,1990-02-03,07-2662246,lisu@example.net,293 臺中五福路4段148號之8,Normal
+4cafa996-ef7a-4f8d-b90f-9782a694855f,盧怡安,男,1997-04-13,01-12632112,juan89@example.com,13103 臺東民權巷36號之7,Normal
+898e1c40-57bd-44d1-817a-59a9e7fd9087,高琬婷,男,1989-07-05,0969-022836,lei25@example.com,32225 新竹建國路88號4樓,Normal
+948fbbbb-13ca-44f1-acec-b39b0a3008b0,解雅萍,女,1985-01-25,0925-094045,hcao@example.com,30182 斗六勝利街2段9號6樓,VIP
+9068c15f-0d50-43ae-a320-c83d3edcd2e2,黃冠廷,女,1968-06-22,00-40222532,opan@example.org,680 中壢延平路86號9樓,VIP
+9ea6bdfe-979f-4370-a76e-e4806eccdc19,李惠如,男,1977-03-31,09-3306803,nawang@example.org,35269 鳳山光明街1號1樓,Normal
+e2828717-f3fd-4d5c-a3d8-dd748bcf20af,李瑋婷,女,1983-11-12,036 72639617,zyang@example.com,53340 蘆洲市文化街8段1號3樓,Normal
+7669dcff-604b-4eb7-b5c4-b104ccbf89af,趙中山,女,2003-03-03,0949966047,liming@example.com,34474 苗栗光華路814號之3,VIP
+bce4d860-3df7-4aa6-b9ff-64b65f93822d,羅威廷,男,1998-04-23,(03) 38731745,msun@example.com,645 桃園縣水源巷20號之1,Normal
+39016912-6fc4-42cb-9033-957e77d831f4,周承翰,女,1990-02-13,04 3808560,wanguiying@example.net,920 楊梅自強街213號8樓,Normal
+b8547c0f-a376-4940-970b-7a96c5744f2f,劉羽,女,1969-09-29,(07) 62214465,zhoujun@example.net,37089 永和縣大橋頭路5段45號4樓,Normal
+0e85c3b9-bbdf-4460-8199-5fe03c58c2bb,林美琪,女,1980-07-26,0955178982,tzheng@example.com,41991 平鎮縣東興路5段3號之2,Normal
+01afa835-15a8-46a1-899b-4dbecce74914,黃雅玲,女,1998-09-19,06 1578497,liwan@example.net,115 花蓮自強街81號1樓,Normal
+43535389-ec28-4680-9b2e-51a1d2e9b4a2,胡志宏,男,1963-08-06,09-22997072,yuanguiying@example.com,527 頭份縣大橋頭街2號之4,Normal
+5574fbb8-b2f3-4c0e-91d4-8526caf31474,桂惠雯,男,1976-03-02,(09) 58179959,jie85@example.net,426 連江頂福州路506號之2,Normal
+2cc1be8c-e74a-4bd7-9bf5-03ebeba861a1,張宇軒,男,1999-06-08,0965-949645,isu@example.org,129 台北中和路929號之7,VIP
+49f7575b-4f2b-4d8c-8abc-e0a478c9f977,王哲瑋,男,1973-04-22,07-4021808,yanghe@example.com,723 彰化文化巷21號之7,Normal
+59ff4685-956c-44d1-aeb1-3552c51fb0b4,藍淑貞,女,1963-04-01,(02) 97038683,yang06@example.net,12736 台北永寧路982號5樓,VIP
+5955ae41-08e2-4656-b67a-5819a5d7aed9,武怡安,女,1980-02-04,00-3478927,dingxiulan@example.org,992 新竹縣中華巷4號之1,Normal
+91f98f2c-a37b-4735-9fb6-cf8b41e1cf4a,趙欣怡,男,1995-06-12,09-6803078,matao@example.com,697 頭份縣新莊巷75號之3,Normal
