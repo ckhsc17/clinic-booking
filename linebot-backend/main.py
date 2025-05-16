@@ -38,6 +38,38 @@ async def callback(request: Request):
             reply_token = event["replyToken"]
             user_msg = event["message"]["text"]
 
+            if user_msg == "查詢紀錄":
+                user_id = event["source"]["userId"]
+
+                try:
+                    # 呼叫自己的 server backend API
+                    resp = requests.get(
+                        f"http://http://127.0.0.1:8000/api/patients/records",
+                        params={"user_id": user_id},
+                        timeout=5
+                    )
+                    if resp.status_code == 200:
+                        record = resp.json()
+                        msg = (
+                            f"📋 上次就診紀錄：\n"
+                            f"- 🕒 就診時間：{record['last_visit_time']}\n"
+                            f"- 🩺 看診項目：{record['last_treatment']}\n"
+                            f"- 💊 藥劑剩餘：{record['medication_left']}"
+                        )
+                    else:
+                        msg = "⚠️ 查詢失敗，請稍後再試。"
+
+                except Exception as e:
+                    print("❌ 查詢錯誤：", e)
+                    msg = "⚠️ 系統錯誤，請稍後再試。"
+
+                reply_payload = {
+                    "replyToken": reply_token,
+                    "messages": [{"type": "text", "text": msg}]
+                }
+                r = requests.post("https://api.line.me/v2/bot/message/reply", headers=HEADERS, json=reply_payload)
+                return PlainTextResponse("OK", status_code=200)
+
             echo_payload = {
                 "replyToken": reply_token,
                 "messages": [
