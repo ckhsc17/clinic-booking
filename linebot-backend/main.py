@@ -39,13 +39,13 @@ async def callback(request: Request):
             user_msg = event["message"]["text"]
 
             if user_msg == "查詢紀錄":
-                
+
                 user_id = event["source"]["userId"]
 
                 try:
                     # 呼叫自己的 server backend API
                     resp = requests.get(
-                        f"http://http://127.0.0.1:8000/api/patients/records",
+                        f"https://booking-backend-prod-260019038661.asia-east1.run.app/api/patients/records",
                         params={"user_id": user_id},
                         timeout=5
                     )
