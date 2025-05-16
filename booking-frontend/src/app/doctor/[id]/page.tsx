@@ -2,43 +2,58 @@
 import { useRouter, useParams } from "next/navigation";
 import Modal from "@/components/Modal";
 
-const doctorData = {
+const doctorData: Record<
+  string,
+  {
+    name: string;
+    avatar: string;
+    lastVisit: string;
+    tags: string[];
+  }
+> = {
   "1": {
     name: "劉淳熙",
     avatar: "/avatar1.png",
-    lastVisit: "5天前",
-    tags: ["#抽脂", "#眼皮"],
+    lastVisit: "5 天前",
+    tags: ["抽脂", "眼皮"],
   },
   "2": {
     name: "孫立惠",
     avatar: "/avatar2.jpg",
-    lastVisit: "10天前",
-    tags: ["#拉皮", "#隆鼻"],
+    lastVisit: "12 天前",
+    tags: ["電波", "音波"],
   },
   "3": {
     name: "林孟穎",
     avatar: "/avatar3.jpg",
-    lastVisit: "20天前",
-    tags: ["#拉皮", "#隆鼻"],
+    lastVisit: "2 天前",
+    tags: ["眼袋"],
   },
   "4": {
     name: "張峯瑞",
     avatar: "/avatar4.jpg",
-    lastVisit: "90天前",
-    tags: ["#拉皮", "#隆鼻"],
+    lastVisit: "20 天前",
+    tags: ["隆鼻"],
   },
   "5": {
     name: "余德毅",
     avatar: "/avatar5.jpg",
-    lastVisit: "1000天前",
-    tags: ["#拉皮", "#隆鼻"],
+    lastVisit: "8 天前",
+    tags: ["體雕"],
   },
 };
 
 export default function DoctorDetailPage() {
   const router = useRouter();
-  const { id } = useParams();
-  const doctor = doctorData[id];
+
+  const rawId = useParams().id;
+  const doctorId = Array.isArray(rawId) ? rawId[0] : rawId;
+
+  if (!doctorId) return <div>找不到醫師資料</div>;
+
+  const doctor = doctorData[doctorId];
+
+  if (!doctor) return <div>找不到醫師資料</div>;
 
   if (!doctor) return <div>找不到醫師資料</div>;
 
@@ -65,7 +80,7 @@ export default function DoctorDetailPage() {
           ))}
         </div>
         <button
-          onClick={() => router.push(`/doctor/${id}/schedule`)}
+          onClick={() => router.push(`/doctor/${doctorId}/schedule`)}
           className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
         >
           預約

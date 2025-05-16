@@ -5,6 +5,13 @@ import { useState } from 'react';
 const timesMorning = ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00'];
 const timesAfternoon = ['13:00', '14:00', '15:00', '16:00', '17:00', '18:00'];
 
+type TimeButtonProps = {
+  time: string;
+};
+
+
+
+
 export default function TimeSelectPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -19,18 +26,18 @@ export default function TimeSelectPage() {
     }
   };
 
-  const TimeButton = ({ time }) => (
-    <button
-      onClick={() => setSelectedTime(time)}
-      className={`w-20 h-10 rounded-lg border text-sm ${
-        selectedTime === time
-          ? 'border-blue-500 bg-blue-100'
-          : 'border-gray-300 hover:bg-gray-100'
-      }`}
-    >
-      {time}
-    </button>
-  );
+  const TimeButton = ({ time }: TimeButtonProps) => (
+  <button
+    onClick={() => setSelectedTime(time)}
+    className={`w-20 h-10 rounded-lg border text-sm ${
+      selectedTime === time
+        ? 'border-blue-500 bg-blue-100'
+        : 'border-gray-300 hover:bg-gray-100'
+    }`}
+  >
+    {time}
+  </button>
+);
 
   return (
     <div className="max-w-md mx-auto p-6">

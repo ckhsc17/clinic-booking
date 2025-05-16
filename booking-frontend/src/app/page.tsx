@@ -4,6 +4,14 @@ import DoctorCard from "@/components/DoctorCard";
 import Modal from "@/components/Modal";
 import { useRouter } from "next/navigation";
 
+type Doctor = {
+  id: string;
+  name: string;
+  title: string;
+  avatar: string;
+  seenRecently: boolean;
+};
+
 const doctors = [
   {
     id: "1",
@@ -44,7 +52,7 @@ const doctors = [
 
 export default function HomePage() {
   const [showWelcome, setShowWelcome] = useState(true);
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const router = useRouter();
 
   return (
