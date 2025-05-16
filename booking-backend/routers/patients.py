@@ -34,7 +34,18 @@ async def create_patient(info: PatientCreate):
 
 @router.get("/patients/records", response_model=PatientRecordResponse)
 async def get_patient_record(user_id: str = Query(..., description="LINE UserId")):
+    # 👉 第一步：確認病患是否存在
+    patient_check = supabase.table("patients")\
+        .select("user_id")\
+        .eq("user_id", user_id)\
+        .maybe_single()\
+        .execute()
+
+    if not patient_check.data:
+        raise HTTPException(status_code=404, detail="User not found")
+    
     # 查詢最近一次完成的 Appointment
+    # 第二步：查詢最近一次完成的 Appointment
     appointments = supabase.table("appointments")\
         .select("appointment_id, appointment_time, treatment_id")\
         .eq("user_id", user_id)\

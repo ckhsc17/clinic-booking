@@ -50,8 +50,32 @@ async def callback(request: Request):
                         params={"user_id": user_id},
                         timeout=5
                     )
-                    if resp.status_code == 200:
+
+                    if resp.status_code == 404:
+                        print("🔍 使用者不存在，建立預設資料中...")
+                        
+                        # 1. 查詢使用者 LINE 資料
+                        profile = line_bot_api.get_profile(user_id)
+                        user_name = profile.display_name
+                        
+                        # 2. 呼叫 booking backend 新增病人
+                        patient_resp = requests.post(
+                            "https://booking-backend-prod-xxx.run.app/api/patients",
+                            json={
+                                "user_id": user_id,
+                                "name": user_name,
+                                "gender": "",
+                                "birthdate": "",
+                                "phone": "",
+                                "email": "",
+                                "address": "",
+                                "role": "Normal"
+                            }
+                        )
+                        
+                    elif resp.status_code == 200:
                         record = resp.json()
+                        print("查詢紀錄成功：", record)
                         msg = (
                             f"📋 上次就診紀錄：\n"
                             f"- 🕒 就診時間：{record['last_visit_time']}\n"
@@ -59,6 +83,8 @@ async def callback(request: Request):
                             f"- 💊 藥劑剩餘：{record['medication_left']}"
                         )
                     else:
+                        print("❌ 查詢失敗，狀態碼：", resp.status_code)
+                        print("❌ 查詢失敗，回應內容：", resp.text)
                         msg = "⚠️ 查詢失敗，請稍後再試。"
 
                 except Exception as e:
