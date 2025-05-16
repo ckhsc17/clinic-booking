@@ -69,6 +69,11 @@ class TreatmentRecordCreate(BaseModel):
     notes: str
     date_performed: date
     outcome: str
+class TreatmentRecordResponse(BaseModel):
+    appointment_id: int
+    notes: str
+    date_performed: date
+    outcome: str
 
 class PurchaseCreate(BaseModel):
     user_id: str

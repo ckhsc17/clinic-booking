@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException, Query
 from supabase_client import supabase
 from schemas import PatientCreate
-from schemas import AppointmentCreate, PatientRecordResponse
+from schemas import PatientRecordResponse
 
 router = APIRouter(tags=["Patients"])
 
