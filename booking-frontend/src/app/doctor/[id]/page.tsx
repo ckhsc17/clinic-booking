@@ -1,8 +1,6 @@
 "use client";
 import { useRouter, useParams } from "next/navigation";
 import Modal from "@/components/Modal";
-import { desc } from "framer-motion/client";
-import { de } from "date-fns/locale";
 
 const doctorData: Record<
   string,
