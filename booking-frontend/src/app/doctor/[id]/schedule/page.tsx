@@ -9,7 +9,7 @@ export default function SchedulePage() {
   const [selectedDate, setSelectedDate] = useState("");
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fdf3ef] to-[#e8d3c8] flex flex-col items-center relative p-0 pt-0">
+    <div className="min-h-screen bg-gradient-to-b from-[#F5E9E2] to-[#f5e9e2] flex flex-col items-center relative p-0 pt-0">
       <div className="w-full bg-[#d4b7a5] text-white py-3 flex items-center justify-start px-4 shadow-md relative">
         {/* 返回按鈕 */}
         <button
