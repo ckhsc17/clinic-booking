@@ -39,6 +39,7 @@ async def callback(request: Request):
             user_msg = event["message"]["text"]
 
             if user_msg == "查詢紀錄":
+                
                 user_id = event["source"]["userId"]
 
                 try:

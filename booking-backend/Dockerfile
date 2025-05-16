@@ -2,7 +2,7 @@
 FROM python:3.8.16-slim
 
 # 設定工作目錄
-WORKDIR /linebot-backend
+WORKDIR /booking-backend
 
 # 複製需求與程式
 COPY requirements.txt .
