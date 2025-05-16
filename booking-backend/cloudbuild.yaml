@@ -27,7 +27,7 @@ steps:
           --region=asia-east1 \
           --platform=managed \
           --allow-unauthenticated \
-          --update-secrets=SUPABASE_URL=SUPABASE_URL:latest,SUPABASE_KEY=SUPABASE_KEY:latest
+          --update-secrets=SUPABASE_URL=SUPABASE_URL:latest
 
 #substitutions:
 # _API_URL: "https://ticketease-frontend-staging-396633212684.asia-east1.run.app/"
