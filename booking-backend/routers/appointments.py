@@ -1,10 +1,9 @@
 # routers/appointments.py
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException
 from uuid import uuid4
 from supabase_client import supabase
-from schemas import AppointmentCreate, PatientRecordResponse
-
+from schemas import AppointmentCreate
 router = APIRouter(tags=["Appointments"])
 
 @router.post("/appointments")

@@ -39,8 +39,9 @@ async def callback(request: Request):
             user_msg = event["message"]["text"]
 
             if user_msg == "查詢紀錄":
-
+                print("收到查詢紀錄請求")
                 user_id = event["source"]["userId"]
+                print("使用者 ID:", user_id)
 
                 try:
                     # 呼叫自己的 server backend API
