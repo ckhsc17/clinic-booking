@@ -1,4 +1,17 @@
-export default function DoctorCard({ doctor, onClick }) {
+type Doctor = {
+  id: string;
+  name: string;
+  title: string;
+  avatar: string;
+  seenRecently: boolean;
+};
+
+type DoctorCardProps = {
+  doctor: Doctor;
+  onClick: (doctor: Doctor) => void;
+};
+
+export default function DoctorCard({ doctor, onClick }: DoctorCardProps) {
   return (
     <div
       onClick={() => onClick(doctor)}

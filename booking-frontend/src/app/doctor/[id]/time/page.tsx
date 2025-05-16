@@ -9,6 +9,9 @@ type TimeButtonProps = {
   time: string;
 };
 
+
+
+
 export default function TimeSelectPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -24,17 +27,17 @@ export default function TimeSelectPage() {
   };
 
   const TimeButton = ({ time }: TimeButtonProps) => (
-    <button
-      onClick={() => setSelectedTime(time)}
-      className={`w-20 h-12 rounded-xl border text-sm font-medium transition-all duration-200 ${
-        selectedTime === time
-          ? 'border-blue-500 bg-blue-100 text-blue-700 shadow-md'
-          : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50 hover:shadow-sm'
-      }`}
-    >
-      {time}
-    </button>
-  );
+  <button
+    onClick={() => setSelectedTime(time)}
+    className={`w-20 h-10 rounded-lg border text-sm ${
+      selectedTime === time
+        ? 'border-blue-500 bg-blue-100'
+        : 'border-gray-300 hover:bg-gray-100'
+    }`}
+  >
+    {time}
+  </button>
+);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">

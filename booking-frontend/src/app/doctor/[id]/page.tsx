@@ -1,16 +1,24 @@
 "use client";
 import { useRouter, useParams } from "next/navigation";
 import Modal from "@/components/Modal";
-import { desc } from "framer-motion/client";
-import { de } from "date-fns/locale";
 
-const doctorData = {
+const doctorData: Record<
+  string,
+  {
+    name: string;
+    avatar: string;
+    lastVisit: string;
+    tags: string[];
+    descriptionLink: string;
+  }
+> = {
   "1": {
     name: "劉淳熙",
     avatar: "/avatar1.png",
     lastVisit: "5天前",
     tags: ["#抽脂", "#眼皮"],
     descriptionLink: "https://beautyeye.com.tw/%E9%86%AB%E5%B8%AB%E4%BB%8B%E7%B4%B9/%E5%8A%89%E6%B7%B3%E7%86%99-%E9%86%AB%E5%B8%AB/",
+
   },
   "2": {
     name: "孫立惠",
@@ -44,8 +52,15 @@ const doctorData = {
 
 export default function DoctorDetailPage() {
   const router = useRouter();
-  const { id } = useParams();
-  const doctor = doctorData[id];
+
+  const rawId = useParams().id;
+  const doctorId = Array.isArray(rawId) ? rawId[0] : rawId;
+
+  if (!doctorId) return <div>找不到醫師資料</div>;
+
+  const doctor = doctorData[doctorId];
+
+  if (!doctor) return <div>找不到醫師資料</div>;
 
   if (!doctor) return <div>找不到醫師資料</div>;
 
@@ -72,7 +87,7 @@ export default function DoctorDetailPage() {
           ))}
         </div>
         <button
-          onClick={() => router.push(`/doctor/${id}/schedule`)}
+          onClick={() => router.push(`/doctor/${doctorId}/schedule`)}
           className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
         >
           預約

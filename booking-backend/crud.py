@@ -1,6 +1,6 @@
 from uuid import uuid4
 from fastapi import HTTPException
-from models import AppointmentInfo, PatientInfo, Appointment
+from models import AppointmentInfo, PatientInfo, Appointment, TreatmentRecord
 from supabase_client import supabase
 
 # Simulated database for appointments
