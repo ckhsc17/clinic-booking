@@ -1,172 +1,158 @@
 from faker import Faker
-from sqlalchemy import create_engine, Column, Integer, String, Date, DateTime, DECIMAL, Boolean, Text, ForeignKey, CheckConstraint, VARCHAR
-from sqlalchemy.orm import declarative_base, sessionmaker, relationship
+import pandas as pd
 import random
-from datetime import timedelta, datetime
-import csv
+from datetime import datetime, timedelta
 
-fake = Faker('zh_TW')
+fake = Faker("zh_TW")
 
-def write_csv(filename, fieldnames, rows):
-    with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
-# Generate Patients
+# 模擬資料數量
+NUM_PATIENTS = 100
+NUM_DOCTORS = 7
+NUM_TREATMENTS = 7
+NUM_MEDICINES = 5
+
+# 病人資料
 patients = []
-for _ in range(100):
+for _ in range(NUM_PATIENTS):
     patients.append({
-        'user_id': fake.uuid4(),
-        'name': fake.name(),
-        'gender': random.choice(['男', '女']),
-        'birthdate': fake.date_of_birth(minimum_age=18, maximum_age=65).isoformat(),
-        'phone': fake.phone_number(),
-        'email': fake.email(),
-        'address': fake.address(),
-        'role': random.choice(['VIP', 'Normal'])
+        "user_id": fake.uuid4(),
+        "name": fake.name(),
+        "gender": random.choice(["男", "女"]),
+        "birthdate": fake.date_of_birth(minimum_age=18, maximum_age=65),
+        "phone": fake.phone_number(),
+        "email": fake.email(),
+        "address": fake.address().replace('\n', ' '),
+        "role": random.choice(["VIP", "Normal"]),
+        "membership": random.choice(["True", "False"])
     })
-write_csv('patients.csv', patients[0].keys(), patients)
+pd.DataFrame(patients).to_csv("patients.csv", index=False)
 
-# Generate Doctors
+# 醫師資料
 doctors = []
-for i in range(1, 7):
+for _ in range(NUM_DOCTORS):
     doctors.append({
-        'doctor_id': i,
-        'name': fake.name(),
-        'specialty': random.choice(['皮膚科', '整形外科', '醫美']),
-        'phone': fake.phone_number(),
-        'email': fake.email(),
-        'license_no': fake.uuid4()
+        "doctor_id": None,  # 若需自動編號可留空或用 range
+        "name": fake.name(),
+        "specialty": random.choice(["皮膚科", "整形外科", "美容醫學"]),
+        "phone": fake.phone_number(),
+        "email": fake.email(),
+        "license_no": fake.bothify(text='??#####')
     })
-write_csv('doctors.csv', doctors[0].keys(), doctors)
+df_doctors = pd.DataFrame(doctors)
+df_doctors["doctor_id"] = range(1, len(df_doctors) + 1)
+df_doctors.to_csv("doctors.csv", index=False)
 
+# 療程資料
+treatments = []
+for _ in range(NUM_TREATMENTS):
+    treatments.append({
+        "treatment_id": None,
+        "name": fake.word() + "療程",
+        "description": fake.text(max_nb_chars=100),
+        "price": round(random.uniform(1000, 20000), 2),
+        "duration_min": random.choice([30, 45, 60])
+    })
+df_treatments = pd.DataFrame(treatments)
+df_treatments["treatment_id"] = range(1, len(df_treatments) + 1)
+df_treatments.to_csv("treatments.csv", index=False)
+
+# 藥品資料
+medicines = []
+for _ in range(NUM_MEDICINES):
+    medicines.append({
+        "medicine_id": None,
+        "name": fake.word() + "藥品",
+        "description": fake.text(max_nb_chars=50),
+        "amount": random.choice(["1ml", "500mg", "一顆", "10ml"])
+    })
+df_medicines = pd.DataFrame(medicines)
+df_medicines["medicine_id"] = range(1, len(df_medicines) + 1)
+df_medicines.to_csv("medicines.csv", index=False)
+
+# 醫師可預約時段
 doctor_availabilities = []
 availability_id = 1
+        
 for doctor in doctors:
-    # 每位醫師生成 5 個可預約時段
     for _ in range(5):
-        start_datetime = fake.date_time_between(start_date='now', end_date='+30d')
-        end_datetime = start_datetime + timedelta(minutes=random.choice([30, 60, 90]))
+        # 隨機選一個日期（今天到 30 天後）
+        random_date = fake.date_between(start_date='today', end_date='+30d')
+        
+        # 隨機選擇時長（60、120、180分鐘）
+        duration_minutes = random.choice([60, 120, 180])
+        duration_hours = duration_minutes // 60
+
+        # 可開始的最晚小時（例如，若 duration=3 小時，最晚是 17:00 開始）
+        latest_start_hour = 20 - duration_hours
+
+        # 隨機選擇一個合法的開始小時
+        start_hour = random.randint(10, latest_start_hour)
+
+        # 組合成 datetime 物件
+        start_datetime = datetime.combine(random_date, datetime.min.time()).replace(hour=start_hour)
+        end_datetime = start_datetime + timedelta(minutes=duration_minutes)
+
         doctor_availabilities.append({
             'availability_id': availability_id,
-            'doctor_id': doctor['doctor_id'],
+            'doctor_id': doctor,
             'available_start': start_datetime.isoformat(),
             'available_end': end_datetime.isoformat(),
-            'is_bookable': random.choice([True, True, True, False])  # 大部分時間是可預約
+            'is_bookable': random.choice([True, True, True, False])
         })
         availability_id += 1
-write_csv('doctor_availabilities.csv', doctor_availabilities[0].keys(), doctor_availabilities)
+df_availability = pd.DataFrame(doctor_availabilities)
+df_availability["availability_id"] = range(1, len(df_availability) + 1)
+df_availability.to_csv("doctor_availability.csv", index=False)
 
-services = []
-service_names = ['雙眼皮手術', '隆鼻手術', '拉皮手術', '玻尿酸豐唇', '電波拉皮', '脂肪移植', '微整瘦臉', '雷射除斑', '肉毒桿菌注射', '皮秒雷射']
 
-for i, service_name in enumerate(service_names, start=1):
-    services.append({
-        'service_id': i,
-        'name': service_name,
-        'description': fake.text(max_nb_chars=150),
-        'price': round(random.uniform(5000, 80000), 2)
-    })
-write_csv('services.csv', services[0].keys(), services)
-
-# Generate Treatments
-treatments = []
-for i in range(1, 6):
-    treatments.append({
-        'treatment_id': i,
-        'name': fake.word() + ' 療程',
-        'description': fake.text(max_nb_chars=200),
-        'price': round(random.uniform(1000, 50000), 2),
-        'duration_min': random.randint(30, 120)
-    })
-write_csv('treatments.csv', treatments[0].keys(), treatments)
-
-# Generate Medicines
-medicines = []
-for i in range(1, 6):
-    medicines.append({
-        'medicine_id': i,
-        'name': fake.word() + ' 藥品',
-        'description': fake.text(max_nb_chars=100),
-        'amount': random.choice(['1ml', '500mg', '一顆'])
-    })
-write_csv('medicines.csv', medicines[0].keys(), medicines)
-
-# Generate Appointments
+# 模擬預約資料（Appointments）
 appointments = []
-for i in range(1, 23):
+for i in range(20):
+    patient = random.choice(patients)
+    doctor = random.choice(doctors)
+    treatment = random.choice(treatments)
+    appt_time = fake.date_time_between(start_date="+1d", end_date="+15d")
+    status = random.choice(['Pending', 'Completed', 'Cancelled'])
     appointments.append({
-        'appointment_id': i,
-        'user_id': random.choice(patients)['user_id'],
-        'doctor_id': random.choice(doctors)['doctor_id'],
-        'treatment_id': random.choice(treatments)['treatment_id'],
-        'appointment_time': fake.date_time_this_year().isoformat(),
-        'status': random.choice(['Pending', 'Confirmed', 'Completed', 'Cancelled']),
-        'notes': fake.text(max_nb_chars=100)
+        "appointment_id": i + 1,
+        "user_id": patient["user_id"],
+        "doctor_id": df_doctors.sample(1)["doctor_id"].values[0],
+        "treatment_id": df_treatments.sample(1)["treatment_id"].values[0],
+        "appointment_time": appt_time,
+        "status": status,
+        "notes": fake.sentence(nb_words=6)
     })
-write_csv('appointments.csv', appointments[0].keys(), appointments)
+df_appointments = pd.DataFrame(appointments)
+df_appointments.to_csv("appointments.csv", index=False)
 
-# Generate Billing
-billings = []
-for i, appointment in enumerate(appointments, 1):
-    billings.append({
-        'bill_id': i,
-        'appointment_id': appointment['appointment_id'],
-        'amount': round(random.uniform(1000, 50000), 2),
-        'paid': random.choice([True, False]),
-        'payment_date': fake.date_this_year().isoformat(),
-        'payment_method': random.choice(['Credit Card', 'Cash', 'LINE Pay'])
+# 模擬帳單資料（Billing）
+billing = []
+for appt in df_appointments.itertuples():
+    if appt.status == "Cancelled":
+        continue
+    billing.append({
+        "bill_id": len(billing) + 1,
+        "appointment_id": appt.appointment_id,
+        "amount": round(random.uniform(2000, 25000), 2),
+        "paid": random.choice([True, False]),
+        "payment_date": fake.date_between(start_date='-10d', end_date='today') if random.choice([True, False]) else None,
+        "payment_method": random.choice(["現金", "信用卡", "轉帳", "Line Pay"])
     })
-write_csv('billing.csv', billings[0].keys(), billings)
+df_billing = pd.DataFrame(billing)
+df_billing.to_csv("billing.csv", index=False)
 
-# Generate Treatment Records (only for Completed)
-treatment_records = []
-record_id_counter = 1
-for appointment in appointments:
-    if appointment['status'] == 'Completed':
-        treatment_records.append({
-            'record_id': record_id_counter,
-            'appointment_id': appointment['appointment_id'],
-            'notes': fake.text(max_nb_chars=100),
-            'date_performed': fake.date_this_year().isoformat(),
-            'outcome': random.choice(['良好', '一般', '需要回診'])
-        })
-        record_id_counter += 1
-write_csv('treatment_records.csv', treatment_records[0].keys(), treatment_records)
-
-# Generate Purchases
-unique_pairs = set()
-purchases = []
-
-while len(purchases) < 10:  # 你要產 10 筆資料
-    user_id = random.choice(patients)['user_id']
-    treatment_id = random.choice(treatments)['treatment_id']
-    pair = (user_id, treatment_id)
-
-    if pair not in unique_pairs:
-        unique_pairs.add(pair)
-        purchases.append({
-            'user_id': user_id,
-            'treatment_id': treatment_id,
-            'total_quantity': round(random.uniform(1.0, 10.0), 2),
-            'remaining_quantity': round(random.uniform(0.0, 5.0), 2),
-            'purchase_date': fake.date_this_year().isoformat()
-        })
-
-# 寫出 CSV
-write_csv('purchases.csv', purchases[0].keys(), purchases)
-
-# Generate Treatment Medicine Usage (related to Treatment Records)
-treatment_medicine_usage = []
-usage_id_counter = 1
-for record in treatment_records:
-    treatment_medicine_usage.append({
-        'usage_id': usage_id_counter,
-        'record_id': record['record_id'],
-        'medicine_id': random.choice(medicines)['medicine_id'],
-        'used_amount': round(random.uniform(0.5, 2.0), 2)
+# 模擬藥品餘量（drug_remain）
+drug_remain = []
+for _ in range(20):
+    user = random.choice(patients)
+    med_id = df_medicines.sample(1)["medicine_id"].values[0]
+    remain_qty = random.randint(1, 10)
+    drug_remain.append({
+        "user_id": user["user_id"],
+        "medicine_id": med_id,
+        "remaining_quantity": remain_qty
     })
-    usage_id_counter += 1
-write_csv('treatment_medicine_usage.csv', treatment_medicine_usage[0].keys(), treatment_medicine_usage)
+df_drug_remain = pd.DataFrame(drug_remain).drop_duplicates(subset=["user_id", "medicine_id"])
+df_drug_remain.to_csv("drug_remain.csv", index=False)
 
 print("CSV files generated successfully!")

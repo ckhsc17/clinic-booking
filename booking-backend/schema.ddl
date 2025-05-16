@@ -7,7 +7,8 @@ CREATE TABLE Patients (
     phone VARCHAR(20),
     email VARCHAR(100),
     address VARCHAR(255),
-    role VARCHAR(10) CHECK (role IN ('VIP', 'Normal'))
+    role VARCHAR(10) CHECK (role IN ('VIP', 'Normal')),
+    membership VARCHAR(10) CHECK (membership IN ('True', 'False'))
 );
 
 -- 醫師表格，加入可用時段表
@@ -62,7 +63,7 @@ CREATE TABLE Appointments (
     doctor_id INT,
     treatment_id INT,
     appointment_time TIMESTAMP,
-    status VARCHAR(50) CHECK (status IN ('Pending', 'Confirmed', 'Completed', 'Cancelled')),
+    status VARCHAR(50) CHECK (status IN ('Pending', 'Completed', 'Cancelled')),
     notes TEXT,
     FOREIGN KEY (user_id) REFERENCES Patients(user_id),
     FOREIGN KEY (doctor_id) REFERENCES Doctors(doctor_id),
@@ -80,33 +81,12 @@ CREATE TABLE Billing (
     FOREIGN KEY (appointment_id) REFERENCES Appointments(appointment_id)
 );
 
--- 療程紀錄表
-CREATE TABLE Treatment_Records (
-    record_id  INT GENERATED  BY DEFAULT AS IDENTITY PRIMARY KEY,
-    appointment_id INT,
-    notes TEXT,
-    date_performed DATE,
-    outcome TEXT,
-    FOREIGN KEY (appointment_id) REFERENCES Appointments(appointment_id)
-);
-
 -- 課程購買紀錄（針對非一次性的療程，如玻尿酸購買 ml 數）
-CREATE TABLE Purchases (
+CREATE TABLE drug_remain (
     user_id VARCHAR(50),
-    treatment_id INT,
-    total_quantity DECIMAL(10, 2), -- 例如 2.0 ml
-    remaining_quantity DECIMAL(10, 2),
-    purchase_date DATE,
-    PRIMARY KEY (user_id, treatment_id),
-    FOREIGN KEY (user_id) REFERENCES Patients(user_id),
-    FOREIGN KEY (treatment_id) REFERENCES Treatments(treatment_id)
-);
-
-CREATE TABLE Treatment_Medicine_Usage (
-    usage_id  INT GENERATED  BY DEFAULT AS IDENTITY PRIMARY KEY,
-    record_id INT,               -- 對應到 Treatment_Records
     medicine_id INT,
-    used_amount DECIMAL(10, 2), -- e.g. 0.5 ml
-    FOREIGN KEY (record_id) REFERENCES Treatment_Records(record_id),
+    remaining_quantity INT,
+    PRIMARY KEY (user_id, medicine_id),
+    FOREIGN KEY (user_id) REFERENCES Patients(user_id),
     FOREIGN KEY (medicine_id) REFERENCES Medicines(medicine_id)
 );
