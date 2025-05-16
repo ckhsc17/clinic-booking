@@ -12,8 +12,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # 設定環境變數（可選）
-ENV FLASK_APP=main.py
-ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_ENV=development
 
 # 開放 port 5000 給外部訪問
