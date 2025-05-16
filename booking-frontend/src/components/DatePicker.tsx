@@ -1,12 +1,14 @@
 'use client';
-import { useState } from 'react';
+import { isBefore, isSameDay, getDay, startOfToday } from 'date-fns';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { addDays, isBefore, isSameDay, getDay, startOfToday } from 'date-fns';
 
-export default function CustomDatePicker({ selectedDate, onSelectDate }) {
-  const [date, setDate] = useState<Date | null>(null);
+type DatePickerProps = {
+  selectedDate: Date | null;
+  onSelectDate: (date: Date) => void;
+};
 
+export default function CustomDatePicker({ selectedDate, onSelectDate }: DatePickerProps) {
   const isSunday = (date: Date) => getDay(date) === 0;
   const isBeforeToday = (date: Date) => isBefore(date, startOfToday()) || isSameDay(date, startOfToday());
 
@@ -17,11 +19,8 @@ export default function CustomDatePicker({ selectedDate, onSelectDate }) {
   return (
     <div className="w-full flex justify-center">
       <DatePicker
-        selected={date}
-        onChange={(d) => {
-          setDate(d);
-          onSelectDate(d);
-        }}
+        selected={selectedDate}
+        onChange={(d) => d && onSelectDate(d)}
         inline
         dayClassName={(d) =>
           isDisabled(d)
