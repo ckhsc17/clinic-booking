@@ -28,7 +28,7 @@ export default function ConfirmPage() {
   };
 
   // 格式化日期字串（從 ISO 或 Date 轉成 yyyy-mm-dd）
-  const formatDate = (dateStr) => {
+  const formatDate = (dateStr: string | null | undefined): string => {
     if (!dateStr) return "";
     const dateObj = new Date(dateStr);
     const yyyy = dateObj.getFullYear();
