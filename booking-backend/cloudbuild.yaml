@@ -22,8 +22,8 @@ steps:
     args:
       - -c
       - |
-        gcloud run deploy linebot-backend-prod \
-          --image=asia-east1-docker.pkg.dev/$PROJECT_ID/clinicbooking/linebot-backend:latest \
+        gcloud run deploy booking-backend-prod \
+          --image=asia-east1-docker.pkg.dev/$PROJECT_ID/clinicbooking/booking-backend:latest \
           --region=asia-east1 \
           --platform=managed \
           --allow-unauthenticated \
