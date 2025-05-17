@@ -1,6 +1,6 @@
 # schema.py
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 from datetime import date, datetime
 
 class PatientBase(BaseModel):
@@ -32,6 +32,12 @@ class DoctorAvailabilityCreate(BaseModel):
     available_start: datetime
     available_end: datetime
     is_bookable: Optional[bool] = True
+class DoctorAvailabilityOut(BaseModel):
+    start: datetime
+    end: datetime
+class DoctorAvailabilityResponse(BaseModel):
+    doctor_id: int
+    available_times: List[DoctorAvailabilityOut]
 
 class TreatmentCreate(BaseModel):
     name: str
