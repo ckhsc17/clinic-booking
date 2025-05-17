@@ -2,7 +2,12 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import PlainTextResponse
 from linebot import LineBotApi
-from linebot.models import TextSendMessage
+from linebot.models import (
+    TextSendMessage,
+    QuickReply,
+    QuickReplyButton,
+    MessageAction
+)
 from dotenv import load_dotenv
 from schemas import PushRequest
 import requests
@@ -37,8 +42,71 @@ async def callback(request: Request):
         if event.get("type") == "message" and event["message"].get("type") == "text":
             reply_token = event["replyToken"]
             user_msg = event["message"]["text"]
+            if user_msg == "服務說明":
+                quick_reply = QuickReply(items=[
+                    QuickReplyButton(action=MessageAction(label="眼整形", text="眼整形")),
+                    QuickReplyButton(action=MessageAction(label="臉部整形", text="臉部整形")),
+                    QuickReplyButton(action=MessageAction(label="身體雕塑", text="身體雕塑")),
+                    QuickReplyButton(action=MessageAction(label="微整注射", text="微整注射")),
+                    QuickReplyButton(action=MessageAction(label="雷射光療", text="雷射光療")),
+                    ])
+                message = TextSendMessage(text="請選擇您想了解的手術項目：",quick_reply=quick_reply)
 
-            if user_msg == "查詢紀錄":
+                line_bot_api.reply_message(reply_token, message)
+                return PlainTextResponse("OK", status_code=200)
+                
+            elif user_msg == "臉部整形":
+                detail_msg = (
+                    "👤 臉部整形\n\n"
+                    "📌 簡介：包含隆鼻、削骨、下巴雕塑等，改善五官比例，打造立體精緻的臉型。\n"
+                    "💰 價格：約 NT$80,000 起（依項目而定）\n"
+                    "⏱️ 手術時間：約 2～4 小時，術後恢復期約 1～2 週"
+                )
+                line_bot_api.reply_message(reply_token, TextSendMessage(text=detail_msg))
+                return PlainTextResponse("OK", status_code=200)
+
+            elif user_msg == "眼整形":
+                detail_msg = (
+                    "👁️ 眼整形\n\n"
+                    "📌 簡介：針對眼部進行調整，例如雙眼皮手術、開眼頭、眼袋移除等，讓雙眼更有神、更有精神。\n"
+                    "💰 價格：NT$30,000 起\n"
+                    "⏱️ 手術時間：約 1 小時，術後可當日返家"
+                )
+                line_bot_api.reply_message(reply_token, TextSendMessage(text=detail_msg))
+                return PlainTextResponse("OK", status_code=200)
+                
+            elif user_msg == "身體雕塑":
+                detail_msg = (
+                    "🏋️‍♀️ 身體雕塑\n\n"
+                    "📌 簡介：透過抽脂、自體脂肪移植、緊實療程等，改善局部脂肪堆積與體態曲線。\n"
+                    "💰 價格：約 NT$50,000 起\n"
+                    "⏱️ 手術時間：約 2 小時，恢復期約 1～2 週"
+                )
+                line_bot_api.reply_message(reply_token, TextSendMessage(text=detail_msg))
+                return PlainTextResponse("OK", status_code=200)
+
+            elif user_msg == "微整注射":
+                detail_msg = (
+                    "💉 微整注射\n\n"
+                    "📌 簡介：如玻尿酸、肉毒桿菌等注射，可改善皺紋、豐唇、修飾輪廓，見效快且幾乎無恢復期。\n"
+                    "💰 價格：NT$6,000 起\n"
+                    "⏱️ 手術時間：約 15～30 分鐘，當天可正常活動"
+                )
+                line_bot_api.reply_message(reply_token, TextSendMessage(text=detail_msg))
+                return PlainTextResponse("OK", status_code=200)
+
+            elif user_msg == "雷射光療":
+                detail_msg = (
+                    "🔆 雷射光療\n\n"
+                    "📌 簡介：用雷射技術改善痘疤、斑點、毛孔粗大等膚況，促進肌膚更新與亮白。\n"
+                    "💰 價格：NT$3,000 起／次\n"
+                    "⏱️ 手術時間：約 30 分鐘，依療程次數調整"
+                )
+                line_bot_api.reply_message(reply_token, TextSendMessage(text=detail_msg))
+                return PlainTextResponse("OK", status_code=200)
+
+
+            elif user_msg == "查詢紀錄":
                 print("收到查詢紀錄請求")
                 user_id = event["source"]["userId"]
                 print("使用者 ID:", user_id)
