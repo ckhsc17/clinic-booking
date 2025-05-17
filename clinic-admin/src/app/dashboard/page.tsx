@@ -1,22 +1,98 @@
-import DashboardCard from "@/components/DashboardCard";
+"use client";
+
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
+import PatientSearch from "@/components/PatientSearch";
+import ScheduleTable from "@/components/ScheduleTable";
+import AddPatientModal from "@/components/AddPatientModal";
+import { patientHistory } from "@/lib/mockData";
+
+type Patient = {
+  id: number;
+  name: string;
+  lastVisit: string;
+  condition: string;
+  notes: string;
+};
 
 export default function Dashboard() {
+  const [patients, setPatients] = useState<Patient[]>(patientHistory);
+  const [searchResults, setSearchResults] = useState<Patient[]>(patients);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSearchResults = (results: Patient[]) => {
+    setSearchResults(results || patients);
+  };
+
+  const addPatient = (newPatient: { name: string; notes: string }) => {
+    const newId = patients.length > 0 ? Math.max(...patients.map(p => p.id)) + 1 : 1;
+    const patientWithId: Patient = {
+      id: newId,
+      name: newPatient.name,
+      lastVisit: "",
+      condition: "",
+      notes: newPatient.notes,
+    };
+    const updatedPatients = [...patients, patientWithId];
+    setPatients(updatedPatients);
+    setSearchResults(updatedPatients);
+    setIsModalOpen(false);
+  };
+
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Navbar />
         <main className="p-6">
-          <h1 className="text-2xl font-bold mb-6">Clinic Admin Dashboard</h1>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <DashboardCard title="Total Appointments" value="120" />
-            <DashboardCard title="Active Patients" value="85" />
-            <DashboardCard title="Pending Requests" value="15" />
-          </div>
+          <h1 className="text-3xl font-bold mb-8 text-gray-800">Clinic Admin Dashboard</h1>
+
+          {/* Patient Search Section */}
+          <section className="mb-12">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-gray-700">Patient History</h2>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              >
+                Add New Patient
+              </button>
+            </div>
+            <PatientSearch patients={patients} onSearch={handleSearchResults} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {searchResults?.length > 0 ? (
+                searchResults.map((patient) => (
+                  <div
+                    key={patient.id}
+                    className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition"
+                  >
+                    <h3 className="text-lg font-semibold text-gray-800">{patient.name}</h3>
+                    <p className="text-gray-600">Last Visit: {patient.lastVisit}</p>
+                    <p className="text-gray-600">Condition: {patient.condition}</p>
+                    <p className="text-gray-500 text-sm mt-2">{patient.notes}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-500">No patients found.</p>
+              )}
+            </div>
+          </section>
+
+          {/* Doctor Schedule Section */}
+          <section>
+            <h2 className="text-xl font-semibold mb-4 text-gray-700">Doctor Schedules</h2>
+            <ScheduleTable />
+          </section>
         </main>
       </div>
+      {isModalOpen && (
+        <AddPatientModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onAddPatient={addPatient}
+        />
+      )}
     </div>
   );
 }
