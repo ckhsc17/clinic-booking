@@ -61,7 +61,7 @@ async def get_doctor_available_times(name: str = Query(..., description="Doctor'
     final_available = subtract_unavailable(available_intervals, unavailable_intervals)
 
     return DoctorAvailabilityResponse(
-        doctor_id=doctor_id,
+        doctor_name=name,
         available_times=[
             DoctorAvailabilityOut(start=interval[0], end=interval[1])
             for interval in final_available

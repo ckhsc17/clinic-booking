@@ -36,7 +36,7 @@ class DoctorAvailabilityOut(BaseModel):
     start: datetime
     end: datetime
 class DoctorAvailabilityResponse(BaseModel):
-    doctor_id: int
+    doctor_name: str
     available_times: List[DoctorAvailabilityOut]
 
 class TreatmentCreate(BaseModel):
