@@ -6,8 +6,10 @@ from linebot.models import (
     TextSendMessage,
     QuickReply,
     QuickReplyButton,
-    MessageAction
+    MessageAction,
+    FlexSendMessage  
 )
+
 from dotenv import load_dotenv
 from schemas import PushRequest
 import requests
@@ -55,15 +57,80 @@ async def callback(request: Request):
                 line_bot_api.reply_message(reply_token, message)
                 return PlainTextResponse("OK", status_code=200)
                 
+                
             elif user_msg == "臉部整形":
-                detail_msg = (
-                    "👤 臉部整形\n\n"
-                    "📌 簡介：包含隆鼻、削骨、下巴雕塑等，改善五官比例，打造立體精緻的臉型。\n"
-                    "💰 價格：約 NT$80,000 起（依項目而定）\n"
-                    "⏱️ 手術時間：約 2～4 小時，術後恢復期約 1～2 週"
+                flex_message = FlexSendMessage(
+                    alt_text="臉部整形服務介紹",
+                    contents={
+                        "type": "bubble",
+                        "hero": {
+                            "type": "image",
+                            "url": "https://i.pinimg.com/736x/2a/7a/22/2a7a224d8d9bf710a41e3733f0f202f7.jpg",
+                            "size": "full",
+                            "aspectRatio": "16:9",
+                            "aspectMode": "cover"
+                        },
+                        "body": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "spacing": "md",
+                            "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "👤 臉部整形",
+                                    "weight": "bold",
+                                    "size": "xl"
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "改善五官比例、提升整體臉部輪廓",
+                                    "size": "sm",
+                                    "wrap": True,
+                                    "color": "#666666"
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "baseline",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {"type": "text", "text": "💰 價格", "flex": 1, "size": "sm"},
+                                        {"type": "text", "text": "約 NT$80,000 起", "flex": 4, "size": "sm", "color": "#111111"}
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "baseline",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {"type": "text", "text": "⏱️ 時間", "flex": 1, "size": "sm"},
+                                        {"type": "text", "text": "約 2～4 小時，恢復期約 1～2 週", "flex": 4, "size": "sm", "wrap": True, "color": "#111111"}
+                                    ]
+                                }
+                            ]
+                        },
+                        "footer": {
+                            "type": "box",
+                            "layout": "horizontal",
+                            "spacing": "sm",
+                            "contents": [
+                                {
+                                    "type": "button",
+                                    "style": "primary",
+                                    "height": "sm",
+                                    "action": {
+                                        "type": "uri",
+                                        "label": "預約諮詢",
+                                        "uri": "https://beautyeye.com.tw/"
+                                    }
+                                }
+                            ],
+                            "flex": 0
+                        }
+                    }
                 )
-                line_bot_api.reply_message(reply_token, TextSendMessage(text=detail_msg))
+                line_bot_api.reply_message(reply_token, flex_message)
                 return PlainTextResponse("OK", status_code=200)
+
 
             elif user_msg == "眼整形":
                 detail_msg = (
