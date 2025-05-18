@@ -112,9 +112,9 @@ export default function Dashboard() {
             </div>
           </section>
 
-          {/* Doctor Schedule Section */}
+          {/* Today's Operations Section */}
           <section className="mb-12">
-            <h2 className="text-xl font-semibold mb-4 text-gray-700">Doctor Schedules</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-700">Today's Operations</h2>
             <ScheduleTable />
           </section>
 
