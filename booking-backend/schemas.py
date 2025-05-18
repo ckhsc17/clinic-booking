@@ -44,6 +44,11 @@ class DoctorAvailabilityCreate(BaseModel):
     available_start: datetime
     available_end: datetime
     is_bookable: bool = True
+class DoctorAvailabilityDelete(BaseModel):
+    doctor_id: int
+    available_start: datetime
+    available_end: datetime
+    is_bookable: bool
 
 class TreatmentCreate(BaseModel):
     name: str

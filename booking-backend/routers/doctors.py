@@ -29,7 +29,7 @@ def subtract_unavailable(available_intervals, unavailable_intervals):
 
     return result
 
-@router.get("/available-times", response_model=DoctorAvailabilityResponse)
+@router.get("/available_times", response_model=DoctorAvailabilityResponse)
 async def get_doctor_available_times(name: str = Query(..., description="Doctor's name")):
     # Step 1: 查 doctor_id
     doctor_resp = supabase.table("doctors").select("doctor_id").eq("name", name).maybe_single().execute()
