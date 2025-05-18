@@ -68,7 +68,7 @@ class AppointmentCreate(BaseModel):
     appointment_time: datetime
     status: str
     notes: Optional[str] = None
-class AppointStatusUpdate(BaseModel):
+class AppointmentStatusUpdate(BaseModel):
     appointment_id: int
     status: str
 
