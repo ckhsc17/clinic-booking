@@ -39,6 +39,12 @@ class DoctorAvailabilityResponse(BaseModel):
     doctor_name: str
     available_times: List[DoctorAvailabilityOut]
 
+class DoctorAvailabilityCreate(BaseModel):
+    doctor_id: int
+    available_start: datetime
+    available_end: datetime
+    is_bookable: bool = True
+
 class TreatmentCreate(BaseModel):
     name: str
     description: str
@@ -62,6 +68,9 @@ class AppointmentCreate(BaseModel):
     appointment_time: datetime
     status: str
     notes: Optional[str] = None
+class AppointStatusUpdate(BaseModel):
+    appointment_id: int
+    status: str
 
 class BillingCreate(BaseModel):
     appointment_id: int
