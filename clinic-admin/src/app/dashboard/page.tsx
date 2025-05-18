@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import PatientSearch from "@/components/PatientSearch";
 import ScheduleTable from "@/components/ScheduleTable";
 import AddPatientModal from "@/components/AddPatientModal";
-import { patientHistory } from "@/lib/mockData";
+import ReservationTable from "@/components/ReservationTable";
+import { patientHistory, reservationRequests } from "@/lib/mockdata";
 
 type Patient = {
   id: number;
@@ -16,10 +17,21 @@ type Patient = {
   notes: string;
 };
 
+type Reservation = {
+  id: number;
+  patientName: string;
+  type: "Consultation" | "Appointment" | "Operation";
+  date: string;
+  time: string;
+  status: "Pending" | "Confirmed" | "Rejected";
+};
+
 export default function Dashboard() {
-  const [patients, setPatients] = useState<Patient[]>(patientHistory);
+  const [patients, setPatients] = useState<Patient[]>(patientHistory || []);
   const [searchResults, setSearchResults] = useState<Patient[]>(patients);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [reservations, setReservations] = useState<Reservation[]>(reservationRequests || []);
 
   const handleSearchResults = (results: Patient[]) => {
     setSearchResults(results || patients);
@@ -38,14 +50,35 @@ export default function Dashboard() {
     setPatients(updatedPatients);
     setSearchResults(updatedPatients);
     setIsModalOpen(false);
+    setSuccessMessage("Successfully added patient!");
   };
+
+  const handleReservationAction = (id: number, action: "confirm" | "reject") => {
+    setReservations(reservations.map(res =>
+      res.id === id ? { ...res, status: action === "confirm" ? "Confirmed" : "Rejected" } : res
+    ));
+  };
+
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage]);
 
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Navbar />
-        <main className="p-6">
+        <main className="p-6 relative">
+          {successMessage && (
+            <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg animate-fade">
+              {successMessage}
+            </div>
+          )}
           <h1 className="text-3xl font-bold mb-8 text-gray-800">Clinic Admin Dashboard</h1>
 
           {/* Patient Search Section */}
@@ -80,9 +113,15 @@ export default function Dashboard() {
           </section>
 
           {/* Doctor Schedule Section */}
-          <section>
+          <section className="mb-12">
             <h2 className="text-xl font-semibold mb-4 text-gray-700">Doctor Schedules</h2>
             <ScheduleTable />
+          </section>
+
+          {/* Reservation Requests Section */}
+          <section className="mb-12">
+            <h2 className="text-xl font-semibold mb-4 text-gray-700">Reservation Requests</h2>
+            <ReservationTable reservations={reservations} onAction={handleReservationAction} />
           </section>
         </main>
       </div>

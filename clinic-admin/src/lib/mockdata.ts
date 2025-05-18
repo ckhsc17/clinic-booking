@@ -80,3 +80,30 @@ export const doctorSchedules = [
     status: "Cancelled",
   },
 ];
+
+export const reservationRequests = [
+  {
+    id: 1,
+    patientName: "John Doe",
+    type: "Consultation",
+    date: "2025-05-18",
+    time: "10:00 AM",
+    status: "Pending",
+  },
+  {
+    id: 2,
+    patientName: "Emily Carter",
+    type: "Appointment",
+    date: "2025-05-19",
+    time: "09:00 AM",
+    status: "Pending",
+  },
+  {
+    id: 3,
+    patientName: "Michael Brown",
+    type: "Operation",
+    date: "2025-05-20",
+    time: "02:00 PM",
+    status: "Pending",
+  },
+];
