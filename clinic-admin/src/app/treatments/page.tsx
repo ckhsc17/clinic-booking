@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 
 type Treatment = {
@@ -89,7 +88,6 @@ export default function Treatments() {
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
       <div className="flex-1 flex flex-col">
-        <Navbar />
         <main className="p-6">
           <h1 className="text-3xl font-bold mb-8 text-gray-800">Treatments</h1>
           <div className="overflow-x-auto">

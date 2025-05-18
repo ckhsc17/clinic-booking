@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import PatientSearch from "@/components/PatientSearch";
 import ScheduleTable from "@/components/ScheduleTable";
@@ -72,7 +71,6 @@ export default function Dashboard() {
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
       <div className="flex-1 flex flex-col">
-        <Navbar />
         <main className="p-6 relative">
           {successMessage && (
             <div className="fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded shadow-lg animate-fade">

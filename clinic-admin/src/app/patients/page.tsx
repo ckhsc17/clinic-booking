@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import PatientSearch from "@/components/PatientSearch";
 import AddPatientModal from "@/components/AddPatientModal";
