@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FaHome, FaCalendarAlt, FaUser, FaPills } from "react-icons/fa";
+import { FaHome, FaCalendarAlt, FaUser, FaPills, FaUserMd } from "react-icons/fa";
 
 export default function Sidebar() {
   return (
@@ -45,6 +45,15 @@ export default function Sidebar() {
             >
               <FaPills className="mr-3" />
               Treatments
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/doctors"
+              className="flex items-center p-3 rounded-lg hover:bg-gray-700 transition"
+            >
+              <FaUserMd className="mr-3" />
+              Doctors
             </Link>
           </li>
         </ul>
