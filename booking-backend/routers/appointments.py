@@ -4,6 +4,10 @@ from fastapi import APIRouter, HTTPException
 from uuid import uuid4
 from supabase_client import supabase
 from schemas import AppointmentCreate
+
+# import calendar.py
+from calendar import create_event_from_booking
+
 router = APIRouter(tags=["Appointments"])
 
 @router.post("/appointments")

@@ -36,3 +36,31 @@ def create_event_from_booking(info: BookingInfo) -> str:
 
     except Exception as e:
         raise RuntimeError(f"建立 Google Calendar 活動失敗：{str(e)}")
+
+def delete_event(event_id: str) -> None:
+    try:
+        calendar_service.events().delete(calendarId=CALENDAR_ID, eventId=event_id).execute()
+    except Exception as e:
+        raise RuntimeError(f"刪除 Google Calendar 活動失敗：{str(e)}")
+
+def update_event(event_id: str, info: BookingInfo) -> None:
+    try:
+        start_time = datetime.fromisoformat(info.start_time)
+        end_time = datetime.fromisoformat(info.end_time)
+
+        event = {
+            'summary': f"{info.treatment} - {info.user_name}",
+            'description': info.note,
+            'location': '愛惟美診所',
+            'start': {'dateTime': start_time.isoformat(), 'timeZone': 'Asia/Taipei'},
+            'end': {'dateTime': end_time.isoformat(), 'timeZone': 'Asia/Taipei'},
+        }
+
+        calendar_service.events().update(
+            calendarId=CALENDAR_ID,
+            eventId=event_id,
+            body=event
+        ).execute()
+
+    except Exception as e:
+        raise RuntimeError(f"更新 Google Calendar 活動失敗：{str(e)}")
