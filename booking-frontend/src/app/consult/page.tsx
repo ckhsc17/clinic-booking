@@ -82,7 +82,10 @@ export default function ConsultForm() {
       } else if (key === "photo" && form.photo) {
         formData.append("photo", form.photo);
       } else {
-        formData.append(key, (form as any)[key]);
+        const value = form[key as keyof FormData];
+        if (typeof value === "string") {
+          formData.append(key, value);
+        }
       }
     }
     await fetch("/api/submit-consult", {

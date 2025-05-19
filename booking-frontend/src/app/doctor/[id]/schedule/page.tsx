@@ -27,12 +27,12 @@ export default function SchedulePage() {
   // ✅ 當選取日期後，自動更新可用時段
   useEffect(() => {
     if (!selectedDate) return;
-    const dateStr = selectedDate.toISOString().split("T")[0];
+    // const dateStr = selectedDate.toISOString().split("T")[0];
     fetch(`https://booking-backend-prod-260019038661.asia-east1.run.app/api/available_times?doctor_name=${doctorData[id]?.name}`)
       .then((res) => res.json())
       .then((data) => {
         const dateHourMap: Record<string, number[]> = {};
-        const filteredHours: number[] = [];
+        // const filteredHours: number[] = [];
 
         data.available_times.forEach((slot: AvailableTime) => {
           const dateObj = new Date(slot.start);
