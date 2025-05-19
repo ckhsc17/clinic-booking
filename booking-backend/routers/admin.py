@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from supabase_client import supabase
-from schemas import DoctorAvailabilityCreate, AppointmentStatusUpdate, DoctorAvailabilityDelete, PatientCreate
+from schemas import PatientCreate, AppointmentStatusUpdate, DoctorAvailabilityCreate, DoctorAvailabilityDelete, DoctorAvailabilityOut, DoctorAvailabilityResponse
 from datetime import datetime
 
 router = APIRouter(tags=["Admin"])
@@ -76,6 +76,41 @@ async def disable_doctor_availability(info: DoctorAvailabilityDelete):
         raise HTTPException(status_code=404, detail="Matching availability not found")
     
     return {"status": "success", "message": "Availability set to unbookable"}
+
+# 回傳
+@router.get("/available_times", response_model=DoctorAvailabilityResponse)
+async def get_raw_doctor_availability(name: str = Query(..., description="Doctor's name")):
+    # Step 1: 找出 doctor_id
+    doctor_resp = supabase.table("doctors")\
+        .select("doctor_id")\
+        .eq("name", name)\
+        .maybe_single()\
+        .execute()
+
+    if not doctor_resp or not doctor_resp.data:
+        raise HTTPException(status_code=404, detail="Doctor not found")
+
+    doctor_id = doctor_resp.data["doctor_id"]
+
+    time_resp = supabase.table("doctor_availability")\
+        .select("available_start, available_end, is_bookable")\
+        .eq("doctor_id", doctor_id)\
+        .order("available_start")\
+        .execute()
+
+    all_data = time_resp.data
+
+    return DoctorAvailabilityResponse(
+        doctor_name=name,
+        available_times=[
+            DoctorAvailabilityOut(
+                start=datetime.fromisoformat(row["available_start"]),
+                end=datetime.fromisoformat(row["available_end"]),
+                is_bookable=row["is_bookable"]
+            )
+            for row in all_data
+        ]
+    )
 
 # 設定patient藥劑購買量、消耗量
 
