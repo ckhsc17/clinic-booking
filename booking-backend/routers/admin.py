@@ -51,7 +51,7 @@ async def create_doctor_availability(info: DoctorAvailabilityCreate):
         "doctor_id": info.doctor_id,
         "available_start": info.available_start.isoformat(),
         "available_end": info.available_end.isoformat(),
-        "is_bookable": True
+        "is_bookable": info.is_bookable
     }).execute()
 
     if not response.data:
@@ -76,6 +76,21 @@ async def disable_doctor_availability(info: DoctorAvailabilityDelete):
         raise HTTPException(status_code=404, detail="Matching availability not found")
     
     return {"status": "success", "message": "Availability set to unbookable"}
+
+# 刪除
+@router.delete("/availability/remove")
+async def remove_doctor_availability(info: DoctorAvailabilityDelete):
+    response = supabase.table("doctor_availability")\
+        .delete()\
+        .eq("doctor_id", info.doctor_id)\
+        .eq("available_start", info.available_start.isoformat())\
+        .eq("available_end", info.available_end.isoformat())\
+        .execute()
+
+    if not response.data:
+        raise HTTPException(status_code=404, detail="No matching availability to delete")
+
+    return {"status": "success", "message": "Availability removed"}
 
 # 回傳
 @router.get("/admin_get_doctor_available_times", response_model=DoctorAvailabilityResponse)

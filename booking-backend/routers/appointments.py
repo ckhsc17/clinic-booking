@@ -6,7 +6,7 @@ from supabase_client import supabase
 from schemas import AppointmentCreate
 
 # import calendar.py
-from calendar import create_event_from_booking
+from services.calendar import create_event_from_booking
 
 router = APIRouter(tags=["Appointments"])
 
