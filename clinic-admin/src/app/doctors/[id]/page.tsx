@@ -7,7 +7,7 @@ import Sidebar from "@/components/Sidebar";
 type TimeSlot = {
   date: string;
   time: string;
-  available: boolean;
+  status: "available" | "booked" | "unavailable" | "past";
 };
 
 type Doctor = {
@@ -27,7 +27,9 @@ export default function DoctorSchedule() {
   ];
 
   const doctor = doctors.find((d) => d.id === Number(id));
-  const [availableTimes, setAvailableTimes] = useState<TimeSlot[]>([]);
+  const [selectedDay, setSelectedDay] = useState(new Date("2025-05-19"));
+  const [selectedWeekStart, setSelectedWeekStart] = useState(new Date("2025-05-19"));
+  const [schedule, setSchedule] = useState<TimeSlot[][]>([]);
   const [editSlot, setEditSlot] = useState<TimeSlot | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -37,62 +39,84 @@ export default function DoctorSchedule() {
       setIsLoading(false);
       return;
     }
-    const startDate = new Date("2025-05-19"); // Monday, May 19, 2025
-    const endDate = new Date("2025-05-24"); // Saturday, May 24, 2025
-    const times = [];
-    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    setIsLoading(true);
+    const currentDateTime = new Date("2025-05-19T10:01:00-05:00"); // 10:01 AM CST, May 19, 2025
+    const weekSchedule: TimeSlot[][] = [];
+    for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
+      const date = new Date(selectedWeekStart);
+      date.setDate(selectedWeekStart.getDate() + dayOffset);
+      const dateStr = date.toISOString().split("T")[0];
+      const daySlots: TimeSlot[] = [];
       for (let hour = 11; hour <= 20; hour++) {
         const time = hour < 12 ? `${hour}:00 AM` : hour === 12 ? "12:00 PM" : `${hour - 12}:00 PM`;
-        const dateStr = d.toISOString().split("T")[0];
         const slotDateTime = new Date(`${dateStr}T${time.replace(" AM", ":00").replace(" PM", ":00")}-05:00`);
-        const currentDateTime = new Date("2025-05-19T00:08:00-05:00"); // 12:08 AM CST, May 19, 2025
-        times.push({
-          date: dateStr,
-          time: time,
-          available: slotDateTime >= currentDateTime,
-        });
+        let status: "available" | "booked" | "unavailable" | "past" = "available";
+        if (slotDateTime < currentDateTime) {
+          status = "past";
+        } else if (Math.random() < 0.3) {
+          status = "booked";
+        } else if (hour === 20) {
+          status = "unavailable";
+        }
+        daySlots.push({ date: dateStr, time, status });
       }
+      weekSchedule.push(daySlots);
     }
-    setAvailableTimes(times);
+    setSchedule(weekSchedule);
     setIsLoading(false);
-  }, [doctor]);
+  }, [doctor, selectedWeekStart]);
 
   const isPastTime = (date: string, time: string): boolean => {
     const slotDateTime = new Date(`${date}T${time.replace(" AM", ":00").replace(" PM", ":00")}-05:00`);
-    const currentDateTime = new Date("2025-05-19T00:08:00-05:00");
+    const currentDateTime = new Date("2025-05-19T10:01:00-05:00");
     return slotDateTime < currentDateTime;
   };
 
+  const handleWeekChange = (offset: number) => {
+    const newWeekStart = new Date(selectedWeekStart);
+    newWeekStart.setDate(selectedWeekStart.getDate() + offset * 7);
+    setSelectedWeekStart(newWeekStart);
+    setSelectedDay(newWeekStart);
+  };
+
+  const handleDayClick = (date: Date) => {
+    setSelectedDay(new Date(date));
+    const newWeekStart = new Date(date);
+    newWeekStart.setDate(date.getDate() - (date.getDay() || 7) + 1);
+    setSelectedWeekStart(newWeekStart);
+  };
+
   const handleEdit = (slot: TimeSlot) => {
-    if (isPastTime(slot.date, slot.time)) return;
+    if (isPastTime(slot.date, slot.time) || slot.status === "unavailable") return;
     setEditSlot({ ...slot });
     setIsModalOpen(true);
   };
 
   const handleAddNewSlot = () => {
-    setEditSlot({ date: "", time: "", available: true });
+    const selectedDayStr = selectedDay.toISOString().split("T")[0];
+    setEditSlot({ date: selectedDayStr, time: "11:00 AM", status: "available" });
     setIsModalOpen(true);
   };
 
   const handleSave = () => {
     if (editSlot && editSlot.date && editSlot.time) {
       const slotDateTime = new Date(`${editSlot.date}T${editSlot.time.replace(" AM", ":00").replace(" PM", ":00")}-05:00`);
-      const currentDateTime = new Date("2025-05-19T00:08:00-05:00");
+      const currentDateTime = new Date("2025-05-19T10:01:00-05:00");
       if (slotDateTime < currentDateTime) {
         alert("Cannot add or edit times in the past.");
         return;
       }
-      if (editSlot.date === "" || editSlot.time === "") {
-        // New slot being added
-        setAvailableTimes([...availableTimes, { date: editSlot.date, time: editSlot.time, available: true }]);
-      } else {
-        // Editing existing slot
-        setAvailableTimes(availableTimes.map((t) =>
-          t.date === editSlot.date && t.time === editSlot.time
-            ? { ...t, date: editSlot.date, time: editSlot.time, available: true }
-            : t
-        ));
-      }
+      setSchedule((prev) =>
+        prev.map((day, i) =>
+          day[0].date === editSlot.date
+            ? day.map((t) =>
+                t.date === editSlot.date && t.time === editSlot.time
+                  ? { ...t, status: "available" }
+                  : t
+              )
+            : day
+        )
+      );
       setIsModalOpen(false);
       setEditSlot(null);
     }
@@ -136,13 +160,28 @@ export default function DoctorSchedule() {
     );
   }
 
-  const days = [
-    { name: "Monday", date: "2025-05-19" },
-    { name: "Tuesday", date: "2025-05-20" },
-    { name: "Wednesday", date: "2025-05-21" },
-    { name: "Thursday", date: "2025-05-22" },
-    { name: "Friday", date: "2025-05-23" },
-    { name: "Saturday", date: "2025-05-24" },
+  const days = [];
+  for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
+    const date = new Date(selectedWeekStart);
+    date.setDate(selectedWeekStart.getDate() + dayOffset);
+    days.push({
+      day: date.toLocaleDateString("en-US", { weekday: "short" }),
+      date: date.getDate(),
+      fullDate: date.toISOString().split("T")[0],
+    });
+  }
+
+  const timeLabels = [
+    "11:00 AM",
+    "12:00 PM",
+    "1:00 PM",
+    "2:00 PM",
+    "3:00 PM",
+    "4:00 PM",
+    "5:00 PM",
+    "6:00 PM",
+    "7:00 PM",
+    "8:00 PM",
   ];
 
   return (
@@ -159,7 +198,66 @@ export default function DoctorSchedule() {
               Back to Doctors
             </button>
           </div>
-          <div className="mb-4">
+          <div className="mb-6 flex items-center justify-center space-x-2">
+            <button
+              onClick={() => handleWeekChange(-1)}
+              className="bg-gray-300 text-black px-2 py-1 rounded hover:bg-gray-400"
+            >
+              &lt;
+            </button>
+            {days.map((day, index) => (
+              <div
+                key={index}
+                onClick={() => handleDayClick(new Date(day.fullDate))}
+                className={`cursor-pointer px-3 py-2 rounded ${
+                  day.fullDate === selectedDay.toISOString().split("T")[0]
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-200 hover:bg-gray-300"
+                }`}
+              >
+                <div className="text-xs">{day.day}</div>
+                <div className="text-lg font-bold">{day.date}</div>
+              </div>
+            ))}
+            <button
+              onClick={() => handleWeekChange(1)}
+              className="bg-gray-300 text-black px-2 py-1 rounded hover:bg-gray-400"
+            >
+              &gt;
+            </button>
+          </div>
+          <div className="flex-1">
+            {days
+              .filter((day) => day.fullDate === selectedDay.toISOString().split("T")[0])
+              .map((day, dayIndex) => {
+                const daySlots = schedule[days.findIndex((d) => d.fullDate === day.fullDate)];
+                return (
+                  <div key={dayIndex} className="mb-2">
+                    <div className="text-center font-bold text-gray-800 mb-2">{day.day} {day.date}</div>
+                    <div className="flex flex-col">
+                      {daySlots.map((slot, slotIndex) => {
+                        const backgroundColor = slot.status === "past" ? "#d3d3d3" : "#90ee90"; // Gray for past, green for all others
+                        return (
+                          <div key={slotIndex} className="flex items-center">
+                            <div className="w-20 text-center text-sm font-medium text-gray-800 bg-gray-200 border-b border-gray-300 h-12 flex items-center justify-center">
+                              {timeLabels[slotIndex]}
+                            </div>
+                            <div
+                              className={`flex-1 h-12 border-b border-gray-300 ${
+                                slot.status === "available" || slot.status === "booked" ? "cursor-pointer hover:opacity-80" : ""
+                              }`}
+                              style={{ backgroundColor }}
+                              onClick={() => (slot.status === "available" || slot.status === "booked") && handleEdit(slot)}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+          <div className="mt-4">
             <button
               onClick={handleAddNewSlot}
               className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
@@ -167,41 +265,11 @@ export default function DoctorSchedule() {
               Add New Slot
             </button>
           </div>
-          <div className="overflow-x-auto">
-            <div className="grid grid-cols-7 gap-4">
-              <div className="col-span-1 font-bold text-center">Time</div>
-              {days.map((day) => (
-                <div key={day.name} className="col-span-1 font-bold text-center">
-                  {day.name}<br/>{new Date(day.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                </div>
-              ))}
-              {["11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM", "6:00 PM", "7:00 PM", "8:00 PM"].map((time) => (
-                <>
-                  <div key={time} className="col-span-1 text-center">{time}</div>
-                  {days.map((day) => {
-                    const slot = availableTimes.find((s) => s.time === time && s.date === day.date);
-                    const isSlotPast = slot ? isPastTime(slot.date, slot.time) : false;
-                    return (
-                      <div
-                        key={`${day.name}-${time}`}
-                        className={`col-span-1 p-2 border rounded ${
-                          slot && !isSlotPast ? "bg-green-100 hover:bg-opacity-80 cursor-pointer" : "bg-red-100"
-                        }`}
-                        onClick={() => slot && !isSlotPast && handleEdit(slot)}
-                      >
-                        {slot ? (isSlotPast ? "Past" : "Available") : "N/A"}
-                      </div>
-                    );
-                  })}
-                </>
-              ))}
-            </div>
-          </div>
           {isModalOpen && editSlot && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
                 <h2 className="text-xl font-semibold mb-4">
-                  {editSlot.date === "" ? "Add New Time Slot" : "Edit Time Slot"}
+                  {editSlot.time ? "Edit Time Slot" : "Add New Time Slot"}
                 </h2>
                 <div className="space-y-4">
                   <input
@@ -209,15 +277,20 @@ export default function DoctorSchedule() {
                     value={editSlot.date}
                     onChange={(e) => handleInputChange(e, "date")}
                     className="border p-2 rounded w-full"
-                    placeholder="Date"
                   />
                   <input
                     type="time"
                     value={editSlot.time}
                     onChange={(e) => handleInputChange(e, "time")}
                     className="border p-2 rounded w-full"
-                    placeholder="Time"
+                    list="timeOptions"
+                    placeholder="Select Time"
                   />
+                  <datalist id="timeOptions">
+                    {["11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"].map((t) => (
+                      <option key={t} value={t} />
+                    ))}
+                  </datalist>
                 </div>
                 <div className="mt-4 flex justify-end space-x-2">
                   <button

@@ -1,86 +1,60 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
+import { reservationRequests } from "@/lib/mockdata";
 
-type Treatment = {
+type Appointment = {
   id: number;
   patientName: string;
-  patientId: number;
-  doctorName: string;
-  doctorId: number;
+  type: "Consultation" | "Appointment" | "Operation";
   date: string;
-  medications: { drug: string; drugId: number; usage: string }[];
+  time: string;
+  status: "Pending" | "Confirmed" | "Completed" | "Cancelled";
 };
 
-export default function Treatments() {
-  const [treatments, setTreatments] = useState<Treatment[]>([
-    {
-      id: 1,
-      patientName: "John Doe",
-      patientId: 1,
-      doctorName: "Dr. Alice Thompson",
-      doctorId: 1,
-      date: "2025-05-18",
-      medications: [
-        { drug: "Aspirin", drugId: 101, usage: "500 mg" },
-        { drug: "Paracetamol", drugId: 102, usage: "1000 mg" },
-      ],
-    },
-    {
-      id: 2,
-      patientName: "Emily Carter",
-      patientId: 2,
-      doctorName: "Dr. Mark Evans",
-      doctorId: 2,
-      date: "2025-05-17",
-      medications: [{ drug: "Ibuprofen", drugId: 103, usage: "400 mg" }],
-    },
+export default function Appointments() {
+  const [appointments, setAppointments] = useState<Appointment[]>([
+    ...reservationRequests,
+    { id: 4, patientName: "Sarah Wilson", type: "Appointment", date: "2025-05-18", time: "11:00 AM", status: "Completed" },
+    { id: 5, patientName: "David Lee", type: "Consultation", date: "2025-05-17", time: "03:00 PM", status: "Cancelled" },
   ]);
 
-  const [editTreatmentId, setEditTreatmentId] = useState<number | null>(null);
-  const [newMedication, setNewMedication] = useState({ drug: "", drugId: 0, usage: "" });
-  const [editedMedications, setEditedMedications] = useState<{ [key: number]: { drug: string; drugId: number; usage: string }[] }>({});
-
-  const handleEdit = (id: number) => {
-    setEditTreatmentId(id);
-    setEditedMedications({ [id]: [...treatments.find(t => t.id === id)!.medications] });
+  const handleAction = (id: number, action: "confirm" | "deny" | "cancel" | "reschedule", newDateTime?: { date: string; time: string }) => {
+    setAppointments((prevAppointments) =>
+      prevAppointments.map((appt) =>
+        appt.id === id
+          ? {
+              ...appt,
+              status:
+                action === "confirm"
+                  ? "Confirmed"
+                  : action === "deny"
+                  ? "Cancelled"
+                  : action === "cancel"
+                  ? "Cancelled"
+                  : appt.status,
+              ...(newDateTime && { date: newDateTime.date, time: newDateTime.time }),
+            }
+          : appt
+      )
+    );
   };
 
-  const handleAddMedication = (id: number) => {
-    setEditTreatmentId(id);
-    setEditedMedications({ [id]: [...(editedMedications[id] || treatments.find(t => t.id === id)!.medications)] });
-    setNewMedication({ drug: "", drugId: 0, usage: "" });
+  const [rescheduleId, setRescheduleId] = useState<number | null>(null);
+  const [newDate, setNewDate] = useState("");
+  const [newTime, setNewTime] = useState("");
+
+  const handleReschedule = (id: number) => {
+    setRescheduleId(id);
   };
 
-  const handleSave = (id: number) => {
-    setTreatments(treatments.map(t =>
-      t.id === id ? { ...t, medications: editedMedications[id] || t.medications } : t
-    ));
-    setEditTreatmentId(null);
-  };
-
-  const handleCancel = () => {
-    setEditTreatmentId(null);
-    setNewMedication({ drug: "", drugId: 0, usage: "" });
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
-    setNewMedication({ ...newMedication, [field]: e.target.value });
-  };
-
-  const handleMedicationChange = (index: number, field: string, value: string, id: number) => {
-    const updatedMeds = editedMedications[id]?.map((med, i) =>
-      i === index ? { ...med, [field]: value } : med
-    ) || [];
-    setEditedMedications({ ...editedMedications, [id]: updatedMeds });
-  };
-
-  const addNewMedication = (id: number) => {
-    if (newMedication.drug && newMedication.usage) {
-      const updatedMeds = [...(editedMedications[id] || treatments.find(t => t.id === id)!.medications), newMedication];
-      setEditedMedications({ ...editedMedications, [id]: updatedMeds });
-      setNewMedication({ drug: "", drugId: 0, usage: "" });
+  const confirmReschedule = (id: number) => {
+    if (newDate && newTime) {
+      handleAction(id, "reschedule", { date: newDate, time: newTime });
+      setRescheduleId(null);
+      setNewDate("");
+      setNewTime("");
     }
   };
 
@@ -89,147 +63,124 @@ export default function Treatments() {
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <main className="p-6">
-          <h1 className="text-3xl font-bold mb-8 text-gray-800">Treatments</h1>
+          <h1 className="text-3xl font-bold mb-8 text-gray-800">Appointments</h1>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white border rounded-lg shadow">
               <thead>
                 <tr className="bg-gray-200 text-gray-700">
-                  <th className="py-2 px-4 border-b">Treatment ID</th>
                   <th className="py-2 px-4 border-b">Patient Name</th>
-                  <th className="py-2 px-4 border-b">Patient ID</th>
-                  <th className="py-2 px-4 border-b">Doctor Name</th>
-                  <th className="py-2 px-4 border-b">Doctor ID</th>
+                  <th className="py-2 px-4 border-b">Type</th>
                   <th className="py-2 px-4 border-b">Date</th>
-                  <th className="py-2 px-4 border-b">Drug</th>
-                  <th className="py-2 px-4 border-b">Drug ID</th>
-                  <th className="py-2 px-4 border-b">Usage (mg/ml)</th>
+                  <th className="py-2 px-4 border-b">Time</th>
+                  <th className="py-2 px-4 border-b">Status</th>
                   <th className="py-2 px-4 border-b">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {treatments.length > 0 ? (
-                  treatments.map((treatment) =>
-                    treatment.medications.map((med, index) => (
-                      <tr key={`${treatment.id}-${index}`} className="hover:bg-gray-100">
-                        {index === 0 && (
-                          <>
-                            <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.id}</td>
-                            <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.patientName}</td>
-                            <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.patientId}</td>
-                            <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.doctorName}</td>
-                            <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.doctorId}</td>
-                            <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.date}</td>
-                          </>
+                {appointments.length > 0 ? (
+                  appointments.map((appointment) => (
+                    <tr key={appointment.id} className="hover:bg-gray-100">
+                      <td className="py-2 px-4 border-b">{appointment.patientName}</td>
+                      <td className="py-2 px-4 border-b">{appointment.type}</td>
+                      <td className="py-2 px-4 border-b">{appointment.date}</td>
+                      <td className="py-2 px-4 border-b">{appointment.time}</td>
+                      <td className="py-2 px-4 border-b">
+                        {appointment.status === "Confirmed" && (
+                          <span className="text-green-600 font-medium">Confirmed</span>
                         )}
-                        <td className="py-2 px-4 border-b">{med.drug}</td>
-                        <td className="py-2 px-4 border-b">{med.drugId}</td>
-                        <td className="py-2 px-4 border-b">{med.usage}</td>
-                        {index === 0 && (
-                          <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">
+                        {appointment.status === "Completed" && (
+                          <span className="text-green-600 font-medium">Completed</span>
+                        )}
+                        {appointment.status === "Cancelled" && (
+                          <span className="text-red-600 font-medium">Cancelled</span>
+                        )}
+                        {appointment.status === "Pending" && (
+                          <span className="text-yellow-600 font-medium">Pending</span>
+                        )}
+                      </td>
+                      <td className="py-2 px-4 border-b">
+                        {appointment.status === "Pending" && (
+                          <div className="flex space-x-2">
                             <button
-                              onClick={() => handleEdit(treatment.id)}
-                              className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 mr-2 transition duration-200"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleAddMedication(treatment.id)}
+                              onClick={() => handleAction(appointment.id, "confirm")}
                               className="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 transition duration-200"
                             >
-                              Add
+                              Confirm
                             </button>
-                          </td>
+                            <button
+                              onClick={() => handleAction(appointment.id, "deny")}
+                              className="bg-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-700 transition duration-200"
+                            >
+                              Deny
+                            </button>
+                            <button
+                              onClick={() => handleReschedule(appointment.id)}
+                              className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
+                            >
+                              Reschedule
+                            </button>
+                          </div>
                         )}
-                      </tr>
-                    ))
-                  )
+                        {appointment.status === "Confirmed" && (
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => handleAction(appointment.id, "cancel")}
+                              className="bg-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-700 transition duration-200"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={() => handleReschedule(appointment.id)}
+                              className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
+                            >
+                              Reschedule
+                            </button>
+                          </div>
+                        )}
+                        {(appointment.status === "Completed" || appointment.status === "Cancelled") && (
+                          <span className="text-gray-600">No actions available</span>
+                        )}
+                        {rescheduleId === appointment.id && (
+                          <div className="mt-2 flex space-x-2">
+                            <input
+                              type="date"
+                              value={newDate}
+                              onChange={(e) => setNewDate(e.target.value)}
+                              className="border p-1 rounded"
+                            />
+                            <input
+                              type="time"
+                              value={newTime}
+                              onChange={(e) => setNewTime(e.target.value)}
+                              className="border p-1 rounded"
+                            />
+                            <button
+                              onClick={() => confirmReschedule(appointment.id)}
+                              className="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 transition duration-200"
+                            >
+                              Save
+                            </button>
+                            <button
+                              onClick={() => setRescheduleId(null)}
+                              className="bg-gray-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-700 transition duration-200"
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))
                 ) : (
                   <tr>
-                    <td colSpan={10} className="py-2 px-4 text-center text-gray-500">
-                      No treatments available.
+                    <td colSpan={6} className="py-2 px-4 text-center text-gray-500">
+                      No appointments available.
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
           </div>
-          {editTreatmentId !== null && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-                <h2 className="text-xl font-semibold mb-4">Edit/Add Medications</h2>
-                <div className="space-y-4">
-                  {(editedMedications[editTreatmentId] || []).map((med, index) => (
-                    <div key={index} className="flex space-x-2">
-                      <input
-                        type="text"
-                        value={med.drug}
-                        onChange={(e) => handleMedicationChange(index, "drug", e.target.value, editTreatmentId!)}
-                        className="border p-2 rounded w-1/3"
-                        placeholder="Drug"
-                      />
-                      <input
-                        type="number"
-                        value={med.drugId}
-                        onChange={(e) => handleMedicationChange(index, "drugId", e.target.value, editTreatmentId!)}
-                        className="border p-2 rounded w-1/6"
-                        placeholder="Drug ID"
-                      />
-                      <input
-                        type="text"
-                        value={med.usage}
-                        onChange={(e) => handleMedicationChange(index, "usage", e.target.value, editTreatmentId!)}
-                        className="border p-2 rounded w-1/3"
-                        placeholder="Usage (mg/ml)"
-                      />
-                    </div>
-                  ))}
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      value={newMedication.drug}
-                      onChange={(e) => handleInputChange(e, "drug")}
-                      className="border p-2 rounded w-1/3"
-                      placeholder="New Drug"
-                    />
-                    <input
-                      type="number"
-                      value={newMedication.drugId}
-                      onChange={(e) => handleInputChange(e, "drugId")}
-                      className="border p-2 rounded w-1/6"
-                      placeholder="New Drug ID"
-                    />
-                    <input
-                      type="text"
-                      value={newMedication.usage}
-                      onChange={(e) => handleInputChange(e, "usage")}
-                      className="border p-2 rounded w-1/3"
-                      placeholder="New Usage (mg/ml)"
-                    />
-                    <button
-                      onClick={() => addNewMedication(editTreatmentId!)}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 transition duration-200"
-                    >
-                      Add Medication
-                    </button>
-                  </div>
-                </div>
-                <div className="mt-4 flex justify-end space-x-2">
-                  <button
-                    onClick={() => handleSave(editTreatmentId!)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
-                  >
-                    Save
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="bg-gray-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-700 transition duration-200"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
         </main>
       </div>
     </div>

@@ -87,11 +87,11 @@ export default function PatientProfile() {
   };
 
   const handleSave = () => {
-    // Update patient data (in a real app, this would be a backend API call)
     if (patient) {
       patient.phoneNumber = formData.phoneNumber;
       patient.email = formData.email;
       patient.birthdate = formData.birthdate;
+      // lastVisit remains unchanged for new patients
     }
     setIsEditing(false);
   };
@@ -174,10 +174,16 @@ export default function PatientProfile() {
                     value={formData.birthdate}
                     onChange={(e) => handleInputChange(e, "birthdate")}
                     className="border p-2 rounded w-full"
+                    min="1900-01-01"
+                    max="2025-05-18"
                   />
                 ) : (
                   <p className="text-lg">{patient.birthdate}</p>
                 )}
+              </div>
+              <div>
+                <p className="text-gray-600">Last Visit</p>
+                <p className="text-lg">{patient.lastVisit === "No Visits Yet" ? "No Visits Yet" : patient.lastVisit}</p>
               </div>
             </div>
             {isAdmin && (
@@ -222,13 +228,19 @@ export default function PatientProfile() {
                   </tr>
                 </thead>
                 <tbody>
-                  {patient.appointments.map((appointment, index) => (
-                    <tr key={index} className="border-b border-gray-200 hover:bg-gray-100">
-                      <td className="py-3 px-6">{appointment.date}</td>
-                      <td className="py-3 px-6">{appointment.doctor}</td>
-                      <td className="py-3 px-6">{appointment.reason}</td>
+                  {patient.appointments.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="py-3 px-6 text-center">No appointments yet</td>
                     </tr>
-                  ))}
+                  ) : (
+                    patient.appointments.map((appointment, index) => (
+                      <tr key={index} className="border-b border-gray-200 hover:bg-gray-100">
+                        <td className="py-3 px-6">{appointment.date}</td>
+                        <td className="py-3 px-6">{appointment.doctor}</td>
+                        <td className="py-3 px-6">{appointment.reason}</td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
