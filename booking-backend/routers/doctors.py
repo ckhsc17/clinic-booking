@@ -63,7 +63,7 @@ async def get_doctor_available_times(name: str = Query(..., description="Doctor'
     return DoctorAvailabilityResponse(
         doctor_name=name,
         available_times=[
-            DoctorAvailabilityOut(start=interval[0], end=interval[1])
+            DoctorAvailabilityOut(start=interval[0], end=interval[1], is_bookable=True)
             for interval in final_available
         ]
     )

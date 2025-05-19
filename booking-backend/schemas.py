@@ -35,6 +35,7 @@ class DoctorAvailabilityCreate(BaseModel):
 class DoctorAvailabilityOut(BaseModel):
     start: datetime
     end: datetime
+    is_bookable: bool
 class DoctorAvailabilityResponse(BaseModel):
     doctor_name: str
     available_times: List[DoctorAvailabilityOut]
