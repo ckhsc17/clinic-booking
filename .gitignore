@@ -17,6 +17,11 @@ booking-frontend/.next/
 booking-frontend/.cache/
 booking-frontend/out/
 
+clinic-admin/node_modules/
+clinic-admin/.next/
+clinic-admin/.cache/
+clinic-admin/out/
+
 # Yarn & pnpm（萬用版本管理器排除）
 .pnpm-debug.log*
 .yarn/*

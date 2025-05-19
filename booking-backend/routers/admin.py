@@ -78,8 +78,9 @@ async def disable_doctor_availability(info: DoctorAvailabilityDelete):
     return {"status": "success", "message": "Availability set to unbookable"}
 
 # 回傳
-@router.get("/available_times", response_model=DoctorAvailabilityResponse)
+@router.get("/admin_get_doctor_available_times", response_model=DoctorAvailabilityResponse)
 async def get_raw_doctor_availability(name: str = Query(..., description="Doctor's name")):
+    print("hi from get_raw_doctor_availability")
     # Step 1: 找出 doctor_id
     doctor_resp = supabase.table("doctors")\
         .select("doctor_id")\
@@ -90,15 +91,17 @@ async def get_raw_doctor_availability(name: str = Query(..., description="Doctor
     if not doctor_resp or not doctor_resp.data:
         raise HTTPException(status_code=404, detail="Doctor not found")
 
-    doctor_id = doctor_resp.data["doctor_id"]
-
+    doctor_id = doctor_resp.data["doctor_id"] 
     time_resp = supabase.table("doctor_availability")\
-        .select("available_start, available_end, is_bookable")\
+        .select("available_start, available_end", "is_bookable")\
         .eq("doctor_id", doctor_id)\
         .order("available_start")\
         .execute()
 
+    #time_resp = supabase.table("doctor_availability").select("*").execute()
+
     all_data = time_resp.data
+    print("all_data:", all_data)   
 
     return DoctorAvailabilityResponse(
         doctor_name=name,
