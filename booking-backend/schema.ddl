@@ -90,3 +90,13 @@ CREATE TABLE drug_remain (
     FOREIGN KEY (user_id) REFERENCES Patients(user_id),
     FOREIGN KEY (medicine_id) REFERENCES Medicines(medicine_id)
 );
+
+CREATE TABLE drug_remain (
+    user_id VARCHAR(50),
+    medicine_id INT,
+    remaining_quantity INT,
+    unit VARCHAR(10) CHECK (unit IN ('mg', 'ml')),
+    PRIMARY KEY (user_id, medicine_id),
+    FOREIGN KEY (user_id) REFERENCES Patients(user_id),
+    FOREIGN KEY (medicine_id) REFERENCES Medicines(medicine_id)
+);
