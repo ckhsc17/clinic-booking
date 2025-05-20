@@ -1,5 +1,5 @@
 # schema.py
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, constr
 from typing import Optional, List
 from datetime import date, datetime
 
@@ -11,13 +11,17 @@ class PatientBase(BaseModel):
     email: EmailStr
     address: str
     role: str
-
 class PatientCreate(PatientBase):
     user_id: str
 class PatientRecordResponse(BaseModel):
     last_visit_time: Optional[str]
     last_treatment: Optional[str]
     medication_left: Optional[str]
+class PatientRoleUpdate(BaseModel):
+    name: str
+    phone: str
+    role: constr(pattern=r"^(VIP|Normal)$")
+    
 class DoctorBase(BaseModel):
     name: str
     specialty: str
@@ -39,17 +43,10 @@ class DoctorAvailabilityOut(BaseModel):
 class DoctorAvailabilityResponse(BaseModel):
     doctor_name: str
     available_times: List[DoctorAvailabilityOut]
-
 class DoctorAvailabilityDelete(BaseModel):
     doctor_id: int
     available_start: datetime
     available_end: datetime
-
-class TreatmentCreate(BaseModel):
-    name: str
-    description: str
-    price: float
-    duration_min: int
 
 class ServiceCreate(BaseModel):
     name: str
@@ -79,6 +76,11 @@ class BillingCreate(BaseModel):
     payment_date: date
     payment_method: str
 
+class TreatmentCreate(BaseModel):
+    name: str
+    description: str
+    price: float
+    duration_min: int
 class TreatmentRecordCreate(BaseModel):
     appointment_id: int
     notes: str
@@ -96,6 +98,23 @@ class PurchaseCreate(BaseModel):
     total_quantity: float
     remaining_quantity: float
     purchase_date: date
+
+class DrugRemainingCreate(BaseModel):
+    user_id: int
+    medicine_id: int
+    remaining_amount: int
+class DrugRemainingResponse(BaseModel):
+    user_id: int
+    medicine_id: int
+    remaining_amount: int
+class DrugRemainingUpdate(BaseModel):
+    user_id: int
+    medicine_id: int
+    remaining_amount: int
+class DrugRemainingDelete(BaseModel):
+    user_id: int
+    medicine_id: int
+    remaining_amount: int
 
 class TreatmentMedicineUsageCreate(BaseModel):
     record_id: int
