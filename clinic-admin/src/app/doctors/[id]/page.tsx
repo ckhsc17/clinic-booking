@@ -40,7 +40,7 @@ export default function DoctorSchedule() {
       return;
     }
     setIsLoading(true);
-    const currentDateTime = new Date("2025-05-19T10:01:00-05:00"); // 10:01 AM CST, May 19, 2025
+    const currentDateTime = new Date("2025-05-20T11:57:00-05:00"); // 11:57 AM CST, May 20, 2025
     const weekSchedule: TimeSlot[][] = [];
     for (let dayOffset = 0; dayOffset < 7; dayOffset++) {
       const date = new Date(selectedWeekStart);
@@ -51,12 +51,28 @@ export default function DoctorSchedule() {
         const time = hour < 12 ? `${hour}:00 AM` : hour === 12 ? "12:00 PM" : `${hour - 12}:00 PM`;
         const slotDateTime = new Date(`${dateStr}T${time.replace(" AM", ":00").replace(" PM", ":00")}-05:00`);
         let status: "available" | "booked" | "unavailable" | "past" = "available";
+
+        // Check if the slot is in the past
         if (slotDateTime < currentDateTime) {
           status = "past";
-        } else if (Math.random() < 0.3) {
-          status = "booked";
-        } else if (hour === 20) {
-          status = "unavailable";
+        } else {
+          // Specific rules for booked and unavailable slots
+          const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+          if (dayOfWeek === 0 || dayOfWeek === 6) {
+            // Weekends: mark 1:00 PM to 3:00 PM as booked, 8:00 PM as unavailable
+            if (hour >= 13 && hour <= 15) {
+              status = "booked";
+            } else if (hour === 20) {
+              status = "unavailable";
+            }
+          } else {
+            // Weekdays: mark 12:00 PM and 5:00 PM as booked, 7:00 PM as unavailable
+            if (hour === 12 || hour === 17) {
+              status = "booked";
+            } else if (hour === 19) {
+              status = "unavailable";
+            }
+          }
         }
         daySlots.push({ date: dateStr, time, status });
       }
@@ -68,7 +84,7 @@ export default function DoctorSchedule() {
 
   const isPastTime = (date: string, time: string): boolean => {
     const slotDateTime = new Date(`${date}T${time.replace(" AM", ":00").replace(" PM", ":00")}-05:00`);
-    const currentDateTime = new Date("2025-05-19T10:01:00-05:00");
+    const currentDateTime = new Date("2025-05-20T11:57:00-05:00");
     return slotDateTime < currentDateTime;
   };
 
@@ -92,18 +108,12 @@ export default function DoctorSchedule() {
     setIsModalOpen(true);
   };
 
-  const handleAddNewSlot = () => {
-    const selectedDayStr = selectedDay.toISOString().split("T")[0];
-    setEditSlot({ date: selectedDayStr, time: "11:00 AM", status: "available" });
-    setIsModalOpen(true);
-  };
-
   const handleSave = () => {
-    if (editSlot && editSlot.date && editSlot.time) {
+    if (editSlot && editSlot.date && editSlot.time && editSlot.status) {
       const slotDateTime = new Date(`${editSlot.date}T${editSlot.time.replace(" AM", ":00").replace(" PM", ":00")}-05:00`);
-      const currentDateTime = new Date("2025-05-19T10:01:00-05:00");
+      const currentDateTime = new Date("2025-05-20T11:57:00-05:00");
       if (slotDateTime < currentDateTime) {
-        alert("Cannot add or edit times in the past.");
+        alert("Cannot edit times in the past.");
         return;
       }
       setSchedule((prev) =>
@@ -111,7 +121,7 @@ export default function DoctorSchedule() {
           day[0].date === editSlot.date
             ? day.map((t) =>
                 t.date === editSlot.date && t.time === editSlot.time
-                  ? { ...t, status: "available" }
+                  ? { ...t, status: editSlot.status }
                   : t
               )
             : day
@@ -127,9 +137,9 @@ export default function DoctorSchedule() {
     setEditSlot(null);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (editSlot) {
-      setEditSlot({ ...editSlot, [field]: e.target.value });
+      setEditSlot({ ...editSlot, status: e.target.value as "available" | "booked" | "unavailable" });
     }
   };
 
@@ -236,7 +246,14 @@ export default function DoctorSchedule() {
                     <div className="text-center font-bold text-gray-800 mb-2">{day.day} {day.date}</div>
                     <div className="flex flex-col">
                       {daySlots.map((slot, slotIndex) => {
-                        const backgroundColor = slot.status === "past" ? "#d3d3d3" : "#90ee90"; // Gray for past, green for all others
+                        const backgroundColor =
+                          slot.status === "past"
+                            ? "#d3d3d3" // Gray for past
+                            : slot.status === "booked"
+                            ? "#ffff00" // Yellow for booked
+                            : slot.status === "unavailable"
+                            ? "#ff0000" // Red for unavailable
+                            : "#90ee90"; // Green for available
                         return (
                           <div key={slotIndex} className="flex items-center">
                             <div className="w-20 text-center text-sm font-medium text-gray-800 bg-gray-200 border-b border-gray-300 h-12 flex items-center justify-center">
@@ -244,10 +261,10 @@ export default function DoctorSchedule() {
                             </div>
                             <div
                               className={`flex-1 h-12 border-b border-gray-300 ${
-                                slot.status === "available" || slot.status === "booked" ? "cursor-pointer hover:opacity-80" : ""
+                                slot.status === "available" || slot.status === "booked" || slot.status === "unavailable" ? "cursor-pointer hover:opacity-80" : ""
                               }`}
                               style={{ backgroundColor }}
-                              onClick={() => (slot.status === "available" || slot.status === "booked") && handleEdit(slot)}
+                              onClick={() => (slot.status === "available" || slot.status === "booked" || slot.status === "unavailable") && handleEdit(slot)}
                             />
                           </div>
                         );
@@ -257,40 +274,30 @@ export default function DoctorSchedule() {
                 );
               })}
           </div>
-          <div className="mt-4">
-            <button
-              onClick={handleAddNewSlot}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
-            >
-              Add New Slot
-            </button>
-          </div>
           {isModalOpen && editSlot && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
-                <h2 className="text-xl font-semibold mb-4">
-                  {editSlot.time ? "Edit Time Slot" : "Add New Time Slot"}
-                </h2>
+                <h2 className="text-xl font-semibold mb-4">Edit Time Slot</h2>
                 <div className="space-y-4">
-                  <input
-                    type="date"
-                    value={editSlot.date}
-                    onChange={(e) => handleInputChange(e, "date")}
-                    className="border p-2 rounded w-full"
-                  />
-                  <input
-                    type="time"
-                    value={editSlot.time}
-                    onChange={(e) => handleInputChange(e, "time")}
-                    className="border p-2 rounded w-full"
-                    list="timeOptions"
-                    placeholder="Select Time"
-                  />
-                  <datalist id="timeOptions">
-                    {["11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"].map((t) => (
-                      <option key={t} value={t} />
-                    ))}
-                  </datalist>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Date: {editSlot.date}</label>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Time: {editSlot.time}</label>
+                  </div>
+                  <div>
+                    <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
+                    <select
+                      id="status"
+                      value={editSlot.status}
+                      onChange={handleInputChange}
+                      className="border p-2 rounded w-full"
+                    >
+                      <option value="available">Available</option>
+                      <option value="booked">Booked</option>
+                      <option value="unavailable">Unavailable</option>
+                    </select>
+                  </div>
                 </div>
                 <div className="mt-4 flex justify-end space-x-2">
                   <button
