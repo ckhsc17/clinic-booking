@@ -135,10 +135,10 @@ async def get_raw_doctor_availability(name: str = Query(..., description="Doctor
 
 # 設定預約狀態
 @router.patch("/appointments/update")
-async def update_appointment_status(appointment_id: int, info: AppointmentStatusUpdate):
+async def update_appointment_status(info: AppointmentStatusUpdate):
     response = supabase.table("appointments")\
         .update({"status": info.status})\
-        .eq("appointment_id", appointment_id)\
+        .eq("appointment_id", info.appointment_id)\
         .execute()
     if not response.data:
         raise HTTPException(status_code=500, detail="Failed to update appointment status")
