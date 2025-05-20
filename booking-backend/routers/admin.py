@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Query
 from supabase_client import supabase
-from schemas import PatientCreate, AppointmentStatusUpdate, DoctorAvailabilityCreate, DoctorAvailabilityDelete, DoctorAvailabilityOut, DoctorAvailabilityResponse
+from schemas import PatientCreate, AppointmentStatusUpdate, DoctorAvailabilityCreate, DoctorAvailabilityDelete, DoctorAvailabilityOut, DoctorAvailabilityResponse, PatientRoleUpdate
 from datetime import datetime
 
 router = APIRouter(tags=["Admin"])
@@ -133,12 +133,28 @@ async def get_raw_doctor_availability(name: str = Query(..., description="Doctor
 # 設定patient藥劑購買量、消耗量
 
 
+# 病人資料
+# 更新
+@router.patch("/patients/role")
+async def update_patient_role(info: PatientRoleUpdate):
+    response = supabase.table("patients")\
+        .update({"role": info.role})\
+        .eq("name", info.name)\
+        .eq("phone", info.phone)\
+        .execute()
+    
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Patient not found or update failed")
+    
+    return {"status": "success", "message": f"Patient role updated to {info.role}"}
+
+
 # 設定預約狀態
 @router.patch("/appointments/update")
-async def update_appointment_status(appointment_id: int, info: AppointmentStatusUpdate):
+async def update_appointment_status(info: AppointmentStatusUpdate):
     response = supabase.table("appointments")\
         .update({"status": info.status})\
-        .eq("appointment_id", appointment_id)\
+        .eq("appointment_id", info.appointment_id)\
         .execute()
     if not response.data:
         raise HTTPException(status_code=500, detail="Failed to update appointment status")
