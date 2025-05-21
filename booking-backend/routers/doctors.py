@@ -30,13 +30,16 @@ def subtract_unavailable(available_intervals, unavailable_intervals):
     return result
 
 @router.get("/available_times", response_model=DoctorAvailabilityResponse)
-async def get_doctor_available_times(name: str = Query(..., description="Doctor's name")):
+async def get_doctor_available_times(doctor_id: int = Query(..., description="Doctor's id")):
+    
+    '''
     # Step 1: 查 doctor_id
     doctor_resp = supabase.table("doctors").select("doctor_id").eq("name", name).maybe_single().execute()
     if not doctor_resp or not doctor_resp.data:
         raise HTTPException(status_code=404, detail="Doctor not found")
 
     doctor_id = doctor_resp.data["doctor_id"]
+    '''
 
     # Step 2: 查詢所有時間（含可與不可預約）
     time_resp = supabase.table("doctor_availability")\
@@ -61,7 +64,7 @@ async def get_doctor_available_times(name: str = Query(..., description="Doctor'
     final_available = subtract_unavailable(available_intervals, unavailable_intervals)
 
     return DoctorAvailabilityResponse(
-        doctor_name=name,
+        doctor_id=doctor_id,
         available_times=[
             DoctorAvailabilityOut(start=interval[0], end=interval[1], is_bookable=True)
             for interval in final_available

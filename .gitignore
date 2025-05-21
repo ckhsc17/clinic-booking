@@ -4,7 +4,7 @@ __pycache__/
 *.pyo
 *.pyd
 
-
+#booking-backend/clinicbooking-456701-30e6e8572e11.json
 
 # Python virtual env（針對兩個 backend）
 booking-backend/.venv/

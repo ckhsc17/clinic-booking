@@ -42,7 +42,8 @@ class DoctorAvailabilityOut(BaseModel):
     end: datetime
     is_bookable: bool
 class DoctorAvailabilityResponse(BaseModel):
-    doctor_name: str
+    doctor_id: int
+    #doctor_name: str
     available_times: List[DoctorAvailabilityOut]
 class DoctorAvailabilityDelete(BaseModel):
     doctor_id: int

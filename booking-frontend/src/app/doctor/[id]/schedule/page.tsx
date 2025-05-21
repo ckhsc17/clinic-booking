@@ -6,81 +6,61 @@ import DatePicker from "@/components/DatePicker";
 type AvailableTime = {
   start: string;
   end: string;
-};
-
-const doctorData: Record<string, { name: string }> = {
-  "1": { name: "劉淳熙" },
-  "2": { name: "孫立惠" },
-  "3": { name: "林孟穎" },
-  "4": { name: "張峯瑞" },
-  "5": { name: "余德毅" },
+  is_bookable: boolean;
 };
 
 export default function SchedulePage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedHour, setSelectedHour] = useState<number | null>(null);
-  const [availableHours, setAvailableHours] = useState<number[]>([]);
+
+  // map: { "2025-05-23": [11,12,13...], ... }
+  const [dateHourMap, setDateHourMap] = useState<Record<string, number[]>>({});
   const [selectableDates, setSelectableDates] = useState<Set<string>>(new Set());
 
-  /*
-  // ✅ 當選取日期後，自動更新可用時段
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [availableHours, setAvailableHours] = useState<number[]>([]);
+  const [selectedHour, setSelectedHour] = useState<number | null>(null);
+
+  // 1) on mount, fetch all available times and build dateHourMap
   useEffect(() => {
-    if (!selectedDate) return;
-    // const dateStr = selectedDate.toISOString().split("T")[0];
-    fetch(`https://booking-backend-prod-260019038661.asia-east1.run.app/api/available_times?doctor_name=${doctorData[id]?.name}`)
+    fetch(`http://127.0.0.1:8000/api/available_times?doctor_id=${id}`)
       .then((res) => res.json())
-      .then((data) => {
-        const dateHourMap: Record<string, number[]> = {};
-        // const filteredHours: number[] = [];
-
-        data.available_times.forEach((slot: AvailableTime) => {
-          const dateObj = new Date(slot.start);
-          const dateKey = dateObj.toISOString().split("T")[0];
-          const hour = dateObj.getHours();
-
-          if (hour >= 11 && hour <= 20) {
-            if (!dateHourMap[dateKey]) dateHourMap[dateKey] = [];
-            dateHourMap[dateKey].push(hour);
-          }
-        });
-
-        const dayStr = selectedDate.toISOString().split("T")[0];
-        const hours = dateHourMap[dayStr] ?? [];
-        setAvailableHours(hours);
-      });
-  }, [selectedDate, id]);
-  */
-
-  // ✅ 第一次載入時：計算所有有任一可預約時段的日期
-  useEffect(() => {
-    const doctorName = doctorData[id]?.name;
-    if (!doctorName) return;
-
-    fetch(`https://booking-backend-prod-260019038661.asia-east1.run.app/api/available_times?doctor_name=${encodeURIComponent(doctorName)}`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Fetched data:", data);
+      .then((data: { available_times: AvailableTime[] }) => {
         const map: Record<string, Set<number>> = {};
-        data.available_times.forEach((slot: AvailableTime) => {
-          const date = new Date(slot.start);
-          const dayStr = date.toISOString().split("T")[0];
-          const hour = date.getHours();
-          if (hour >= 11 && hour <= 20) {
-            if (!map[dayStr]) map[dayStr] = new Set();
-            map[dayStr].add(hour);
-          }
+        data.available_times.forEach((slot) => {
+          if (!slot.is_bookable) return;
+          const d = new Date(slot.start);
+          const day = d.toISOString().split("T")[0];
+          const h = d.getHours();
+          // 只顯示 11~20 點
+          if (h < 11 || h > 20) return;
+          if (!map[day]) map[day] = new Set();
+          map[day].add(h);
         });
-
-        const eligible = Object.keys(map).filter((day) => map[day].size > 0);
-        setSelectableDates(new Set(eligible));
-      });
+        const hourMap: Record<string, number[]> = {};
+        Object.entries(map).forEach(([day, hours]) => {
+          hourMap[day] = Array.from(hours).sort((a, b) => a - b);
+        });
+        setDateHourMap(hourMap);
+        setSelectableDates(new Set(Object.keys(hourMap)));
+      })
+      .catch(console.error);
   }, [id]);
+
+  // 2) 當選擇日期時，更新 availableHours
+  useEffect(() => {
+    if (!selectedDate) {
+      setAvailableHours([]);
+      setSelectedHour(null);
+      return;
+    }
+    const day = selectedDate.toISOString().split("T")[0];
+    setAvailableHours(dateHourMap[day] || []);
+    setSelectedHour(null);
+  }, [selectedDate, dateHourMap]);
 
   const handleDateChange = (date: Date) => {
     setSelectedDate(date);
-    setSelectedHour(null);
   };
 
   const handleConfirm = () => {
@@ -93,10 +73,11 @@ export default function SchedulePage() {
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-[#f5e9e2]">
-      <div className="w-full bg-[#d4b7a5] text-white py-3 flex items-center justify-start px-4 shadow-md relative">
+      {/* header */}
+      <div className="w-full bg-[#d4b7a5] text-white py-3 flex items-center px-4 shadow-md relative">
         <button
           onClick={() => router.push("/doctor/[id]/")}
-          className="px-6 py-3 border bg-[#e2cec0] border-white rounded-full hover:bg-white hover:text-[#d4b7a5] transition text-lg font-bold shadow hover:scale-105"
+          className="px-6 py-3 bg-[#e2cec0] border border-white rounded-full text-lg font-bold hover:bg-white hover:text-[#d4b7a5] transition"
         >
           ← 返回
         </button>
@@ -105,49 +86,50 @@ export default function SchedulePage() {
         </h2>
       </div>
 
-      {/* 月曆與時段按鈕 */}
-      <div className="calendar-container scale-[1.35] origin-top w-full max-w-[360px] px-4 flex flex-col items-center mt-8">
+      {/* calendar + time slots */}
+      <div className="w-full max-w-md px-4 mt-8">
         <DatePicker
           selectedDate={selectedDate}
           onSelectDate={handleDateChange}
           selectableDates={selectableDates}
         />
 
-        {/* 時段按鈕 */}
-        <div className="grid grid-cols-5 gap-3 mt-6">
-          {Array.from({ length: 10 }, (_, i) => {
-            const hour = i + 11;
-            const disabled = !selectedDate || !availableHours.includes(hour);
-            const selected = selectedHour === hour;
-
+        {/* 時段列表：寬度和 calendar 一致，文字置中 */}
+        <div className="mt-6 w-full max-w-md space-y-2">
+          {Array.from({ length: 10 }, (_, i) => i + 11).map((hour) => {
+            const isAvailable = availableHours.includes(hour);
+            const isSelected = selectedHour === hour;
             return (
               <button
                 key={hour}
-                onClick={() => setSelectedHour(hour)}
-                disabled={disabled}
-                className={`w-12 h-12 rounded-full text-white text-sm font-semibold shadow ${
-                  disabled
-                    ? "bg-gray-300 cursor-not-allowed"
-                    : selected
-                    ? "bg-green-500"
-                    : "bg-[#d4b7a5] hover:bg-[#c8a68a]"
-                }`}
+                onClick={() => isAvailable && setSelectedHour(hour)}
+                disabled={!isAvailable}
+                className={`
+                  w-full py-4 rounded-lg text-lg font-medium text-center transition
+                  ${isAvailable
+                    ? isSelected
+                      ? "bg-green-500 text-white"
+                      : "bg-white text-black hover:bg-[#f0e6dd]"
+                    : "bg-gray-300 text-gray-600 cursor-not-allowed"}
+                `}
               >
-                {hour}
+                {hour}:00
               </button>
             );
           })}
         </div>
 
-        {/* 確認 */}
+
+        {/* 確認按鈕 */}
         <button
           disabled={!selectedDate || selectedHour === null}
           onClick={handleConfirm}
-          className={`mt-6 py-2 w-full rounded-full text-white text-lg font-semibold transition ${
-            selectedDate && selectedHour !== null
+          className={`
+            mt-6 w-full py-3 rounded-full text-lg font-semibold text-white transition
+            ${selectedDate && selectedHour !== null
               ? "bg-green-500 hover:bg-green-600"
-              : "bg-[#e3cec0] cursor-not-allowed"
-          }`}
+              : "bg-[#e3cec0] cursor-not-allowed"}
+          `}
         >
           確認
         </button>

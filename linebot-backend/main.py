@@ -44,6 +44,14 @@ async def callback(request: Request):
         if event.get("type") == "message" and event["message"].get("type") == "text":
             reply_token = event["replyToken"]
             user_msg = event["message"]["text"]
+            if user_msg == "我要預約":
+                #取得line user id
+                user_id = event["source"]["userId"]
+                print("使用者 ID:", user_id)
+                message = TextSendMessage(text="請點擊下方連結進行預約：\nhttps://beautyeye.com.tw/")
+                line_bot_api.reply_message(reply_token, flex_message)
+                return PlainTextResponse("OK", status_code=200)
+            
             if user_msg == "服務說明":
                 quick_reply = QuickReply(items=[
                     QuickReplyButton(action=MessageAction(label="眼整形", text="眼整形")),

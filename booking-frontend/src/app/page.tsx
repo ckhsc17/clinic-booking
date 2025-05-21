@@ -11,10 +11,9 @@ export default function Home() {
   useEffect(() => {
     const userId = searchParams.get('user_id');
     if (userId) {
-      router.push(`/consult?user_id=${userId}`);
-    } else {
-      router.push('/consult');
+      localStorage.setItem('user_id', userId);
     }
+    router.replace('/consult');
   }, [searchParams, router]);
 
   return <div>Redirecting...</div>;
