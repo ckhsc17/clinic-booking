@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Query
 from supabase_client import supabase
-from schemas import PatientCreate, AppointmentStatusUpdate, DoctorAvailabilityCreate, DoctorAvailabilityDelete, DoctorAvailabilityOut, DoctorAvailabilityResponse, PatientRoleUpdate
+from schemas import PatientCreate, AppointmentStatusUpdate, DoctorAvailabilityCreate, DoctorAvailabilityDelete, DoctorAvailabilityOut, DoctorAvailabilityResponse, PatientRoleUpdate, DrugRemainingCreate
 from datetime import datetime
 
 router = APIRouter(tags=["Admin"])

@@ -106,23 +106,22 @@ class DrugRemainingCreate(BaseModel):
     user_id: int
     medicine_id: int
     remaining_amount: int
+    unit: str
 class DrugRemainingResponse(BaseModel):
     user_id: int
     medicine_id: int
     remaining_amount: int
+    unit: str
 class DrugRemainingUpdate(BaseModel):
     user_id: int
     medicine_id: int
     remaining_amount: int
+    unit: str
 class DrugRemainingDelete(BaseModel):
     user_id: int
     medicine_id: int
     remaining_amount: int
-
-class TreatmentMedicineUsageCreate(BaseModel):
-    record_id: int
-    medicine_id: int
-    used_amount: float
+    unit: str
 
 # --- 輸入資料模型 ---
 class BookingInfo(BaseModel):
