@@ -130,4 +130,4 @@ class BookingInfo(BaseModel):
     treatment: str
     start_time: str  # e.g. '2025-04-22T15:00:00+08:00'
     end_time: str    # e.g. '2025-04-22T15:30:00+08:00'
-    note: str = ""
+    note: Optional[str] = None

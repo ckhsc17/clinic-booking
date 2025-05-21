@@ -8,7 +8,7 @@ import os
 
 # Google Calendar 設定
 SCOPES = ['https://www.googleapis.com/auth/calendar']
-SERVICE_ACCOUNT_FILE = 'clinicbooking-456701-30e6e8572e11.json'
+SERVICE_ACCOUNT_FILE = 'clinicbooking-456701-de23520b55e4.json'
 CALENDAR_ID = os.getenv("CALENDAR_ID", "primary")
 
 # 授權與初始化 Calendar API 客戶端
@@ -24,7 +24,7 @@ def create_event_from_booking(info: BookingInfo) -> str:
         end_time = datetime.fromisoformat(info.end_time)
 
         event = {
-            'summary': f"{info.treatment} - {info.user_name}",
+            'summary': f"{info.treatment} - {info.doctor_name}",
             'description': info.note,
             'location': '愛惟美診所',
             'start': {'dateTime': start_time.isoformat(), 'timeZone': 'Asia/Taipei'},

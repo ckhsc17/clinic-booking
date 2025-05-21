@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException
 from uuid import uuid4
 from supabase_client import supabase
 from schemas import AppointmentCreate, BookingInfo
+from datetime import timedelta
 
 # import calendar.py
 from services.calendar import create_event_from_booking
@@ -23,12 +24,14 @@ async def create_appointment(info: AppointmentCreate):
         raise HTTPException(status_code=404, detail="Treatment not found")
     treatment_name = treatment_resp.data[0]["name"]    
 
+    print(f"Doctor Name: {doctor_name}, Treatment Name: {treatment_name}")
+
     # Step 1: 建立 Google Calendar 活動，取得 event_id
     booking_info = BookingInfo(
         doctor_name=doctor_name,
-        start_time=info.appointment_time.isoformat(),
-        end_time=(info.appointment_time + info.treatment_duration).isoformat(),
         treatment=treatment_name,
+        start_time=info.appointment_time.isoformat(),
+        end_time=(info.appointment_time + timedelta(hours=1)).isoformat(),
         note=info.notes
     )
 

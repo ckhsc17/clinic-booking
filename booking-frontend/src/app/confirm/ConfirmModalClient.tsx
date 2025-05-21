@@ -21,15 +21,15 @@ export default function ConfirmModalClient() {
   const treatmentId = 1; // 這裡可以根據實際情況設置，待處理
   const [confirmed, setConfirmed] = useState(false);
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  //const [loading, setLoading] = useState(false);
+  //const [error, setError] = useState<string | null>(null);
 
   const handleConfirm = async () => {
     console.log('handleConfirm clicked');
     if (!doctorId || !date || !time || !userId) {
       console.log('缺少必要參數');
       console.log('userId:', userId);
-      setError("缺少必要參數");
+      //setError("缺少必要參數");
       return;
     }
     console.log('具備必要參數，開始預約');
@@ -38,8 +38,8 @@ export default function ConfirmModalClient() {
     console.log('time:', time);
     console.log('userId:', userId);
 
-    setLoading(true);
-    setError(null);
+    //setLoading(true);
+    //setError(null);
 
     // 組成 ISO 8601 時間字串
     // 如果 time 已經是 "14:00"，再補 ":00" 變成 "14:00:00"
@@ -76,11 +76,12 @@ export default function ConfirmModalClient() {
         router.push('/');
       }, 1500);
 
-    } catch (err: any) {
+      // specify a different type
+    } catch (err: unknown) {
       console.error(err);
-      setError(err.message || '發生未知錯誤');
+      //setError(err.message || '發生未知錯誤');
     } finally {
-      setLoading(false);
+      //setLoading(false);
     }
   };
 
