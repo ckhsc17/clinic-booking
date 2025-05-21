@@ -1,5 +1,5 @@
 # schema.py
-from pydantic import BaseModel, EmailStr, constr
+from pydantic import BaseModel, EmailStr, Field, constr
 from typing import Optional, List
 from datetime import date, datetime
 
@@ -20,7 +20,8 @@ class PatientRecordResponse(BaseModel):
 class PatientRoleUpdate(BaseModel):
     name: str
     phone: str
-    role: constr(pattern=r"^(VIP|Normal)$")
+    role: str = Field(..., pattern=r"^(VIP|Normal)$")
+
     
 class DoctorBase(BaseModel):
     name: str

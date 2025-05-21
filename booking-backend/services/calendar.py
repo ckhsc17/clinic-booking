@@ -8,7 +8,7 @@ import os
 
 # Google Calendar 設定
 SCOPES = ['https://www.googleapis.com/auth/calendar']
-SERVICE_ACCOUNT_FILE = '.secrets/clinicbooking-456701-xxx.json'
+SERVICE_ACCOUNT_FILE = 'clinicbooking-456701-30e6e8572e11.json'
 CALENDAR_ID = os.getenv("CALENDAR_ID", "primary")
 
 # 授權與初始化 Calendar API 客戶端
