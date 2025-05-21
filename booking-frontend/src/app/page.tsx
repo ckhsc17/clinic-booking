@@ -12,6 +12,7 @@ export default function Home() {
     const userId = searchParams.get('user_id');
     if (userId) {
       localStorage.setItem('user_id', userId);
+      console.log('User ID set in local storage:', userId);
     }
     router.replace('/consult');
   }, [searchParams, router]);

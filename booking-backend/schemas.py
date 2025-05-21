@@ -65,8 +65,9 @@ class AppointmentCreate(BaseModel):
     doctor_id: int
     treatment_id: int
     appointment_time: datetime
-    status: str
+    status: str = "Pending"
     notes: Optional[str] = None
+    
 class AppointmentStatusUpdate(BaseModel):
     appointment_id: int
     status: str

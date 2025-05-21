@@ -25,7 +25,9 @@ export default function SchedulePage() {
   useEffect(() => {
     fetch(`http://127.0.0.1:8000/api/available_times?doctor_id=${id}`)
       .then((res) => res.json())
+
       .then((data: { available_times: AvailableTime[] }) => {
+        console.log("Fetched data:", data);
         const map: Record<string, Set<number>> = {};
         data.available_times.forEach((slot) => {
           if (!slot.is_bookable) return;
