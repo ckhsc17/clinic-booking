@@ -67,7 +67,7 @@ class AppointmentCreate(BaseModel):
     appointment_time: datetime
     status: str = "Pending"
     notes: Optional[str] = None
-    
+
 class AppointmentStatusUpdate(BaseModel):
     appointment_id: int
     status: str
@@ -126,7 +126,7 @@ class TreatmentMedicineUsageCreate(BaseModel):
 
 # --- 輸入資料模型 ---
 class BookingInfo(BaseModel):
-    user_name: str
+    doctor_name: str
     treatment: str
     start_time: str  # e.g. '2025-04-22T15:00:00+08:00'
     end_time: str    # e.g. '2025-04-22T15:30:00+08:00'
