@@ -48,7 +48,7 @@ async def callback(request: Request):
                 #取得line user id
                 user_id = event["source"]["userId"]
                 print("使用者 ID:", user_id)
-                message = TextSendMessage(text="請點擊下方連結進行預約：\nhttp://127.0.0.1:3000?user_id="+user_id)
+                message = TextSendMessage(text="請點擊下方連結進行預約：\nhttps://booking-frontend-staging-260019038661.asia-east1.run.app?user_id="+user_id)
                 line_bot_api.reply_message(reply_token, message)
                 return PlainTextResponse("OK", status_code=200)
             
