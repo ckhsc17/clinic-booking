@@ -103,24 +103,23 @@ class PurchaseCreate(BaseModel):
     purchase_date: date
 
 class DrugRemainingCreate(BaseModel):
-    user_id: int
+    user_id: str
     medicine_id: int
-    remaining_amount: int
+    remaining_quantity: int
     unit: str
 class DrugRemainingResponse(BaseModel):
-    user_id: int
+    user_id: str
     medicine_id: int
-    remaining_amount: int
+    remaining_quantity: int
     unit: str
 class DrugRemainingUpdate(BaseModel):
-    user_id: int
+    user_id: str
     medicine_id: int
-    remaining_amount: int
-    unit: str
+    remaining_quantity: int
 class DrugRemainingDelete(BaseModel):
-    user_id: int
+    user_id: str
     medicine_id: int
-    remaining_amount: int
+    remaining_quantity: int
     unit: str
 
 # --- 輸入資料模型 ---

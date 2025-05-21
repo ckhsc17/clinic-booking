@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query
 from supabase_client import supabase
-from schemas import PatientCreate, AppointmentStatusUpdate, DoctorAvailabilityCreate, DoctorAvailabilityDelete, DoctorAvailabilityOut, DoctorAvailabilityResponse, PatientRoleUpdate, DrugRemainingCreate
+from schemas import PatientCreate, AppointmentStatusUpdate, DoctorAvailabilityCreate, DoctorAvailabilityDelete, DoctorAvailabilityOut, DoctorAvailabilityResponse, PatientRoleUpdate
+from schemas import DrugRemainingCreate, DrugRemainingUpdate, DrugRemainingDelete, DrugRemainingResponse
 from datetime import datetime
 
 router = APIRouter(tags=["Admin"])
@@ -130,7 +131,109 @@ async def get_raw_doctor_availability(name: str = Query(..., description="Doctor
         ]
     )
 
-# 設定patient藥劑購買量、消耗量
+# 藥品剩餘量
+# 建立資料
+@router.post("/drug_remain/create")
+async def create_drug_remain(info: DrugRemainingCreate):
+    # Step 1: 確認病人是否存在
+    check_patient = supabase.table("patients")\
+        .select("user_id")\
+        .eq("user_id", info.user_id)\
+        .maybe_single()\
+        .execute()
+
+    if not check_patient or not check_patient.data:
+        raise HTTPException(status_code=400, detail=f"user_id '{info.user_id}' not found in patients")
+
+    # Step 2: 檢查該 user_id + medicine_id 是否已存在
+    check_dup = supabase.table("drug_remain")\
+        .select("user_id", "medicine_id")\
+        .eq("user_id", info.user_id)\
+        .eq("medicine_id", info.medicine_id)\
+        .maybe_single()\
+        .execute()
+
+    if check_dup or check_dup.data:
+        raise HTTPException(status_code=400, detail="This drug record already exists. Consider using update instead.")
+
+    # Step 3: 寫入資料
+    response = supabase.table("drug_remain").insert({
+        "user_id": info.user_id,
+        "medicine_id": info.medicine_id,
+        "remaining_quantity": info.remaining_quantity,
+        "unit": info.unit
+    }).execute()
+
+    if not response or not response.data:
+        raise HTTPException(status_code=500, detail="Failed to create drug record")
+
+    return {"status": "success", "message": "Drug record created"}
+
+
+# 更新資料
+@router.patch("/drug_remain/increase")
+async def increase_drug_remain(info: DrugRemainingUpdate):
+    # 先查舊資料
+    record = supabase.table("drug_remain")\
+        .select("remaining_quantity")\
+        .eq("user_id", info.user_id)\
+        .eq("medicine_id", info.medicine_id)\
+        .maybe_single()\
+        .execute()
+
+    if not record or not record.data:
+        raise HTTPException(status_code=404, detail="Drug record not found")
+    
+    new_quantity = record.data["remaining_quantity"] + info.remaining_quantity
+
+    # 更新資料
+    response = supabase.table("drug_remain")\
+        .update({"remaining_quantity": new_quantity})\
+        .eq("user_id", info.user_id)\
+        .eq("medicine_id", info.medicine_id)\
+        .execute()
+
+    return {"status": "success", "message": f"Remaining quantity increased to {new_quantity}"}
+
+@router.patch("/drug_remain/decrease")
+async def decrease_drug_remain(info: DrugRemainingUpdate):
+    record = supabase.table("drug_remain")\
+        .select("remaining_quantity")\
+        .eq("user_id", info.user_id)\
+        .eq("medicine_id", info.medicine_id)\
+        .maybe_single()\
+        .execute()
+
+    if not record or not record.data:
+        raise HTTPException(status_code=404, detail="Drug record not found")
+    
+    current = record.data["remaining_quantity"]
+    if info.remaining_quantity > current:
+        raise HTTPException(status_code=400, detail="Not enough remaining quantity")
+
+    new_quantity = current - info.remaining_quantity
+
+    response = supabase.table("drug_remain")\
+        .update({"remaining_quantity": new_quantity})\
+        .eq("user_id", info.user_id)\
+        .eq("medicine_id", info.medicine_id)\
+        .execute()
+
+    return {"status": "success", "message": f"Remaining quantity decreased to {new_quantity}"}
+
+# 刪除資料
+@router.delete("/drug_remain/delete")
+async def delete_drug_remain(info: DrugRemainingDelete):
+    response = supabase.table("drug_remain")\
+        .delete()\
+        .eq("user_id", info.user_id)\
+        .eq("medicine_id", info.medicine_id)\
+        .execute()
+
+    if not response or not response.data:
+        raise HTTPException(status_code=404, detail="Drug record not found or already deleted")
+
+    return {"status": "success", "message": "Drug record deleted"}
 
 
 # 病人資料
