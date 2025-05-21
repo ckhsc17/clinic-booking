@@ -59,7 +59,7 @@ class MedicineCreate(BaseModel):
     amount: str
 
 class AppointmentCreate(BaseModel):
-    user_id: str
+    patient_id: str
     doctor_id: int
     treatment_id: int
     appointment_time: datetime

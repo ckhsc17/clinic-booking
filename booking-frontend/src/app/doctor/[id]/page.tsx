@@ -87,7 +87,7 @@ export default function HomePage() {
         {showWelcome && (
           <Modal onClose={() => setShowWelcome(false)} showCloseButton={false}>
             <h2 className="text-xl font-semibold text-black">歡迎 OOO</h2>
-            <p className="text-black">🍆請選擇預約醫師🍆</p>
+            <p className="text-black">歡迎，請選擇預約醫師</p>
             <button
               className="mt-4 w-full bg-green-500 text-white py-2 rounded-full hover:bg-green-600 transform hover:scale-101 transition duration-200"
               onClick={() => setShowWelcome(false)}

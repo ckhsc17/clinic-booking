@@ -24,6 +24,7 @@ export default function SchedulePage() {
   const [availableHours, setAvailableHours] = useState<number[]>([]);
   const [selectableDates, setSelectableDates] = useState<Set<string>>(new Set());
 
+  /*
   // ✅ 當選取日期後，自動更新可用時段
   useEffect(() => {
     if (!selectedDate) return;
@@ -50,12 +51,17 @@ export default function SchedulePage() {
         setAvailableHours(hours);
       });
   }, [selectedDate, id]);
+  */
 
   // ✅ 第一次載入時：計算所有有任一可預約時段的日期
   useEffect(() => {
-    fetch(`/api/available_times?doctor_name=${doctorData[id]?.name}`)
+    const doctorName = doctorData[id]?.name;
+    if (!doctorName) return;
+
+    fetch(`https://booking-backend-prod-260019038661.asia-east1.run.app/api/available_times?doctor_name=${encodeURIComponent(doctorName)}`)
       .then((res) => res.json())
       .then((data) => {
+        console.log("Fetched data:", data);
         const map: Record<string, Set<number>> = {};
         data.available_times.forEach((slot: AvailableTime) => {
           const date = new Date(slot.start);

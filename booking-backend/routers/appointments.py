@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException
 from uuid import uuid4
 from supabase_client import supabase
-from schemas import AppointmentCreate
+from schemas import AppointmentCreate, BookingInfo
 
 # import calendar.py
 from services.calendar import create_event_from_booking
@@ -23,6 +23,8 @@ async def create_appointment(info: AppointmentCreate):
         "status": info.status,
         "notes": info.notes
     }).execute()
+
+
     
     if not response.data:
         raise HTTPException(status_code=500, detail="Failed to save appointment info to database")
