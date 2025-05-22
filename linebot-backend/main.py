@@ -7,8 +7,9 @@ from linebot.models import (
     QuickReply,
     QuickReplyButton,
     MessageAction,
-    FlexSendMessage
+    FlexSendMessage  
 )
+
 from dotenv import load_dotenv
 from schemas import PushRequest
 import requests
@@ -32,24 +33,25 @@ HEADERS = {
     "Authorization": f"Bearer {CHANNEL_ACCESS_TOKEN}"
 }
 
+# ✅ webhook 接收訊息
 @app.post("/callback")
 async def callback(request: Request):
     body = await request.json()
-    print("\ud83d\udce9 Webhook body:", body)
+    print("📩 Webhook body:", body)
 
     events = body.get("events", [])
     for event in events:
         if event.get("type") == "message" and event["message"].get("type") == "text":
             reply_token = event["replyToken"]
             user_msg = event["message"]["text"]
-
             if user_msg == "我要預約":
+                #取得line user id
                 user_id = event["source"]["userId"]
                 print("使用者 ID:", user_id)
-                message = TextSendMessage(text="請點擊下方連結進行預約：\nhttps://booking-frontend-staging-260019038661.asia-east1.run.app?user_id=" + user_id)
+                message = TextSendMessage(text="請點擊下方連結進行預約：\nhttps://booking-frontend-staging-260019038661.asia-east1.run.app?user_id="+user_id)
                 line_bot_api.reply_message(reply_token, message)
                 return PlainTextResponse("OK", status_code=200)
-
+            
             if user_msg == "服務說明":
                 quick_reply = QuickReply(items=[
                     QuickReplyButton(action=MessageAction(label="眼整形", text="眼整形")),
@@ -57,11 +59,13 @@ async def callback(request: Request):
                     QuickReplyButton(action=MessageAction(label="身體雕塑", text="身體雕塑")),
                     QuickReplyButton(action=MessageAction(label="微整注射", text="微整注射")),
                     QuickReplyButton(action=MessageAction(label="雷射光療", text="雷射光療")),
-                ])
-                message = TextSendMessage(text="請選擇您想了解的手術項目：", quick_reply=quick_reply)
+                    ])
+                message = TextSendMessage(text="請選擇您想了解的手術項目：",quick_reply=quick_reply)
+
                 line_bot_api.reply_message(reply_token, message)
                 return PlainTextResponse("OK", status_code=200)
-
+                
+                
             elif user_msg == "臉部整形":
                 flex_message = FlexSendMessage(
                     alt_text="臉部整形服務介紹",
@@ -79,15 +83,38 @@ async def callback(request: Request):
                             "layout": "vertical",
                             "spacing": "md",
                             "contents": [
-                                {"type": "text", "text": "\ud83d\udc64 臉部整形", "weight": "bold", "size": "xl"},
-                                {"type": "text", "text": "改善五官比例、提升整體臉部輪廓", "size": "sm", "wrap": True, "color": "#666666"},
+                                {
+                                    "type": "text",
+                                    "text": "👤 臉部整形",
+                                    "weight": "bold",
+                                    "size": "xl"
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "改善五官比例、提升整體臉部輪廓",
+                                    "size": "sm",
+                                    "wrap": True,
+                                    "color": "#666666"
+                                },
                                 {
                                     "type": "box",
                                     "layout": "horizontal",
                                     "spacing": "sm",
                                     "contents": [
-                                        {"type": "text", "text": "\ud83d\udcb0 價格：", "size": "sm", "color": "#111111", "flex": 0},
-                                        {"type": "text", "text": "約 NT$80,000 起", "size": "sm", "color": "#111111", "wrap": True}
+                                        {
+                                        "type": "text",
+                                        "text": "💰 價格：",
+                                        "size": "sm",
+                                        "color": "#111111",
+                                        "flex": 0
+                                        },
+                                        {
+                                        "type": "text",
+                                        "text": "約 NT$80,000 起",
+                                        "size": "sm",
+                                        "color": "#111111",
+                                        "wrap": True
+                                        }
                                     ]
                                 },
                                 {
@@ -95,9 +122,21 @@ async def callback(request: Request):
                                     "layout": "horizontal",
                                     "spacing": "sm",
                                     "contents": [
-                                        {"type": "text", "text": "\u23f1\ufe0f 時間：", "size": "sm", "color": "#111111", "flex": 0},
-                                        {"type": "text", "text": "約 2～4 小時，恢復期約 1～2 週", "size": "sm", "color": "#111111", "wrap": True}
-                                    ]
+                                        {
+                                        "type": "text",
+                                        "text": "⏱️ 時間：",
+                                        "size": "sm",
+                                        "color": "#111111",
+                                        "flex": 0
+                                        },
+                                        {
+                                        "type": "text",
+                                        "text": "約 1 小時，術後可當日返家",
+                                        "size": "sm",
+                                        "color": "#111111",
+                                        "wrap": true
+                                        }
+                                ]
                                 }
                             ]
                         },
@@ -124,66 +163,15 @@ async def callback(request: Request):
                 line_bot_api.reply_message(reply_token, flex_message)
                 return PlainTextResponse("OK", status_code=200)
 
+
             elif user_msg == "眼整形":
-                flex_message = FlexSendMessage(
-                    alt_text="眼整形服務介紹",
-                    contents={
-                        "type": "bubble",
-                        "hero": {
-                            "type": "image",
-                            "url": "https://beautyeye.com.tw/wp-content/uploads/2022/06/N%E5%AE%98%E7%B6%B2400x400-banner-%E7%89%88%E5%9E%8B-%E5%B7%B2%E5%BE%A9%E5%8E%9F-01-1.jpg",
-                            "size": "full",
-                            "aspectRatio": "1:1",
-                            "aspectMode": "cover"
-                        },
-                        "body": {
-                            "type": "box",
-                            "layout": "vertical",
-                            "spacing": "md",
-                            "contents": [
-                                {"type": "text", "text": "\ud83d\udc41\ufe0f 眼整形", "weight": "bold", "size": "xl"},
-                                {"type": "text", "text": "打造明亮有神的雙眼，提升整體眼部美感", "size": "sm", "wrap": True, "color": "#666666"},
-                                {
-                                    "type": "box",
-                                    "layout": "horizontal",
-                                    "spacing": "sm",
-                                    "contents": [
-                                        {"type": "text", "text": "\ud83d\udcb0 價格：", "size": "sm", "color": "#111111", "flex": 0},
-                                        {"type": "text", "text": "NT$30,000 起", "size": "sm", "color": "#111111", "wrap": True}
-                                    ]
-                                },
-                                {
-                                    "type": "box",
-                                    "layout": "horizontal",
-                                    "spacing": "sm",
-                                    "contents": [
-                                        {"type": "text", "text": "\u23f1\ufe0f 時間：", "size": "sm", "color": "#111111", "flex": 0},
-                                        {"type": "text", "text": "約 1 小時，術後可當日返家", "size": "sm", "color": "#111111", "wrap": True}
-                                    ]
-                                }
-                            ]
-                        },
-                        "footer": {
-                            "type": "box",
-                            "layout": "horizontal",
-                            "spacing": "sm",
-                            "contents": [
-                                {
-                                    "type": "button",
-                                    "style": "primary",
-                                    "height": "sm",
-                                    "action": {
-                                        "type": "uri",
-                                        "label": "預約諮詢",
-                                        "uri": "https://beautyeye.com.tw/%e7%9c%bc%e9%83%a8%e6%95%b4%e5%bd%a2/%e9%9b%99%e7%9c%bc%e7%9a%ae%e6%89%8b%e8%a1%93/"
-                                    }
-                                }
-                            ],
-                            "flex": 0
-                        }
-                    }
+                detail_msg = (
+                    "👁️ 眼整形\n\n"
+                    "📌 簡介：針對眼部進行調整，例如雙眼皮手術、開眼頭、眼袋移除等，讓雙眼更有神、更有精神。\n"
+                    "💰 價格：NT$30,000 起\n"
+                    "⏱️ 手術時間：約 1 小時，術後可當日返家"
                 )
-                line_bot_api.reply_message(reply_token, flex_message)
+                line_bot_api.reply_message(reply_token, TextSendMessage(text=detail_msg))
                 return PlainTextResponse("OK", status_code=200)
                 
             elif user_msg == "身體雕塑":
