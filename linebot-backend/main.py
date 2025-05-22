@@ -98,20 +98,44 @@ async def callback(request: Request):
                                 },
                                 {
                                     "type": "box",
-                                    "layout": "baseline",
+                                    "layout": "horizontal",
                                     "spacing": "sm",
                                     "contents": [
-                                        {"type": "text", "text": "💰 價格: ", "flex": 1, "size": "sm"},
-                                        {"type": "text", "text": "NT$80,000 起", "flex": 4, "size": "sm", "color": "#111111"}
+                                        {
+                                            "type": "text",
+                                            "text": "💰 價格：",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "flex": 0
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "NT$80,000 起",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "wrap": True
+                                        }
                                     ]
                                 },
                                 {
                                     "type": "box",
-                                    "layout": "baseline",
+                                    "layout": "horizontal",
                                     "spacing": "sm",
                                     "contents": [
-                                        {"type": "text", "text": "⏱️ 時間: ", "flex": 1, "size": "sm"},
-                                        {"type": "text", "text": "約 2～4 小時，恢復期約 1～2 週", "flex": 4, "size": "sm", "wrap": True, "color": "#111111"}
+                                        {
+                                            "type": "text",
+                                            "text": "⏱️ 時間：",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "flex": 0
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "約 2～4 小時，恢復期約 1～2 週",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "wrap": True
+                                        }
                                     ]
                                 }
                             ]
@@ -138,6 +162,7 @@ async def callback(request: Request):
                 )
                 line_bot_api.reply_message(reply_token, flex_message)
                 return PlainTextResponse("OK", status_code=200)
+
 
 
             elif user_msg == "眼整形":
@@ -172,16 +197,28 @@ async def callback(request: Request):
                                 },
                                 {
                                     "type": "box",
-                                    "layout": "baseline",
+                                    "layout": "horizontal",
                                     "spacing": "sm",
                                     "contents": [
-                                        {"type": "text", "text": "💰 價格: ", "flex": 1, "size": "sm"},
-                                        {"type": "text", "text": "NT$30,000 起", "flex": 4, "size": "sm", "color": "#111111"}
+                                        {
+                                        "type": "text",
+                                        "text": "💰 價格：",
+                                        "size": "sm",
+                                        "color": "#111111",
+                                        "flex": 0
+                                        },
+                                        {
+                                        "type": "text",
+                                        "text": "NT$30,000 起",
+                                        "size": "sm",
+                                        "color": "#111111",
+                                        "wrap": True
+                                        }
                                     ]
                                 },
                                 {
                                     "type": "box",
-                                    "layout": "baseline",
+                                    "layout": "horizontal",
                                     "spacing": "sm",
                                     "contents": [
                                         {"type": "text", "text": "⏱️ 時間: ", "flex": 1, "size": "sm"},
