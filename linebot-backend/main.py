@@ -270,14 +270,93 @@ async def callback(request: Request):
 
                 
             elif user_msg == "身體雕塑":
-                detail_msg = (
-                    "🏋️‍♀️ 身體雕塑\n\n"
-                    "📌 簡介：透過抽脂、自體脂肪移植、緊實療程等，改善局部脂肪堆積與體態曲線。\n"
-                    "💰 價格：約 NT$50,000 起\n"
-                    "⏱️ 手術時間：約 2 小時，恢復期約 1～2 週"
+                flex_message = FlexSendMessage(
+                    alt_text="身體雕塑服務介紹",
+                    contents={
+                        "type": "bubble",
+                        "hero": {
+                            "type": "image",
+                            "url": "https://beautyeye.com.tw/wp-content/uploads/2022/06/%E6%9F%94%E6%BB%B4-01.jpg",
+                            "size": "full",
+                            "aspectRatio": "1:1",
+                            "aspectMode": "cover"
+                        },
+                        "body": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "spacing": "md",
+                            "contents": 
+                            [
+                                {"type": "text", "text": "🏋️‍♀️ 身體雕塑", "weight": "bold", "size": "xl"},
+                                {"type": "text", "text": "結合柔滴隆乳與自體脂肪，打造自然豐胸與曲線雕塑", "size": "sm", "wrap": True, "color": "#666666"},
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "💰 價格：",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "flex": 0
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "NT$120,000 起（視療程項目與脂肪填補區域而定）",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "wrap": True
+                                        }
+                                    ]
+                                },
+                                
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "⏱️ 時間：",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "flex": 0
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "手術約 2.5 小時，術後 1～2 週可回復日常活動",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "wrap": True
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "footer": {
+                            "type": "box",
+                            "layout": "horizontal",
+                            "spacing": "sm",
+                            "contents": [
+                                {
+                                    "type": "button",
+                                    "style": "primary",
+                                    "height": "sm",
+                                    "action": {
+                                        "type": "uri",
+                                        "label": "預約諮詢",
+                                        "uri": "https://booking-frontend-staging-260019038661.asia-east1.run.app?user_id=Ucd43995d47b6b0a8e202e4d97402d45a"
+                                    }
+                                }
+                            ],
+                            "flex": 0
+                        }
+                    }
                 )
-                line_bot_api.reply_message(reply_token, TextSendMessage(text=detail_msg))
+                line_bot_api.reply_message(reply_token, flex_message)
                 return PlainTextResponse("OK", status_code=200)
+
 
             elif user_msg == "微整注射":
                 detail_msg = (
