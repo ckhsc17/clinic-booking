@@ -481,7 +481,7 @@ async def callback(request: Request):
                                     "spacing": "sm",
                                     "contents": [
                                         {"type": "text", "text": "💰 價格：", "size": "sm", "color": "#111111", "flex": 0},
-                                        {"type": "text", "text": "每次約 NT$5,000 起（依膚況與雷射模式調整）", "size": "sm", "color": "#111111", "wrap": True}
+                                        {"type": "text", "text": "NT$5,000 起，依膚況與雷射模式調整", "size": "sm", "color": "#111111", "wrap": True}
                                     ]
                                 },
                                 {
