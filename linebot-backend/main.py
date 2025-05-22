@@ -359,14 +359,102 @@ async def callback(request: Request):
 
 
             elif user_msg == "微整注射":
-                detail_msg = (
-                    "💉 微整注射\n\n"
-                    "📌 簡介：如玻尿酸、肉毒桿菌等注射，可改善皺紋、豐唇、修飾輪廓，見效快且幾乎無恢復期。\n"
-                    "💰 價格：NT$6,000 起\n"
-                    "⏱️ 手術時間：約 15～30 分鐘，當天可正常活動"
+                flex_message = FlexSendMessage(
+                    alt_text="微整注射服務介紹",
+                    contents={
+                        "type": "bubble",
+                        "hero": {
+                            "type": "image",
+                            "url": "https://beautyeye.julian.com.tw/wp-content/uploads/2022/06/botox-01-1-1024x1024.jpg",
+                            "size": "full",
+                            "aspectRatio": "1:1",
+                            "aspectMode": "cover"
+                        },
+                        "body": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "spacing": "md",
+                            "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "💉 微整注射（肉毒桿菌）",
+                                    "weight": "bold",
+                                    "size": "xl"
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "放鬆過度收縮肌肉，改善皺紋與臉型，展現自然表情",
+                                    "size": "sm",
+                                    "wrap": True,
+                                    "color": "#666666"
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "💰 價格：",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "flex": 0
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "每區域 NT$6,000 起，依劑量與品牌而異",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "wrap": True
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {
+                                            "type": "text",
+                                            "text": "⏱️ 時間：",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "flex": 0
+                                        },
+                                        {
+                                            "type": "text",
+                                            "text": "療程約 15 分鐘，當天可正常活動，效果約 3~6 個月",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "wrap": True
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "footer": {
+                            "type": "box",
+                            "layout": "horizontal",
+                            "spacing": "sm",
+                            "contents": [
+                                {
+                                    "type": "button",
+                                    "style": "primary",
+                                    "height": "sm",
+                                    "action": {
+                                        "type": "uri",
+                                        "label": "預約諮詢",
+                                        "uri": "https://booking-frontend-staging-260019038661.asia-east1.run.app?user_id=Ucd43995d47b6b0a8e202e4d97402d45a"
+                                    }
+                                }
+                            ],
+                            "flex": 0
+                        }
+                    }
                 )
-                line_bot_api.reply_message(reply_token, TextSendMessage(text=detail_msg))
+                line_bot_api.reply_message(reply_token, flex_message)
                 return PlainTextResponse("OK", status_code=200)
+
 
             elif user_msg == "雷射光療":
                 detail_msg = (
