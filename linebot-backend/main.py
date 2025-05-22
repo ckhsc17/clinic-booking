@@ -303,7 +303,7 @@ async def callback(request: Request):
                                         },
                                         {
                                             "type": "text",
-                                            "text": "NT$120,000 起（視療程項目與脂肪填補區域而定）",
+                                            "text": "NT$120,000 起，視療程項目與脂肪填補區域而定",
                                             "size": "sm",
                                             "color": "#111111",
                                             "wrap": True
@@ -457,14 +457,67 @@ async def callback(request: Request):
 
 
             elif user_msg == "雷射光療":
-                detail_msg = (
-                    "🔆 雷射光療\n\n"
-                    "📌 簡介：用雷射技術改善痘疤、斑點、毛孔粗大等膚況，促進肌膚更新與亮白。\n"
-                    "💰 價格：NT$3,000 起／次\n"
-                    "⏱️ 手術時間：約 30 分鐘，依療程次數調整"
+                flex_message = FlexSendMessage(
+                    alt_text="雷射光療服務介紹",
+                    contents={
+                        "type": "bubble",
+                        "hero": {
+                            "type": "image",
+                            "url": "https://beautyeye.julian.com.tw/wp-content/uploads/2022/06/pico-01-1024x1024.jpg",
+                            "size": "full",
+                            "aspectRatio": "1:1",
+                            "aspectMode": "cover"
+                        },
+                        "body": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "spacing": "md",
+                            "contents": [
+                                {"type": "text", "text": "🔆 雷射光療（皮秒雷射）", "weight": "bold", "size": "xl"},
+                                {"type": "text", "text": "改善斑點、凹疤與膚質，恢復期短、副作用低，適合怕反黑者", "size": "sm", "wrap": True, "color": "#666666"},
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {"type": "text", "text": "💰 價格：", "size": "sm", "color": "#111111", "flex": 0},
+                                        {"type": "text", "text": "每次約 NT$5,000 起（依膚況與雷射模式調整）", "size": "sm", "color": "#111111", "wrap": True}
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {"type": "text", "text": "⏱️ 時間：", "size": "sm", "color": "#111111", "flex": 0},
+                                        {"type": "text", "text": "療程約 30 分鐘，視範圍與模式不同恢復期為 1～5 天", "size": "sm", "color": "#111111", "wrap": True}
+                                    ]
+                                }
+                            ]
+                        },
+                        "footer": {
+                            "type": "box",
+                            "layout": "horizontal",
+                            "spacing": "sm",
+                            "contents": [
+                                {
+                                    "type": "button",
+                                    "style": "primary",
+                                    "height": "sm",
+                                    "action": {
+                                        "type": "uri",
+                                        "label": "預約諮詢",
+                                        "uri": "https://booking-frontend-staging-260019038661.asia-east1.run.app?user_id=Ucd43995d47b6b0a8e202e4d97402d45a"
+                                    }
+                                }
+                            ],
+                            "flex": 0
+                        }
+                    }
                 )
-                line_bot_api.reply_message(reply_token, TextSendMessage(text=detail_msg))
+                line_bot_api.reply_message(reply_token, flex_message)
                 return PlainTextResponse("OK", status_code=200)
+
 
 
             elif user_msg == "查詢紀錄":
