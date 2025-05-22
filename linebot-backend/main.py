@@ -170,14 +170,16 @@ async def callback(request: Request):
                     alt_text="眼整形服務介紹",
                     contents={
                         "type": "bubble",
-                        "hero": {
+                        "hero": 
+                        {
                             "type": "image",
                             "url": "https://beautyeye.com.tw/wp-content/uploads/2022/06/N%E5%AE%98%E7%B6%B2400x400-banner-%E7%89%88%E5%9E%8B-%E5%B7%B2%E5%BE%A9%E5%8E%9F-01-1.jpg",
                             "size": "full",
                             "aspectRatio": "1:1",
                             "aspectMode": "cover"
                         },
-                        "body": {
+                        "body": 
+                        {
                             "type": "box",
                             "layout": "vertical",
                             "spacing": "md",
@@ -199,7 +201,8 @@ async def callback(request: Request):
                                     "type": "box",
                                     "layout": "horizontal",
                                     "spacing": "sm",
-                                    "contents": [
+                                    "contents": 
+                                    [
                                         {
                                         "type": "text",
                                         "text": "💰 價格：",
@@ -220,11 +223,25 @@ async def callback(request: Request):
                                     "type": "box",
                                     "layout": "horizontal",
                                     "spacing": "sm",
-                                    "contents": [
-                                        {"type": "text", "text": "⏱️ 時間: ", "flex": 1, "size": "sm"},
-                                        {"type": "text", "text": "約 1 小時，術後可當日返家", "flex": 4, "size": "sm", "wrap": True, "color": "#111111"}
+                                    "contents": 
+                                    [
+                                        {
+                                        "type": "text",
+                                        "text": "⏱️ 時間：",
+                                        "size": "sm",
+                                        "color": "#111111",
+                                        "flex": 0
+                                        },
+                                        {
+                                        "type": "text",
+                                        "text": "約 1 小時，術後可當日返家",
+                                        "size": "sm",
+                                        "color": "#111111",
+                                        "wrap": True
+                                        }
                                     ]
                                 }
+
                             ]
                         },
                         "footer": {
