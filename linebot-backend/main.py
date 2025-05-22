@@ -75,7 +75,7 @@ async def callback(request: Request):
                             "type": "image",
                             "url": "https://beautyeye.com.tw/wp-content/uploads/2022/06/N%E5%AE%98%E7%B6%B2400x400-banner-%E7%B5%90%E6%A7%8B%E9%BC%BB%E6%95%B4%E5%BD%A2.jpg",
                             "size": "full",
-                            "aspectRatio": "16:9",
+                            "aspectRatio": "1:1",
                             "aspectMode": "cover"
                         },
                         "body": {
@@ -102,18 +102,18 @@ async def callback(request: Request):
                                     "spacing": "sm",
                                     "contents": [
                                         {
-                                        "type": "text",
-                                        "text": "💰 價格：",
-                                        "size": "sm",
-                                        "color": "#111111",
-                                        "flex": 0
+                                            "type": "text",
+                                            "text": "💰 價格：",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "flex": 0
                                         },
                                         {
-                                        "type": "text",
-                                        "text": "約 NT$80,000 起",
-                                        "size": "sm",
-                                        "color": "#111111",
-                                        "wrap": True
+                                            "type": "text",
+                                            "text": "NT$80,000 起",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "wrap": True
                                         }
                                     ]
                                 },
@@ -123,20 +123,20 @@ async def callback(request: Request):
                                     "spacing": "sm",
                                     "contents": [
                                         {
-                                        "type": "text",
-                                        "text": "⏱️ 時間：",
-                                        "size": "sm",
-                                        "color": "#111111",
-                                        "flex": 0
+                                            "type": "text",
+                                            "text": "⏱️ 時間：",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "flex": 0
                                         },
                                         {
-                                        "type": "text",
-                                        "text": "約 1 小時，術後可當日返家",
-                                        "size": "sm",
-                                        "color": "#111111",
-                                        "wrap": true
+                                            "type": "text",
+                                            "text": "約 2～4 小時，恢復期約 1～2 週",
+                                            "size": "sm",
+                                            "color": "#111111",
+                                            "wrap": True
                                         }
-                                ]
+                                    ]
                                 }
                             ]
                         },
@@ -152,7 +152,7 @@ async def callback(request: Request):
                                     "action": {
                                         "type": "uri",
                                         "label": "預約諮詢",
-                                        "uri": "https://beautyeye.com.tw/"
+                                        "uri": "https://booking-frontend-staging-260019038661.asia-east1.run.app?user_id=Ucd43995d47b6b0a8e202e4d97402d45a"
                                     }
                                 }
                             ],
@@ -164,15 +164,93 @@ async def callback(request: Request):
                 return PlainTextResponse("OK", status_code=200)
 
 
+
             elif user_msg == "眼整形":
-                detail_msg = (
-                    "👁️ 眼整形\n\n"
-                    "📌 簡介：針對眼部進行調整，例如雙眼皮手術、開眼頭、眼袋移除等，讓雙眼更有神、更有精神。\n"
-                    "💰 價格：NT$30,000 起\n"
-                    "⏱️ 手術時間：約 1 小時，術後可當日返家"
+                flex_message = FlexSendMessage(
+                    alt_text="眼整形服務介紹",
+                    contents={
+                        "type": "bubble",
+                        "hero": {
+                            "type": "image",
+                            "url": "https://beautyeye.com.tw/wp-content/uploads/2022/06/N%E5%AE%98%E7%B6%B2400x400-banner-%E7%89%88%E5%9E%8B-%E5%B7%B2%E5%BE%A9%E5%8E%9F-01-1.jpg",
+                            "size": "full",
+                            "aspectRatio": "1:1",
+                            "aspectMode": "cover"
+                        },
+                        "body": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "spacing": "md",
+                            "contents": [
+                                {
+                                    "type": "text",
+                                    "text": "👁️ 眼整形",
+                                    "weight": "bold",
+                                    "size": "xl"
+                                },
+                                {
+                                    "type": "text",
+                                    "text": "打造明亮有神的雙眼，提升整體眼部美感",
+                                    "size": "sm",
+                                    "wrap": True,
+                                    "color": "#666666"
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {
+                                        "type": "text",
+                                        "text": "💰 價格：",
+                                        "size": "sm",
+                                        "color": "#111111",
+                                        "flex": 0
+                                        },
+                                        {
+                                        "type": "text",
+                                        "text": "NT$30,000 起",
+                                        "size": "sm",
+                                        "color": "#111111",
+                                        "wrap": True
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "box",
+                                    "layout": "horizontal",
+                                    "spacing": "sm",
+                                    "contents": [
+                                        {"type": "text", "text": "⏱️ 時間: ", "flex": 1, "size": "sm"},
+                                        {"type": "text", "text": "約 1 小時，術後可當日返家", "flex": 4, "size": "sm", "wrap": True, "color": "#111111"}
+                                    ]
+                                }
+                            ]
+                        },
+                        "footer": {
+                            "type": "box",
+                            "layout": "horizontal",
+                            "spacing": "sm",
+                            "contents": [
+                                {
+                                    "type": "button",
+                                    "style": "primary",
+                                    "height": "sm",
+                                    "action": {
+                                        "type": "uri",
+                                        "label": "預約諮詢",
+                                        "uri": "https://booking-frontend-staging-260019038661.asia-east1.run.app?user_id=Ucd43995d47b6b0a8e202e4d97402d45a"
+                                    }
+                                }
+                            ],
+                            "flex": 0
+                        }
+                    }
                 )
-                line_bot_api.reply_message(reply_token, TextSendMessage(text=detail_msg))
+                line_bot_api.reply_message(reply_token, flex_message)
                 return PlainTextResponse("OK", status_code=200)
+
+
                 
             elif user_msg == "身體雕塑":
                 detail_msg = (
