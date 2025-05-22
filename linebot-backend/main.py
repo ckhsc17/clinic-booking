@@ -75,7 +75,7 @@ async def callback(request: Request):
                             "type": "image",
                             "url": "https://beautyeye.com.tw/wp-content/uploads/2022/06/N%E5%AE%98%E7%B6%B2400x400-banner-%E7%B5%90%E6%A7%8B%E9%BC%BB%E6%95%B4%E5%BD%A2.jpg",
                             "size": "full",
-                            "aspectRatio": "16:9",
+                            "aspectRatio": "1:1",
                             "aspectMode": "cover"
                         },
                         "body": {
@@ -101,8 +101,8 @@ async def callback(request: Request):
                                     "layout": "baseline",
                                     "spacing": "sm",
                                     "contents": [
-                                        {"type": "text", "text": "💰 價格", "flex": 1, "size": "sm"},
-                                        {"type": "text", "text": "約 NT$80,000 起", "flex": 4, "size": "sm", "color": "#111111"}
+                                        {"type": "text", "text": "💰 價格: ", "flex": 1, "size": "sm"},
+                                        {"type": "text", "text": "NT$80,000 起", "flex": 4, "size": "sm", "color": "#111111"}
                                     ]
                                 },
                                 {
@@ -110,7 +110,7 @@ async def callback(request: Request):
                                     "layout": "baseline",
                                     "spacing": "sm",
                                     "contents": [
-                                        {"type": "text", "text": "⏱️ 時間", "flex": 1, "size": "sm"},
+                                        {"type": "text", "text": "⏱️ 時間: ", "flex": 1, "size": "sm"},
                                         {"type": "text", "text": "約 2～4 小時，恢復期約 1～2 週", "flex": 4, "size": "sm", "wrap": True, "color": "#111111"}
                                     ]
                                 }
@@ -128,7 +128,7 @@ async def callback(request: Request):
                                     "action": {
                                         "type": "uri",
                                         "label": "預約諮詢",
-                                        "uri": "https://beautyeye.com.tw/"
+                                        "uri": "https://booking-frontend-staging-260019038661.asia-east1.run.app?user_id=Ucd43995d47b6b0a8e202e4d97402d45a"
                                     }
                                 }
                             ],
@@ -149,7 +149,7 @@ async def callback(request: Request):
                             "type": "image",
                             "url": "https://beautyeye.com.tw/wp-content/uploads/2022/06/N%E5%AE%98%E7%B6%B2400x400-banner-%E7%89%88%E5%9E%8B-%E5%B7%B2%E5%BE%A9%E5%8E%9F-01-1.jpg",
                             "size": "full",
-                            "aspectRatio": "16:9",
+                            "aspectRatio": "1:1",
                             "aspectMode": "cover"
                         },
                         "body": {
@@ -175,8 +175,8 @@ async def callback(request: Request):
                                     "layout": "baseline",
                                     "spacing": "sm",
                                     "contents": [
-                                        {"type": "text", "text": "💰 價格", "flex": 1, "size": "sm"},
-                                        {"type": "text", "text": "約 NT$30,000 起", "flex": 4, "size": "sm", "color": "#111111"}
+                                        {"type": "text", "text": "💰 價格: ", "flex": 1, "size": "sm"},
+                                        {"type": "text", "text": "NT$30,000 起", "flex": 4, "size": "sm", "color": "#111111"}
                                     ]
                                 },
                                 {
@@ -184,7 +184,7 @@ async def callback(request: Request):
                                     "layout": "baseline",
                                     "spacing": "sm",
                                     "contents": [
-                                        {"type": "text", "text": "⏱️ 時間", "flex": 1, "size": "sm"},
+                                        {"type": "text", "text": "⏱️ 時間: ", "flex": 1, "size": "sm"},
                                         {"type": "text", "text": "約 1 小時，術後可當日返家", "flex": 4, "size": "sm", "wrap": True, "color": "#111111"}
                                     ]
                                 }
@@ -202,7 +202,7 @@ async def callback(request: Request):
                                     "action": {
                                         "type": "uri",
                                         "label": "預約諮詢",
-                                        "uri": "https://beautyeye.com.tw/%e7%9c%bc%e9%83%a8%e6%95%b4%e5%bd%a2/%e9%9b%99%e7%9c%bc%e7%9a%ae%e6%89%8b%e8%a1%93/"
+                                        "uri": "https://booking-frontend-staging-260019038661.asia-east1.run.app?user_id=Ucd43995d47b6b0a8e202e4d97402d45a"
                                     }
                                 }
                             ],
