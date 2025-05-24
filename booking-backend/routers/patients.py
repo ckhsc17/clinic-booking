@@ -16,7 +16,7 @@ async def get_patient_record(user_id: str = Query(..., description="LINE UserId"
         .maybe_single()\
         .execute()
 
-    if not patient_check.data:
+    if not patient_check or not patient_check.data:
         raise HTTPException(status_code=404, detail="User not found")
     
     # 查詢最近一次完成的 Appointment
