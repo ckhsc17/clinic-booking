@@ -8,7 +8,7 @@ router = APIRouter(tags=["Treatment Records"])
 @router.post("/treatment_records")
 async def create_treatment_record(info: TreatmentRecordCreate):
     response_id = supabase.table("treatment_records").select("record_id").order("record_id", desc=True).limit(1).execute()
-    if not response_id.data:
+    if not response or not response_id.data:
         raise HTTPException(status_code=500, detail="Failed to get max record_id")
     
     max_record_id = response_id.data[0]['record_id'] if response_id.data else 0
@@ -22,7 +22,7 @@ async def create_treatment_record(info: TreatmentRecordCreate):
         "outcome": info.outcome,
     }).execute()
 
-    if not response.data:
+    if not response or not response.data:
         raise HTTPException(status_code=500, detail="Failed to insert treatment record")
     
     return {

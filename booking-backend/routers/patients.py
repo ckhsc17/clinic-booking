@@ -28,7 +28,7 @@ async def get_patient_record(user_id: str = Query(..., description="LINE UserId"
         .order("appointment_time", desc=True)\
         .limit(1).execute()
 
-    if not appointments.data:
+    if not appointments or not appointments.data:
         return PatientRecordResponse(
             last_visit_time=None,
             last_treatment=None,
