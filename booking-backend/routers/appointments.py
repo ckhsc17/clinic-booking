@@ -16,11 +16,11 @@ async def create_appointment(info: AppointmentCreate):
     #new_id = str(uuid4())
     # 根據doctor_id查doctor_name，根據treatment_id查treatment_name
     doctor_resp = supabase.table("doctors").select("name").eq("doctor_id", info.doctor_id).execute()
-    if not doctor_resp.data:
+    if not doctor_resp or not doctor_resp.data:
         raise HTTPException(status_code=404, detail="Doctor not found")
     doctor_name = doctor_resp.data[0]["name"]
     treatment_resp = supabase.table("treatments").select("name").eq("treatment_id", info.treatment_id).execute()
-    if not treatment_resp.data:
+    if not treatment_resp or not treatment_resp.data:
         raise HTTPException(status_code=404, detail="Treatment not found")
     treatment_name = treatment_resp.data[0]["name"]    
 
@@ -61,7 +61,7 @@ async def create_appointment(info: AppointmentCreate):
     }).eq("doctor_id", info.doctor_id).lte("available_start", info.appointment_time.isoformat()).gte("available_end", info.appointment_time.isoformat()).execute()
 
  
-    if not response.data:
+    if not response or not response.data:
         raise HTTPException(status_code=500, detail="Failed to save appointment info to database")
     
     return {"status": "success"}

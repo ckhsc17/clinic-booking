@@ -27,7 +27,7 @@ async def create_patient(info: PatientCreate):
         "address": info.address,
     }).execute()
     
-    if not response.data:
+    if not response or not response.data:
         raise HTTPException(status_code=500, detail="Failed to save patient info to database")
     
     return {"status": "success", "patient_id": new_patient_id}
@@ -41,7 +41,7 @@ async def create_doctor_availability(info: DoctorAvailabilityCreate):
         .order("availability_id", desc=True)\
         .limit(1).execute()
 
-    if not response_id.data:
+    if not response_id or response_id.data:
         raise HTTPException(status_code=500, detail="Failed to get max availability_id")
     
     max_id = response_id.data[0]["availability_id"] if response_id.data else 0
@@ -55,7 +55,7 @@ async def create_doctor_availability(info: DoctorAvailabilityCreate):
         "is_bookable": info.is_bookable
     }).execute()
 
-    if not response.data:
+    if not response or not response.data:
         raise HTTPException(status_code=500, detail="Failed to insert doctor availability")
 
     return {
@@ -73,7 +73,7 @@ async def disable_doctor_availability(info: DoctorAvailabilityDelete):
         .eq("available_end", info.available_end.isoformat())\
         .execute()
 
-    if not response.data:
+    if not response or not response.data:
         raise HTTPException(status_code=404, detail="Matching availability not found")
     
     return {"status": "success", "message": "Availability set to unbookable"}
@@ -88,7 +88,7 @@ async def remove_doctor_availability(info: DoctorAvailabilityDelete):
         .eq("available_end", info.available_end.isoformat())\
         .execute()
 
-    if not response.data:
+    if not response or not response.data:
         raise HTTPException(status_code=404, detail="No matching availability to delete")
 
     return {"status": "success", "message": "Availability removed"}
@@ -246,7 +246,7 @@ async def update_patient_role(info: PatientRoleUpdate):
         .eq("phone", info.phone)\
         .execute()
     
-    if not response.data:
+    if not response or not response.data:
         raise HTTPException(status_code=404, detail="Patient not found or update failed")
     
     return {"status": "success", "message": f"Patient role updated to {info.role}"}
@@ -259,6 +259,6 @@ async def update_appointment_status(info: AppointmentStatusUpdate):
         .update({"status": info.status})\
         .eq("appointment_id", info.appointment_id)\
         .execute()
-    if not response.data:
+    if not response or not response.data:
         raise HTTPException(status_code=500, detail="Failed to update appointment status")
     return {"status": "success"}
