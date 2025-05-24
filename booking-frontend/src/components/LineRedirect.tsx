@@ -9,15 +9,15 @@ export default function LineRedirect() {
 
   useEffect(() => {
     //const lineId = "abc351519"; // 測試用，正式版可改為 searchParams.get("line_id");
-    const lineId = searchParams.get("line_id");
+    const lineId = searchParams.get("user_id");
 
     if (!lineId) {
-      console.error("No line_id provided.");
+      console.error("No line user id provided.");
       setLoading(false);
       return;
     }
 
-    console.log("line id = ", lineId);
+    console.log("uesr line id = ", lineId);
 
     fetch(`https://booking-backend-prod-260019038661.asia-east1.run.app/api/patients/records?user_id=${lineId}`)
       .then((res) => res.json())
