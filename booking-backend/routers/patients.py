@@ -23,7 +23,7 @@ async def get_patient_record(user_id: str = Query(..., description="LINE UserId"
     # 第二步：查詢最近一次完成的 Appointment
     appointments = supabase.table("appointments")\
         .select("appointment_id, appointment_time, treatment_id")\
-        .eq("user_id", user_id)\
+        .eq("patient_id", user_id)\
         .eq("status", "Completed")\
         .order("appointment_time", desc=True)\
         .limit(1).execute()
