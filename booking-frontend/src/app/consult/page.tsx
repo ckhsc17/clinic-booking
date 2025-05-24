@@ -42,12 +42,11 @@ export default function ConsultForm() {
   });
   const [isMember, setIsMember] = useState(false);
 
-  // 🚀 範例 fetch 判斷是否為會員
+  // 判斷是否為會員
   useEffect(() => {
     setIsMember(true);
-    // fetch("/api/check-first-time")
-    //   .then((res) => res.json())
-    //   .then((data) => setIsMember(data.isMember));
+    const flag = localStorage.getItem("isMember");
+    setIsMember(flag === "true");
   }, []);
 
   const handleChange = (

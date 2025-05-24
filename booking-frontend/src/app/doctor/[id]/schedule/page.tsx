@@ -55,7 +55,7 @@ export default function SchedulePage() {
           const day = formatDateYMD(start);
           if (!map[day]) map[day] = new Set();
 
-          let current = new Date(start);
+          const current = new Date(start);
           while (current < end) {
             const hour = current.getHours();
             if (hour >= 11 && hour <= 20) {
