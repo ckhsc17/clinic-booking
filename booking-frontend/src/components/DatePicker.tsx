@@ -1,21 +1,27 @@
-'use client';
-import { isBefore, getDay, startOfToday } from 'date-fns';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+"use client";
+import { isBefore, getDay, startOfToday } from "date-fns";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 type DatePickerProps = {
   selectedDate: Date | null;
   onSelectDate: (date: Date) => void;
-  selectableDates?: Set<string>; // <-- 加入這行
+  selectableDates: Set<string>; // 加入這行
 };
 
-export default function CustomDatePicker({ selectedDate, onSelectDate, selectableDates }: DatePickerProps) {
+export default function CustomDatePicker({
+  selectedDate,
+  onSelectDate,
+  selectableDates,
+}: DatePickerProps) {
   const isSunday = (date: Date) => getDay(date) === 0;
   const isBeforeToday = (date: Date) => isBefore(date, startOfToday());
 
   const isSelectable = (date: Date) => {
     if (!selectableDates) return true;
-    const dateStr = date.toISOString().split('T')[0]; // yyyy-mm-dd
+    const dateStr = `${date.getFullYear()}-${String(
+      date.getMonth() + 1
+    ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
     return selectableDates.has(dateStr);
   };
 
@@ -31,10 +37,10 @@ export default function CustomDatePicker({ selectedDate, onSelectDate, selectabl
         inline
         dayClassName={(d) =>
           isDisabled(d)
-            ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-            : 'bg-white hover:bg-blue-100 cursor-pointer'
+            ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+            : "bg-white hover:bg-blue-100 cursor-pointer"
         }
-        filterDate={(d) => !isDisabled(d)}
+        filterDate={isSelectable} // 加上這行
       />
     </div>
   );

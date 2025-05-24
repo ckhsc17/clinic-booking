@@ -9,54 +9,84 @@ type AvailableTime = {
   is_bookable: boolean;
 };
 
+// 🔧 日期轉 YYYY-MM-DD（解決時區對不上問題）
+function formatDateYMD(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export default function SchedulePage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
 
-  // map: { "2025-05-23": [11,12,13...], ... }
   const [dateHourMap, setDateHourMap] = useState<Record<string, number[]>>({});
-  const [selectableDates, setSelectableDates] = useState<Set<string>>(new Set());
+  const [selectableDates, setSelectableDates] = useState<Set<string>>(
+    new Set()
+  );
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [availableHours, setAvailableHours] = useState<number[]>([]);
   const [selectedHour, setSelectedHour] = useState<number | null>(null);
 
-  // 1) on mount, fetch all available times and build dateHourMap
+  // 1) on mount, fetch 所有可預約資料
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/api/available_times?doctor_id=${id}`)
-      .then((res) => res.json())
+    const doctorId = parseInt(id);
+    if (isNaN(doctorId)) {
+      console.error("Invalid doctor ID");
+      return;
+    }
 
+    fetch(
+      `https://booking-backend-prod-260019038661.asia-east1.run.app/api/available_times?doctor_id=${doctorId}`
+    )
+      .then((res) => res.json())
       .then((data: { available_times: AvailableTime[] }) => {
         console.log("Fetched data:", data);
+
         const map: Record<string, Set<number>> = {};
         data.available_times.forEach((slot) => {
           if (!slot.is_bookable) return;
-          const d = new Date(slot.start);
-          const day = d.toISOString().split("T")[0];
-          const h = d.getHours();
-          // 只顯示 11~20 點
-          if (h < 11 || h > 20) return;
+
+          const start = new Date(slot.start);
+          const end = new Date(slot.end);
+
+          const day = formatDateYMD(start);
           if (!map[day]) map[day] = new Set();
-          map[day].add(h);
+
+          let current = new Date(start);
+          while (current < end) {
+            const hour = current.getHours();
+            if (hour >= 11 && hour <= 20) {
+              map[day].add(hour);
+            }
+            current.setHours(current.getHours() + 1);
+          }
         });
-        const hourMap: Record<string, number[]> = {};
-        Object.entries(map).forEach(([day, hours]) => {
-          hourMap[day] = Array.from(hours).sort((a, b) => a - b);
+
+        const finalMap: Record<string, number[]> = {};
+        Object.entries(map).forEach(([day, hourSet]) => {
+          finalMap[day] = Array.from(hourSet).sort((a, b) => a - b);
         });
-        setDateHourMap(hourMap);
-        setSelectableDates(new Set(Object.keys(hourMap)));
+
+        setDateHourMap(finalMap);
+        setSelectableDates(new Set(Object.keys(finalMap)));
       })
       .catch(console.error);
   }, [id]);
 
-  // 2) 當選擇日期時，更新 availableHours
+  // 2) 選日期後載入時段
   useEffect(() => {
     if (!selectedDate) {
       setAvailableHours([]);
       setSelectedHour(null);
       return;
     }
-    const day = selectedDate.toISOString().split("T")[0];
+    const day = formatDateYMD(selectedDate);
+    console.log("🔎 選取日期:", day);
+    console.log("📅 可選日期 map keys:", Object.keys(dateHourMap));
+
     setAvailableHours(dateHourMap[day] || []);
     setSelectedHour(null);
   }, [selectedDate, dateHourMap]);
@@ -67,7 +97,7 @@ export default function SchedulePage() {
 
   const handleConfirm = () => {
     if (!selectedDate || selectedHour === null) return;
-    const dateStr = selectedDate.toISOString().split("T")[0];
+    const dateStr = formatDateYMD(selectedDate);
     router.push(
       `/confirm?doctorId=${id}&date=${dateStr}&time=${selectedHour}:00`
     );
@@ -96,7 +126,7 @@ export default function SchedulePage() {
           selectableDates={selectableDates}
         />
 
-        {/* 時段列表：寬度和 calendar 一致，文字置中 */}
+        {/* 時段列表 */}
         <div className="mt-6 w-full max-w-md space-y-2">
           {Array.from({ length: 10 }, (_, i) => i + 11).map((hour) => {
             const isAvailable = availableHours.includes(hour);
@@ -108,11 +138,13 @@ export default function SchedulePage() {
                 disabled={!isAvailable}
                 className={`
                   w-full py-4 rounded-lg text-lg font-medium text-center transition
-                  ${isAvailable
-                    ? isSelected
-                      ? "bg-green-500 text-white"
-                      : "bg-white text-black hover:bg-[#f0e6dd]"
-                    : "bg-gray-300 text-gray-600 cursor-not-allowed"}
+                  ${
+                    isAvailable
+                      ? isSelected
+                        ? "bg-green-500 text-white"
+                        : "bg-white text-black hover:bg-[#f0e6dd]"
+                      : "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  }
                 `}
               >
                 {hour}:00
@@ -121,16 +153,17 @@ export default function SchedulePage() {
           })}
         </div>
 
-
         {/* 確認按鈕 */}
         <button
           disabled={!selectedDate || selectedHour === null}
           onClick={handleConfirm}
           className={`
             mt-6 w-full py-3 rounded-full text-lg font-semibold text-white transition
-            ${selectedDate && selectedHour !== null
-              ? "bg-green-500 hover:bg-green-600"
-              : "bg-[#e3cec0] cursor-not-allowed"}
+            ${
+              selectedDate && selectedHour !== null
+                ? "bg-green-500 hover:bg-green-600"
+                : "bg-[#e3cec0] cursor-not-allowed"
+            }
           `}
         >
           確認
