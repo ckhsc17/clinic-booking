@@ -391,7 +391,7 @@ async def callback(request: Request):
                                         },
                                         {
                                             "type": "text",
-                                            "text": "NT$120,000 起，視療程項目與脂肪填補區域而定",
+                                            "text": "NT$120,000 起",
                                             "size": "sm",
                                             "color": "#111111",
                                             "wrap": True
@@ -491,7 +491,7 @@ async def callback(request: Request):
                                         },
                                         {
                                             "type": "text",
-                                            "text": "每區域 NT$6,000 起，依劑量與品牌而異",
+                                            "text": "每區域 NT$6,000 起",
                                             "size": "sm",
                                             "color": "#111111",
                                             "wrap": True
@@ -571,7 +571,7 @@ async def callback(request: Request):
                                     "spacing": "sm",
                                     "contents": [
                                         {"type": "text", "text": "💰 價格：", "size": "sm", "color": "#111111", "flex": 0},
-                                        {"type": "text", "text": "NT$5,000 起，依膚況與雷射模式調整", "size": "sm", "color": "#111111", "wrap": True}
+                                        {"type": "text", "text": "NT$5,000 起", "size": "sm", "color": "#111111", "wrap": True}
                                     ]
                                 },
                                 {
