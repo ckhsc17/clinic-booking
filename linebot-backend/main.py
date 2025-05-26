@@ -66,6 +66,7 @@ async def callback(request: Request):
                                 {
                                     "type": "button",
                                     "style": "primary",
+                                    "color": "#00B900",
                                     "height": "sm",
                                     "action": {
                                         "type": "uri",
@@ -104,7 +105,7 @@ async def callback(request: Request):
                             "spacing": "md",
                             "paddingAll": "16px",
                             "contents": [
-                                {"type": "text", "text": "取消預約", "weight": "bold", "size": "lg"},
+                                {"type": "text", "text": "請於營業時間致電診所", "weight": "bold", "size": "lg"},
                                 {"type": "text", "text": "📞 02-2656-1988", "size": "md", "color": "#1E88E5"},
                                 {"type": "text", "text": "🕒 週一至週五｜11:00-20:00", "size": "sm", "color": "#555555"},
                                 {"type": "text", "text": "期待再次為您服務！", "size": "sm", "color": "#555555"}
