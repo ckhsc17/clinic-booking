@@ -8,7 +8,10 @@ from linebot.models import (
     QuickReplyButton,
     MessageAction,
     FlexSendMessage,
-    URIAction
+    URIAction,
+    ButtonComponent, 
+    BoxComponent, 
+    TextComponent
 )
 
 from dotenv import load_dotenv
@@ -89,26 +92,45 @@ async def callback(request: Request):
                 return PlainTextResponse("OK", status_code=200)
      
             
+
             elif user_msg == "取消預約":
-                cancel_msg = (
-                    "👉 取消預約請來電：02-2656-1988\n"
-                    "🕒 週一至週五 11:00-20:00\n"
-                    "期待再次為您服務！"
+                flex_cancel = FlexSendMessage(
+                    alt_text="取消預約資訊",
+                    contents={
+                        "type": "bubble",
+                        "body": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "spacing": "md",
+                            "paddingAll": "16px",
+                            "contents": [
+                                {"type": "text", "text": "取消預約", "weight": "bold", "size": "lg"},
+                                {"type": "text", "text": "📞 02-2656-1988", "size": "md", "color": "#1E88E5"},
+                                {"type": "text", "text": "🕒 週一至週五｜11:00-20:00", "size": "sm", "color": "#555555"},
+                                {"type": "text", "text": "期待再次為您服務！", "size": "sm", "color": "#555555"}
+                            ]
+                        },
+                        "footer": {
+                            "type": "box",
+                            "layout": "horizontal",
+                            "spacing": "sm",
+                            "contents": [
+                                {
+                                    "type": "button",
+                                    "style": "primary",
+                                    "color": "#00B900",
+                                    "action": {
+                                        "type": "uri",
+                                        "label": "立即撥打",
+                                        "uri": "tel:0226561988"
+                                    }
+                                }
+                            ]
+                        }
+                    }
                 )
 
-                quick = QuickReply(items=[
-                    QuickReplyButton(
-                        action=URIAction(            # ⬅︎ 用 URIAction
-                            label="撥打電話",
-                            uri="tel:0226561988"    # ⬅︎ 直接放 tel: 連結
-                        )
-                    )
-                ])
-
-                line_bot_api.reply_message(
-                    reply_token,
-                    TextSendMessage(text=cancel_msg, quick_reply=quick)
-                )
+                line_bot_api.reply_message(reply_token, flex_cancel)
                 return PlainTextResponse("OK", status_code=200)
 
 
