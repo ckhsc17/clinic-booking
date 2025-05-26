@@ -45,12 +45,69 @@ async def callback(request: Request):
             reply_token = event["replyToken"]
             user_msg = event["message"]["text"]
             if user_msg == "我要預約":
-                #取得line user id
-                user_id = event["source"]["userId"]
+                user_id = event["source"]["userId"]          # 取得 LINE 使用者 ID
                 print("使用者 ID:", user_id)
-                message = TextSendMessage(text="請點擊下方連結進行預約：\nhttps://booking-frontend-staging-260019038661.asia-east1.run.app?user_id="+user_id)
-                line_bot_api.reply_message(reply_token, message)
+
+                flex_message = FlexSendMessage(
+                    alt_text="預約選項",
+                    contents={
+                        "type": "bubble",
+                        "size": "mega",
+                        "body": {
+                            "type": "box",
+                            "layout": "vertical",
+                            "spacing": "md",
+                            "contents": [
+                                {"type": "text", "text": "請選擇動作", "weight": "bold", "size": "lg"},
+                                {
+                                    "type": "button",
+                                    "style": "primary",
+                                    "height": "sm",
+                                    "action": {
+                                        "type": "uri",
+                                        "label": "我要預約",
+                                        # 將 user_id 帶到前端
+                                        "uri": f"https://booking-frontend-staging-260019038661.asia-east1.run.app?user_id={user_id}"
+                                    }
+                                },
+                                {
+                                    "type": "button",
+                                    "style": "secondary",
+                                    "height": "sm",
+                                    "action": {
+                                        "type": "message",
+                                        "label": "取消預約",
+                                        "text": "取消預約"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                )
+                line_bot_api.reply_message(reply_token, flex_message)
                 return PlainTextResponse("OK", status_code=200)
+            
+            elif user_msg == "取消預約":
+                cancel_msg = (
+                    "👉 取消預約請來電：02-2656-1988\n"
+                    "🕒 營業時間：週一至週五 11:00-20:00\n"
+                    "期待再次為您服務！"
+                )
+                quick = QuickReply(items=[
+                    QuickReplyButton(
+                        action=MessageAction(label="撥打電話", text="tel:0226561988",
+                                            uri="tel:0226561988")    # LINE 會把按鈕 URI 當超連結
+                    )
+                ])
+                line_bot_api.reply_message(
+                    reply_token,
+                    TextSendMessage(text=cancel_msg, quick_reply=quick)
+                )
+                return PlainTextResponse("OK", status_code=200)
+
+
+
+
             
             if user_msg == "服務說明":
                 quick_reply = QuickReply(items=[
