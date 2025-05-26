@@ -171,13 +171,13 @@ async def callback(request: Request):
                             "contents": [
                                 {
                                     "type": "text",
-                                    "text": "👤 臉部整形",
+                                    "text": "臉部整形",
                                     "weight": "bold",
                                     "size": "xl"
                                 },
                                 {
                                     "type": "text",
-                                    "text": "改善五官比例、提升整體臉部輪廓",
+                                    "text": "🌟 改善五官比例 ‧ 呈現自然對稱美",
                                     "size": "sm",
                                     "wrap": True,
                                     "color": "#666666"
@@ -217,7 +217,7 @@ async def callback(request: Request):
                                         },
                                         {
                                             "type": "text",
-                                            "text": "約 2～4 小時，恢復期約 1～2 週",
+                                            "text": "約 2～4 小時，恢復期約 2 週",
                                             "size": "sm",
                                             "color": "#111111",
                                             "wrap": True
@@ -234,6 +234,7 @@ async def callback(request: Request):
                                 {
                                     "type": "button",
                                     "style": "primary",
+                                    "color": "#00B900",
                                     "height": "sm",
                                     "action": {
                                         "type": "uri",
@@ -272,13 +273,13 @@ async def callback(request: Request):
                             "contents": [
                                 {
                                     "type": "text",
-                                    "text": "👁️ 眼整形",
+                                    "text": "眼整形",
                                     "weight": "bold",
                                     "size": "xl"
                                 },
                                 {
                                     "type": "text",
-                                    "text": "打造明亮有神的雙眼，提升整體眼部美感",
+                                    "text": "✨ 打造明亮雙眼 ‧ 提升整體眼部美感",
                                     "size": "sm",
                                     "wrap": True,
                                     "color": "#666666"
@@ -338,6 +339,7 @@ async def callback(request: Request):
                                 {
                                     "type": "button",
                                     "style": "primary",
+                                    "color": "#00B900",
                                     "height": "sm",
                                     "action": {
                                         "type": "uri",
@@ -373,8 +375,8 @@ async def callback(request: Request):
                             "spacing": "md",
                             "contents": 
                             [
-                                {"type": "text", "text": "🏋️‍♀️ 身體雕塑", "weight": "bold", "size": "xl"},
-                                {"type": "text", "text": "結合柔滴隆乳與自體脂肪，打造自然豐胸與曲線雕塑", "size": "sm", "wrap": True, "color": "#666666"},
+                                {"type": "text", "text": "身體雕塑", "weight": "bold", "size": "xl"},
+                                {"type": "text", "text": "💗 柔滴結合脂肪 ‧ 曲線更自然", "size": "sm", "wrap": True, "color": "#666666"},
                                 {
                                     "type": "box",
                                     "layout": "horizontal",
@@ -411,7 +413,7 @@ async def callback(request: Request):
                                         },
                                         {
                                             "type": "text",
-                                            "text": "手術約 2.5 小時，術後 1～2 週可回復日常活動",
+                                            "text": "手術約 3 小時，術後 1～2 週可回復日常活動",
                                             "size": "sm",
                                             "color": "#111111",
                                             "wrap": True
@@ -428,6 +430,7 @@ async def callback(request: Request):
                                 {
                                     "type": "button",
                                     "style": "primary",
+                                    "color": "#00B900",
                                     "height": "sm",
                                     "action": {
                                         "type": "uri",
@@ -463,13 +466,13 @@ async def callback(request: Request):
                             "contents": [
                                 {
                                     "type": "text",
-                                    "text": "💉 微整注射（肉毒桿菌）",
+                                    "text": "微整注射",
                                     "weight": "bold",
                                     "size": "xl"
                                 },
                                 {
                                     "type": "text",
-                                    "text": "放鬆過度收縮肌肉，改善皺紋與臉型，展現自然表情",
+                                    "text": "😊 撫紋緊緻臉型 ‧ 展現自然神情",
                                     "size": "sm",
                                     "wrap": True,
                                     "color": "#666666"
@@ -526,6 +529,7 @@ async def callback(request: Request):
                                 {
                                     "type": "button",
                                     "style": "primary",
+                                    "color": "#00B900",
                                     "height": "sm",
                                     "action": {
                                         "type": "uri",
@@ -559,8 +563,8 @@ async def callback(request: Request):
                             "layout": "vertical",
                             "spacing": "md",
                             "contents": [
-                                {"type": "text", "text": "🔆 雷射光療（皮秒雷射）", "weight": "bold", "size": "xl"},
-                                {"type": "text", "text": "改善斑點、凹疤與膚質，恢復期短、副作用低，適合怕反黑者", "size": "sm", "wrap": True, "color": "#666666"},
+                                {"type": "text", "text": "雷射光療", "weight": "bold", "size": "xl"},
+                                {"type": "text", "text": "💫 改善斑疤膚質 ‧ 怕反黑也安心", "size": "sm", "wrap": True, "color": "#666666"},
                                 {
                                     "type": "box",
                                     "layout": "horizontal",
@@ -589,6 +593,7 @@ async def callback(request: Request):
                                 {
                                     "type": "button",
                                     "style": "primary",
+                                    "color": "#00B900",
                                     "height": "sm",
                                     "action": {
                                         "type": "uri",
