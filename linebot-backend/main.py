@@ -7,7 +7,8 @@ from linebot.models import (
     QuickReply,
     QuickReplyButton,
     MessageAction,
-    FlexSendMessage  
+    FlexSendMessage,
+    URIAction
 )
 
 from dotenv import load_dotenv
@@ -58,7 +59,7 @@ async def callback(request: Request):
                             "layout": "vertical",
                             "spacing": "md",
                             "contents": [
-                                {"type": "text", "text": "請選擇動作", "weight": "bold", "size": "lg"},
+                                {"type": "text", "text": "請點選按鍵", "weight": "bold", "size": "lg"},
                                 {
                                     "type": "button",
                                     "style": "primary",
@@ -86,19 +87,24 @@ async def callback(request: Request):
                 )
                 line_bot_api.reply_message(reply_token, flex_message)
                 return PlainTextResponse("OK", status_code=200)
+     
             
             elif user_msg == "取消預約":
                 cancel_msg = (
                     "👉 取消預約請來電：02-2656-1988\n"
-                    "🕒 營業時間：週一至週五 11:00-20:00\n"
+                    "🕒 週一至週五 11:00-20:00\n"
                     "期待再次為您服務！"
                 )
+
                 quick = QuickReply(items=[
                     QuickReplyButton(
-                        action=MessageAction(label="撥打電話", text="tel:0226561988",
-                                            uri="tel:0226561988")    # LINE 會把按鈕 URI 當超連結
+                        action=URIAction(            # ⬅︎ 用 URIAction
+                            label="撥打電話",
+                            uri="tel:0226561988"    # ⬅︎ 直接放 tel: 連結
+                        )
                     )
                 ])
+
                 line_bot_api.reply_message(
                     reply_token,
                     TextSendMessage(text=cancel_msg, quick_reply=quick)
