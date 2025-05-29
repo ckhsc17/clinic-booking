@@ -3,8 +3,70 @@ from supabase_client import supabase
 from schemas import PatientCreate, AppointmentStatusUpdate, DoctorAvailabilityCreate, DoctorAvailabilityDelete, DoctorAvailabilityOut, DoctorAvailabilityResponse, PatientRoleUpdate
 from schemas import DrugRemainingCreate, DrugRemainingUpdate, DrugRemainingDelete, DrugRemainingResponse
 from datetime import datetime
+from typing import List, Dict
 
 router = APIRouter(tags=["Admin"])
+
+# @router.get("/patients/{user_id}")
+
+# 查詢所有病人
+@router.get("/patients/get_all")
+async def get_all_patient_full_summary():
+    # 查詢所有病人基本資料
+    patient_res = supabase.table("patients").select("*").execute()
+    patients = patient_res.data or []
+    if not patients:
+        return []
+
+    user_ids = [p["user_id"] for p in patients]
+
+    # 查詢所有 appointments
+    appt_res = supabase.table("appointments").select("*").in_("patient_id", user_ids).execute()
+    appointments = appt_res.data or []
+
+    # 查詢所有 doctors
+    doctor_ids = list({a["doctor_id"] for a in appointments if a.get("doctor_id")})
+    doctor_map = {}
+    if doctor_ids:
+        doctor_res = supabase.table("doctors").select("doctor_id, name").in_("doctor_id", doctor_ids).execute()
+        for doc in doctor_res.data:
+            doctor_map[doc["doctor_id"]] = doc["name"]
+
+    # 建立 patient_id → appointments list 對照
+    appt_map = {}
+    for appt in appointments:
+        pid = appt["patient_id"]
+        appt_map.setdefault(pid, []).append(appt)
+
+    # 組合每位病人完整資訊
+    result = []
+    for p in patients:
+        uid = p["user_id"]
+        appts = appt_map.get(uid, [])
+
+        # appointments 陣列排序後格式化
+        formatted_appointments = sorted([
+            {
+                "date": a["appointment_time"],
+                "doctor": doctor_map.get(a["doctor_id"], "Unknown"),
+                "reason": a["notes"]
+            }
+            for a in appts
+        ], key=lambda x: x["date"], reverse=True)
+
+        result.append({
+            "id": uid,
+            "name": p["name"],
+            "role": p.get("role", "Normal"),
+            "gender": p["gender"],
+            "birthdate": p["birthdate"],
+            "phoneNumber": p["phone"],
+            "email": p["email"],
+            "lastVisit": formatted_appointments[0]["date"] if formatted_appointments else None,
+            "appointments": formatted_appointments
+        })
+
+    return result
 
 # 新增客人
 @router.post("/patients/create")
