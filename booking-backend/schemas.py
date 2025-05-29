@@ -22,7 +22,13 @@ class PatientRoleUpdate(BaseModel):
     phone: str
     role: str = Field(..., pattern=r"^(VIP|Normal)$")
 
-    
+class PatientUpdateInfo(BaseModel):
+    id: int  # 用 patient_id 作為唯一識別
+    name: Optional[str]
+    phone: Optional[str]
+    email: Optional[str]
+    birthdate: Optional[str]  # yyyy-mm-dd
+    role: Optional[str]
 class DoctorBase(BaseModel):
     name: str
     specialty: str

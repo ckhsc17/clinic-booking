@@ -28,17 +28,23 @@ export default function PatientProfile() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const data = searchParams.get("data");
-  const patient: Patient = data ? JSON.parse(data) : null;
+  const patient_pre: Patient = data ? JSON.parse(data) : null;
+  const [patient, setPatientData] = useState<Patient | null>(patient_pre);
   console.log(patient);
 
   //const patient = patients.find((p) => p.id === Number(id));
   const isAdmin = true; // Simulated admin check; adjust based on your auth logic
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    phoneNumber: string;
+    email: string;
+    birthdate: string;
+    role: "Normal" | "VIP";
+  }>({
     phoneNumber: patient?.phoneNumber || "",
     email: patient?.email || "",
     birthdate: patient?.birthdate || "",
-    role: patient?.role || "",
+    role: patient?.role || "Normal",
   });
 
   const handleEdit = () => {
@@ -47,7 +53,7 @@ export default function PatientProfile() {
       phoneNumber: patient?.phoneNumber || "",
       email: patient?.email || "",
       birthdate: patient?.birthdate || "",
-      role: patient?.role || "",
+      role: patient?.role || "Normal",
     });
   };
 
@@ -60,14 +66,17 @@ export default function PatientProfile() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: patient.id,
-          name: patient.name,
+          id: patient_pre.id,
+          name: patient_pre.name,
           phone: formData.phoneNumber,
           email: formData.email,
           birthdate: formData.birthdate,
           role: formData.role,
         }),
+        
       });
+      console.log(res);
+      console.log(formData);
 
       if (!res.ok) throw new Error("Failed to update patient info");
       const result = await res.json();
@@ -76,6 +85,17 @@ export default function PatientProfile() {
       console.error("Error updating patient:", err);
       alert("Update failed.");
     }
+    //Object.assign(patient, formData);
+
+    setPatientData((prev) =>
+      prev ? {
+        ...prev,
+        phoneNumber: formData.phoneNumber,
+        email: formData.email,
+        birthdate: formData.birthdate,
+        role: formData.role,
+      } : null
+    );
 
     setIsEditing(false);
   };
@@ -171,7 +191,16 @@ export default function PatientProfile() {
               </div>
               <div>
                 <p className="text-gray-600">Role</p>
-                <p className="text-lg">{patient.role}</p>
+                  {isEditing ? (
+                    <input
+                      type="role"
+                      value={formData.role}
+                      onChange={(r) => handleInputChange(r, "role")}
+                      className="border p-2 rounded w-full"
+                    />
+                  ) : (
+                    <p className="text-lg">{patient.role}</p>
+                  )}
               </div>
             </div>
             {isAdmin && (

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query
 from supabase_client import supabase
 from schemas import PatientCreate, AppointmentStatusUpdate, DoctorAvailabilityCreate, DoctorAvailabilityDelete, DoctorAvailabilityOut, DoctorAvailabilityResponse, PatientRoleUpdate
-from schemas import DrugRemainingCreate, DrugRemainingUpdate, DrugRemainingDelete, DrugRemainingResponse
+from schemas import DrugRemainingCreate, DrugRemainingUpdate, DrugRemainingDelete, DrugRemainingResponse, PatientUpdateInfo
 from datetime import datetime
 from typing import List, Dict
 
@@ -18,7 +18,7 @@ async def get_all_patient_full_summary():
     if not patients:
         return []
 
-    user_ids = [p["user_id"] for p in patients]
+    user_ids = [p["patient_id"] for p in patients]
 
     # 查詢所有 appointments
     appt_res = supabase.table("appointments").select("*").in_("patient_id", user_ids).execute()
@@ -41,7 +41,7 @@ async def get_all_patient_full_summary():
     # 組合每位病人完整資訊
     result = []
     for p in patients:
-        uid = p["patient_id"]
+        uid = p["user_id"]
         appts = appt_map.get(uid, [])
 
         # appointments 陣列排序後格式化
@@ -65,6 +65,8 @@ async def get_all_patient_full_summary():
             "lastVisit": formatted_appointments[0]["date"] if formatted_appointments else None,
             "appointments": formatted_appointments
         })
+
+    result.sort(key=lambda x: x["id"])  # 這行會根據 user_id 排序
 
     return result
 
@@ -299,7 +301,7 @@ async def delete_drug_remain(info: DrugRemainingDelete):
 
 
 # 病人資料
-# 更新
+# 更新身份
 @router.patch("/patients/role")
 async def update_patient_role(info: PatientRoleUpdate):
     response = supabase.table("patients")\
@@ -307,11 +309,37 @@ async def update_patient_role(info: PatientRoleUpdate):
         .eq("name", info.name)\
         .eq("phone", info.phone)\
         .execute()
-    
+    print("response:", response)
+    print("response.data:", response.data)
+
     if not response or not response.data:
         raise HTTPException(status_code=404, detail="Patient not found or update failed")
     
     return {"status": "success", "message": f"Patient role updated to {info.role}"}
+
+@router.patch("/patients/update_info")
+async def update_patient_info(info: PatientUpdateInfo):
+    update_data = {}
+
+    # 僅更新有傳入的欄位
+    if info.name: update_data["name"] = info.name
+    if info.phone: update_data["phone"] = info.phone
+    if info.email: update_data["email"] = info.email
+    if info.birthdate: update_data["birthdate"] = info.birthdate
+    if info.role: update_data["role"] = info.role
+
+    if not update_data:
+        raise HTTPException(status_code=400, detail="No data provided for update.")
+
+    response = supabase.table("patients")\
+        .update(update_data)\
+        .eq("user_id", info.id)\
+        .execute()
+
+    if not response or not response.data:
+        raise HTTPException(status_code=404, detail="Patient not found or update failed.")
+
+    return {"status": "success", "message": "Patient info updated."}
 
 
 # 設定預約狀態
