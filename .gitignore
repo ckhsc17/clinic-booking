@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+venv/
 
 booking-backend/clinicbooking-456701-30e6e8572e11.json
 
