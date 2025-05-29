@@ -620,10 +620,11 @@ async def callback(request: Request):
                     # 呼叫自己的 server backend API
                     resp = requests.get(
                         f"https://booking-backend-prod-260019038661.asia-east1.run.app/api/patients/records",
-                        params={"user_id": user_id},
+                        params={"patient_id": user_id},
                         timeout=5
                     )
 
+                    # 這裡好像應該直接回傳尚未註冊（5/29）
                     if resp.status_code == 404:
                         print("🔍 使用者不存在，建立預設資料中...")
                         
