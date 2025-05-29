@@ -38,6 +38,7 @@ export default function PatientProfile() {
     phoneNumber: patient?.phoneNumber || "",
     email: patient?.email || "",
     birthdate: patient?.birthdate || "",
+    role: patient?.role || "",
   });
 
   const handleEdit = () => {
@@ -46,16 +47,36 @@ export default function PatientProfile() {
       phoneNumber: patient?.phoneNumber || "",
       email: patient?.email || "",
       birthdate: patient?.birthdate || "",
+      role: patient?.role || "",
     });
   };
 
-  const handleSave = () => {
-    if (patient) {
-      patient.phoneNumber = formData.phoneNumber;
-      patient.email = formData.email;
-      patient.birthdate = formData.birthdate;
-      // lastVisit remains unchanged for new patients
+
+  const handleSave = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/api/patients/update_info", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: patient.id,
+          name: patient.name,
+          phone: formData.phoneNumber,
+          email: formData.email,
+          birthdate: formData.birthdate,
+          role: formData.role,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update patient info");
+      const result = await res.json();
+      alert(result.message);
+    } catch (err) {
+      console.error("Error updating patient:", err);
+      alert("Update failed.");
     }
+
     setIsEditing(false);
   };
 
