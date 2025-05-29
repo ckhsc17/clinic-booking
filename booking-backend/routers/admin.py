@@ -195,6 +195,70 @@ async def get_raw_doctor_availability(name: str = Query(..., description="Doctor
         ]
     )
 
+# 查詢 completed treatments for admin tagging
+@router.get("/treatments")
+async def get_completed_treatments():
+    # Step 1: 查詢已完成的 appointments
+    appt_res = supabase.table("appointments") \
+        .select("*") \
+        .eq("status", "Completed") \
+        .execute()
+
+    appointments = appt_res.data or []
+    if not appointments:
+        return []
+
+    # 取出 id 列表
+    treatment_ids = list({a["treatment_id"] for a in appointments if a.get("treatment_id")})
+    patient_ids = list({a["patient_id"] for a in appointments})
+    doctor_ids = list({a["doctor_id"] for a in appointments})
+
+    # Step 2: 查詢 treatment name
+    treatment_map = {}
+    if treatment_ids:
+        treatment_res = supabase.table("treatments") \
+            .select("treatment_id, name") \
+            .in_("treatment_id", treatment_ids) \
+            .execute()
+        for t in treatment_res.data:
+            treatment_map[t["treatment_id"]] = t["name"]
+
+    # Step 3: 查詢 patient name
+    patient_map = {}
+    if patient_ids:
+        patient_res = supabase.table("patients") \
+            .select("patient_id, name") \
+            .in_("patient_id", patient_ids) \
+            .execute()
+        for p in patient_res.data:
+            patient_map[p["patient_id"]] = p["name"]
+
+    # Step 4: 查詢 doctor name
+    doctor_map = {}
+    if doctor_ids:
+        doctor_res = supabase.table("doctors") \
+            .select("doctor_id, name") \
+            .in_("doctor_id", doctor_ids) \
+            .execute()
+        for d in doctor_res.data:
+            doctor_map[d["doctor_id"]] = d["name"]
+
+    # Step 5: 整理成前端需要的格式（medications 由 admin 自行填）
+    result = []
+    for a in appointments:
+        result.append({
+            "id": a["appointment_id"],
+            "treatmentName": treatment_map.get(a["treatment_id"], "Unknown"),
+            "patientName": patient_map.get(a["patient_id"], "Unknown"),
+            "doctorName": doctor_map.get(a["doctor_id"], "Unknown"),
+            "date": a["appointment_time"],
+            "medications": []  # 預設空，由 admin 前端填入
+        })
+
+    return result
+
+
+
 # 藥品剩餘量
 # 建立資料
 @router.post("/drug_remain/create")

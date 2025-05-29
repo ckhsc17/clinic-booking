@@ -1,56 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "@/components/Sidebar";
 
 type Treatment = {
   id: number;
+  treatmentName: string;
   patientName: string;
-  patientId: number;
   doctorName: string;
-  doctorId: number;
   date: string;
-  medications: { drug: string; drugId: number; usage: string }[];
+  medications: { drug: string; usage: string }[];
 };
 
 export default function Treatments() {
-  const [treatments, setTreatments] = useState<Treatment[]>([
-    {
-      id: 1,
-      patientName: "John Doe",
-      patientId: 1,
-      doctorName: "Dr. Alice Thompson",
-      doctorId: 1,
-      date: "2025-05-18",
-      medications: [
-        { drug: "Aspirin", drugId: 101, usage: "500 mg" },
-        { drug: "Paracetamol", drugId: 102, usage: "1000 mg" },
-      ],
-    },
-    {
-      id: 2,
-      patientName: "Emily Carter",
-      patientId: 2,
-      doctorName: "Dr. Mark Evans",
-      doctorId: 2,
-      date: "2025-05-17",
-      medications: [{ drug: "Ibuprofen", drugId: 103, usage: "400 mg" }],
-    },
-  ]);
+  const [treatments, setTreatments] = useState<Treatment[]>([]);
+
+  useEffect(() => {
+    const fetchTreatments = async () => {
+      try {
+        const res = await fetch("http://localhost:8000/api/treatments");
+        if (!res.ok) throw new Error("Failed to fetch treatments");
+        const data: Treatment[] = await res.json();
+        console.log(data);
+        setTreatments(data);
+      } catch (error) {
+        console.error("Error fetching treatments:", error);
+      }
+    };
+
+    fetchTreatments();
+  }, []);
 
   const [editTreatmentId, setEditTreatmentId] = useState<number | null>(null);
-  const [newMedication, setNewMedication] = useState({ drug: "", drugId: 0, usage: "" });
-  const [editedMedications, setEditedMedications] = useState<{ [key: number]: { drug: string; drugId: number; usage: string }[] }>({});
+  const [newMedication, setNewMedication] = useState<{ drug: string; usage: string }>({ drug: "", usage: "" });
+  const [editedMedications, setEditedMedications] = useState<Record<number, { drug: string; usage: string }[]>>({});
 
   const handleEdit = (id: number) => {
     setEditTreatmentId(id);
-    setEditedMedications({ [id]: [...treatments.find(t => t.id === id)!.medications] });
+    setEditedMedications({
+      [id]: [...(treatments.find(t => t.id === id)!.medications)],
+    });
   };
 
   const handleAddMedication = (id: number) => {
     setEditTreatmentId(id);
-    setEditedMedications({ [id]: [...(editedMedications[id] || treatments.find(t => t.id === id)!.medications)] });
-    setNewMedication({ drug: "", drugId: 0, usage: "" });
+    setEditedMedications({
+      [id]: [...(editedMedications[id] || treatments.find(t => t.id === id)!.medications)],
+    });
+    setNewMedication({ drug: "", usage: "" });
   };
 
   const handleSave = (id: number) => {
@@ -62,25 +59,25 @@ export default function Treatments() {
 
   const handleCancel = () => {
     setEditTreatmentId(null);
-    setNewMedication({ drug: "", drugId: 0, usage: "" });
+    setNewMedication({ drug: "", usage: "" });
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: "drug" | "usage") => {
     setNewMedication({ ...newMedication, [field]: e.target.value });
   };
 
-  const handleMedicationChange = (index: number, field: string, value: string, id: number) => {
-    const updatedMeds = editedMedications[id]?.map((med, i) =>
+  const handleMedicationChange = (index: number, field: "drug" | "usage", value: string, id: number) => {
+    const updated = (editedMedications[id] || []).map((med, i) =>
       i === index ? { ...med, [field]: value } : med
-    ) || [];
-    setEditedMedications({ ...editedMedications, [id]: updatedMeds });
+    );
+    setEditedMedications({ ...editedMedications, [id]: updated });
   };
 
   const addNewMedication = (id: number) => {
     if (newMedication.drug && newMedication.usage) {
-      const updatedMeds = [...(editedMedications[id] || treatments.find(t => t.id === id)!.medications), newMedication];
-      setEditedMedications({ ...editedMedications, [id]: updatedMeds });
-      setNewMedication({ drug: "", drugId: 0, usage: "" });
+      const updated = [...(editedMedications[id] || treatments.find(t => t.id === id)!.medications), newMedication];
+      setEditedMedications({ ...editedMedications, [id]: updated });
+      setNewMedication({ drug: "", usage: "" });
     }
   };
 
@@ -95,57 +92,51 @@ export default function Treatments() {
               <thead>
                 <tr className="bg-gray-200 text-gray-700">
                   <th className="py-2 px-4 border-b">Treatment ID</th>
+                  <th className="py-2 px-4 border-b">Treatment Name</th>
                   <th className="py-2 px-4 border-b">Patient Name</th>
-                  <th className="py-2 px-4 border-b">Patient ID</th>
                   <th className="py-2 px-4 border-b">Doctor Name</th>
-                  <th className="py-2 px-4 border-b">Doctor ID</th>
                   <th className="py-2 px-4 border-b">Date</th>
                   <th className="py-2 px-4 border-b">Drug</th>
-                  <th className="py-2 px-4 border-b">Drug ID</th>
-                  <th className="py-2 px-4 border-b">Usage (mg/ml)</th>
+                  <th className="py-2 px-4 border-b">Usage</th>
                   <th className="py-2 px-4 border-b">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {treatments.length > 0 ? (
-                  treatments.map((treatment) =>
-                    treatment.medications.map((med, index) => (
-                      <tr key={`${treatment.id}-${index}`} className="hover:bg-gray-100">
-                        {index === 0 && (
-                          <>
-                            <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.id}</td>
-                            <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.patientName}</td>
-                            <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.patientId}</td>
-                            <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.doctorName}</td>
-                            <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.doctorId}</td>
-                            <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.date}</td>
-                          </>
-                        )}
-                        <td className="py-2 px-4 border-b">{med.drug}</td>
-                        <td className="py-2 px-4 border-b">{med.drugId}</td>
-                        <td className="py-2 px-4 border-b">{med.usage}</td>
-                        {index === 0 && (
-                          <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">
-                            <button
-                              onClick={() => handleEdit(treatment.id)}
-                              className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 mr-2 transition duration-200"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleAddMedication(treatment.id)}
-                              className="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 transition duration-200"
-                            >
-                              Add
-                            </button>
-                          </td>
-                        )}
-                      </tr>
-                    ))
-                  )
+                {treatments.length > 0 ? treatments.map(treatment =>
+                  treatment.medications.map((med, idx) => (
+                    <tr key={`${treatment.id}-${idx}`} className="hover:bg-gray-100">
+                      {idx === 0 && (
+                        <>
+                          <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.id}</td>
+                          <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.treatmentName}</td>
+                          <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.patientName}</td>
+                          <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.doctorName}</td>
+                          <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">{treatment.date}</td>
+                        </>
+                      )}
+                      <td className="py-2 px-4 border-b">{med.drug}</td>
+                      <td className="py-2 px-4 border-b">{med.usage}</td>
+                      {idx === 0 && (
+                        <td rowSpan={treatment.medications.length} className="py-2 px-4 border-b">
+                          <button
+                            onClick={() => handleEdit(treatment.id)}
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-blue-700 mr-2 transition duration-200"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleAddMedication(treatment.id)}
+                            className="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 transition duration-200"
+                          >
+                            Add
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+                  ))
                 ) : (
                   <tr>
-                    <td colSpan={10} className="py-2 px-4 text-center text-gray-500">
+                    <td colSpan={8} className="py-2 px-4 text-center text-gray-500">
                       No treatments available.
                     </td>
                   </tr>
@@ -153,63 +144,53 @@ export default function Treatments() {
               </tbody>
             </table>
           </div>
+
           {editTreatmentId !== null && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
                 <h2 className="text-xl font-semibold mb-4">Edit/Add Medications</h2>
                 <div className="space-y-4">
-                  {(editedMedications[editTreatmentId] || []).map((med, index) => (
-                    <div key={index} className="flex space-x-2">
+                  {/* 已有藥品 */}
+                  {(editedMedications[editTreatmentId] || []).map((med, idx) => (
+                    <div key={idx} className="flex space-x-2">
                       <input
                         type="text"
                         value={med.drug}
-                        onChange={(e) => handleMedicationChange(index, "drug", e.target.value, editTreatmentId!)}
-                        className="border p-2 rounded w-1/3"
+                        onChange={e => handleMedicationChange(idx, "drug", e.target.value, editTreatmentId!)}
+                        className="border p-2 rounded w-1/2"
                         placeholder="Drug"
-                      />
-                      <input
-                        type="number"
-                        value={med.drugId}
-                        onChange={(e) => handleMedicationChange(index, "drugId", e.target.value, editTreatmentId!)}
-                        className="border p-2 rounded w-1/6"
-                        placeholder="Drug ID"
                       />
                       <input
                         type="text"
                         value={med.usage}
-                        onChange={(e) => handleMedicationChange(index, "usage", e.target.value, editTreatmentId!)}
-                        className="border p-2 rounded w-1/3"
-                        placeholder="Usage (mg/ml)"
+                        onChange={e => handleMedicationChange(idx, "usage", e.target.value, editTreatmentId!)}
+                        className="border p-2 rounded w-1/2"
+                        placeholder="Usage"
                       />
                     </div>
                   ))}
+
+                  {/* 新增藥品 */}
                   <div className="flex space-x-2">
                     <input
                       type="text"
                       value={newMedication.drug}
-                      onChange={(e) => handleInputChange(e, "drug")}
-                      className="border p-2 rounded w-1/3"
+                      onChange={e => handleInputChange(e, "drug")}
+                      className="border p-2 rounded w-1/2"
                       placeholder="New Drug"
-                    />
-                    <input
-                      type="number"
-                      value={newMedication.drugId}
-                      onChange={(e) => handleInputChange(e, "drugId")}
-                      className="border p-2 rounded w-1/6"
-                      placeholder="New Drug ID"
                     />
                     <input
                       type="text"
                       value={newMedication.usage}
-                      onChange={(e) => handleInputChange(e, "usage")}
-                      className="border p-2 rounded w-1/3"
-                      placeholder="New Usage (mg/ml)"
+                      onChange={e => handleInputChange(e, "usage")}
+                      className="border p-2 rounded w-1/2"
+                      placeholder="New Usage"
                     />
                     <button
                       onClick={() => addNewMedication(editTreatmentId!)}
                       className="bg-green-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-green-700 transition duration-200"
                     >
-                      Add Medication
+                      Add
                     </button>
                   </div>
                 </div>
