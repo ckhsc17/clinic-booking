@@ -41,7 +41,7 @@ async def get_all_patient_full_summary():
     # 組合每位病人完整資訊
     result = []
     for p in patients:
-        uid = p["user_id"]
+        uid = p["patient_id"]
         appts = appt_map.get(uid, [])
 
         # appointments 陣列排序後格式化

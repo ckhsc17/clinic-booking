@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import PatientSearch from "@/components/PatientSearch";
@@ -17,52 +17,9 @@ type Patient = {
   appointments: { date: string; doctor: string; reason: string }[];
 };
 
-const initialPatients: Patient[] = [
-  {
-    id: 1,
-    name: "John Doe",
-    role: "Normal",
-    gender: "Male",
-    lastVisit: "2025-05-18",
-    phoneNumber: "123-456-7890",
-    email: "john.doe@example.com",
-    birthdate: "1990-01-15",
-    appointments: [
-      { date: "2025-05-18", doctor: "Dr. Alice Thompson", reason: "Routine Checkup" },
-      { date: "2025-05-10", doctor: "Dr. Mark Evans", reason: "Flu Symptoms" },
-    ],
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    role: "VIP",
-    gender: "Female",
-    lastVisit: "2025-05-17",
-    phoneNumber: "234-567-8901",
-    email: "jane.smith@example.com",
-    birthdate: "1985-03-22",
-    appointments: [
-      { date: "2025-05-17", doctor: "Dr. Linda Hayes", reason: "Annual Physical" },
-    ],
-  },
-  {
-    id: 3,
-    name: "Alex Johnson",
-    role: "Normal",
-    gender: "Other",
-    lastVisit: "2025-05-16",
-    phoneNumber: "345-678-9012",
-    email: "alex.johnson@example.com",
-    birthdate: "1995-07-30",
-    appointments: [
-      { date: "2025-05-16", doctor: "Dr. Alice Thompson", reason: "Allergy Testing" },
-    ],
-  },
-];
-
 export default function PatientsPage() {
   const router = useRouter();
-  const [patients, setPatients] = useState<Patient[]>(initialPatients);
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>(patients);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newPatient, setNewPatient] = useState({
@@ -77,8 +34,31 @@ export default function PatientsPage() {
     appointments: [] as { date: string; doctor: string; reason: string }[],
   });
 
-  const handlePatientClick = (id: number) => {
-    router.push(`/patients/${id}`);
+  // ✅ 初次載入時 fetch 患者資料
+  useEffect(() => {
+    async function loadPatients() {
+      try {
+        const res = await fetch("http://localhost:8000/api/patients/get_all", {
+          cache: "no-store",
+        });
+        if (!res.ok) throw new Error("Failed to fetch patients");
+        const data: Patient[] = await res.json();
+        setPatients(data);
+        setFilteredPatients(data);
+      } catch (err) {
+        console.error("Error fetching patients:", err);
+      }
+    }
+    loadPatients();
+  }, []);
+
+  const handlePatientClick = (patient: Patient) => {
+    console.log("Patient clicked:", patient)
+    const query = new URLSearchParams({
+      data: JSON.stringify(patient),
+    }).toString();
+
+    router.push(`/patients/${patient.id}?${query}`);
   };
 
   const handleAddPatient = () => {
@@ -123,6 +103,8 @@ export default function PatientsPage() {
     setNewPatient({ ...newPatient, [field]: value });
   };
 
+  console.log("patients:", patients);
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
@@ -154,7 +136,7 @@ export default function PatientsPage() {
                   <tr key={patient.id} className="border-b border-gray-200 hover:bg-gray-100">
                     <td
                       className="py-3 px-6 text-blue-600 cursor-pointer hover:underline"
-                      onClick={() => handlePatientClick(patient.id)}
+                      onClick={() => handlePatientClick(patients[patient.id - 1])}
                     >
                       {patient.name}
                     </td>

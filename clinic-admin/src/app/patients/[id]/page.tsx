@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useRouter, useParams } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 
@@ -22,53 +23,15 @@ type Patient = {
   appointments: Appointment[];
 };
 
-const patients: Patient[] = [
-  {
-    id: 1,
-    name: "John Doe",
-    role: "Normal",
-    gender: "Male",
-    lastVisit: "2025-05-18",
-    phoneNumber: "123-456-7890",
-    email: "john.doe@example.com",
-    birthdate: "1990-01-15",
-    appointments: [
-      { date: "2025-05-18", doctor: "Dr. Alice Thompson", reason: "Routine Checkup" },
-      { date: "2025-05-10", doctor: "Dr. Mark Evans", reason: "Flu Symptoms" },
-    ],
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    role: "VIP",
-    gender: "Female",
-    lastVisit: "2025-05-17",
-    phoneNumber: "234-567-8901",
-    email: "jane.smith@example.com",
-    birthdate: "1985-03-22",
-    appointments: [
-      { date: "2025-05-17", doctor: "Dr. Linda Hayes", reason: "Annual Physical" },
-    ],
-  },
-  {
-    id: 3,
-    name: "Alex Johnson",
-    role: "Normal",
-    gender: "Other",
-    lastVisit: "2025-05-16",
-    phoneNumber: "345-678-9012",
-    email: "alex.johnson@example.com",
-    birthdate: "1995-07-30",
-    appointments: [
-      { date: "2025-05-16", doctor: "Dr. Alice Thompson", reason: "Allergy Testing" },
-    ],
-  },
-];
-
 export default function PatientProfile() {
   const { id } = useParams();
   const router = useRouter();
-  const patient = patients.find((p) => p.id === Number(id));
+  const searchParams = useSearchParams();
+  const data = searchParams.get("data");
+  const patient: Patient = data ? JSON.parse(data) : null;
+  console.log(patient);
+
+  //const patient = patients.find((p) => p.id === Number(id));
   const isAdmin = true; // Simulated admin check; adjust based on your auth logic
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -183,7 +146,11 @@ export default function PatientProfile() {
               </div>
               <div>
                 <p className="text-gray-600">Last Visit</p>
-                <p className="text-lg">{patient.lastVisit === "No Visits Yet" ? "No Visits Yet" : patient.lastVisit}</p>
+                <p className="text-lg">{patient.lastVisit ? patient.lastVisit : "No Visits Yet"}</p>
+              </div>
+              <div>
+                <p className="text-gray-600">Role</p>
+                <p className="text-lg">{patient.role}</p>
               </div>
             </div>
             {isAdmin && (
