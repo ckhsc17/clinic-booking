@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Sidebar from "@/components/Sidebar";
 
@@ -11,38 +11,33 @@ interface Doctor {
   specialty: string;
 }
 
-// Mock doctor data (to be replaced with backend API call)
-const doctors: Doctor[] = [
-  { id: 1, name: 'Dr. Alice Thompson', specialty: 'Cardiology' },
-  { id: 2, name: 'Dr. Mark Evans', specialty: 'Neurology' },
-  { id: 3, name: 'Dr. Linda Hayes', specialty: 'Pediatrics' },
-  { id: 4, name: 'Dr. James Wilson', specialty: 'Orthopedics' },
-  { id: 5, name: 'Dr. Sarah Chen', specialty: 'Dermatology' },
-];
-
 const DoctorsPage: React.FC = () => {
-  // State for loading (for future API integration)
+  // State for doctors, loading, and error
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Placeholder for future API call
-  const fetchDoctors = async () => {
-    setIsLoading(true);
-    try {
-      // Future API call would go here
-      // const response = await fetch('/api/doctors');
-      // const data = await response.json();
-      // return data;
-    } catch (error) {
-      console.error('Error fetching doctors:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // Fetch doctors from backend
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/doctors');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch doctors: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setDoctors(data);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching doctors:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  // Use effect for fetching doctors (uncomment when API is ready)
-  // useEffect(() => {
-  //   fetchDoctors();
-  // }, []);
+    fetchDoctors();
+  }, []);
 
   return (
     <div className="flex">
@@ -53,9 +48,14 @@ const DoctorsPage: React.FC = () => {
       <div className="flex-1 p-6">
         <h1 className="text-3xl font-bold mb-6">Our Doctors</h1>
         
+        {/* Error State */}
+        {error && <div className="text-red-500 mb-4">{error}</div>}
+
         {/* Loading State */}
         {isLoading ? (
           <div className="text-center">Loading doctors...</div>
+        ) : doctors.length === 0 ? (
+          <div className="text-center">No doctors available.</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {doctors.map((doctor) => (
