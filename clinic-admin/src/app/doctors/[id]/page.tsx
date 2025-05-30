@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useParams } from 'next/navigation';
 import Sidebar from "@/components/Sidebar";
 
-// Define interfaces for schedule data
+// Define interfaces for the data
 interface TimeSlot {
   time: string;
   status: 'available' | 'unavailable';
@@ -27,96 +27,133 @@ interface Doctor {
 }
 
 const DoctorSchedulePage: React.FC = () => {
-  const router = useRouter();
-  const { id } = router.query; // Get the doctor ID from the URL
+  const params = useParams();
+  const id = params?.id;
 
   const [doctor, setDoctor] = useState<Doctor | null>(null);
   const [schedules, setSchedules] = useState<TimeSlot[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Helper function to format ISO time to readable format
+  // Format ISO time to readable format
   const formatTime = (isoTime: string) => {
     const date = new Date(isoTime);
     let hours = date.getHours();
     const minutes = date.getMinutes();
     const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12 || 12; // Convert to 12-hour format
+    hours = hours % 12 || 12;
     return `${hours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
   };
 
-  // Fetch doctor details and availability
+  // Fetch doctor details and schedule
   useEffect(() => {
-    if (!id) return;
+    if (!id || typeof id !== 'string') {
+      setError('Invalid or missing doctor ID');
+      setIsLoading(false);
+      return;
+    }
 
-    const fetchDoctorAndSchedule = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
+      setError(null);
+
       try {
-        // Fetch doctor details
-        const doctorResponse = await fetch(`http://127.0.0.1:8000/api/doctors/${id}`);
-        if (!doctorResponse.ok) {
-          throw new Error(`Failed to fetch doctor: ${doctorResponse.statusText}`);
+        const doctorId = parseInt(id);
+        if (isNaN(doctorId)) {
+          throw new Error(`Invalid doctor ID: ${id}`);
         }
-        const doctorData = await doctorResponse.json();
+
+        console.log("Fetching doctor details for ID:", doctorId);
+        // Fetch doctor details
+        const doctorResponse = await fetch(`http://127.0.0.1:8000/api/doctors/${doctorId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!doctorResponse.ok) {
+          const errorText = await doctorResponse.text();
+          throw new Error(`Failed to fetch doctor: ${doctorResponse.statusText} - ${errorText}`);
+        }
+        const doctorData: Doctor = await doctorResponse.json();
         setDoctor(doctorData);
 
-        // Fetch doctor availability
-        const scheduleResponse = await fetch(`http://127.0.0.1:8000/api/doctors/available_times?doctor_id=${id}`);
+        console.log("Fetching schedule for doctor_id:", doctorId);
+        const scheduleUrl = `http://127.0.0.1:8000/api/doctors/availability?doctor_id=${doctorId}`;
+        console.log("Schedule request URL:", scheduleUrl);
+        // Fetch doctor schedule
+        const scheduleResponse = await fetch(scheduleUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
         if (!scheduleResponse.ok) {
-          throw new Error(`Failed to fetch schedule: ${scheduleResponse.statusText}`);
+          const errorText = await scheduleResponse.text();
+          throw new Error(`Failed to fetch schedule: ${scheduleResponse.statusText} - ${errorText}`);
         }
         const scheduleData: DoctorAvailabilityResponse = await scheduleResponse.json();
 
-        // Transform the availability data into time slots
-        const slots: TimeSlot[] = scheduleData.available_times.map((availability) => ({
-          time: `${formatTime(availability.start)} - ${formatTime(availability.end)}`,
-          status: availability.is_bookable ? 'available' : 'unavailable',
+        // Transform schedule data into displayable time slots
+        const slots: TimeSlot[] = scheduleData.available_times.map((slot) => ({
+          time: `${formatTime(slot.start)} - ${formatTime(slot.end)}`,
+          status: slot.is_bookable ? 'available' : 'unavailable',
         }));
         setSchedules(slots);
       } catch (err) {
         setError(err.message);
-        console.error('Error:', err);
+        console.error('Fetch error details:', err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchDoctorAndSchedule();
+    fetchData();
   }, [id]);
 
-  if (!id) return <div>Loading...</div>;
-
   return (
-    <div className="flex">
+    <div className="flex min-h-screen">
       {/* Sidebar */}
       <Sidebar />
-      
+
       {/* Main Content */}
-      <div className="flex-1 p-6">
-        <h1 className="text-3xl font-bold mb-6">{doctor ? `${doctor.name}'s Schedule` : 'Doctor Schedule'}</h1>
+      <div className="flex-1 p-8 bg-gray-100">
+        {/* Doctor Name */}
+        <h1 className="text-4xl font-bold mb-6 text-gray-800">
+          {isLoading ? 'Loading...' : doctor ? `${doctor.name}'s Schedule` : 'Doctor Not Found'}
+        </h1>
 
-        {/* Error State */}
-        {error && <div className="text-red-500 mb-4">{error}</div>}
+        {/* Error Display */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg">
+            {error}
+          </div>
+        )}
 
-        {/* Loading State */}
+        {/* Schedule Display */}
         {isLoading ? (
-          <div className="text-center">Loading schedule...</div>
+          <div className="text-center text-gray-600">Loading schedule...</div>
         ) : schedules.length === 0 ? (
-          <div className="text-center">No schedule available.</div>
+          <div className="text-center text-gray-600">No available time slots.</div>
         ) : (
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Available Time Slots</h2>
-            <div className="space-y-2">
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-700">Available Time Slots</h2>
+            <div className="space-y-3">
               {schedules.map((slot, index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <span className="w-32">{slot.time}</span>
-                  <div
-                    className={`flex-1 p-2 rounded ${
-                      slot.status === 'available' ? 'bg-green-500' : 'bg-red-500'
-                    } text-white`}
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-gray-50 rounded-md"
+                >
+                  <span className="text-gray-800 font-medium">{slot.time}</span>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                      slot.status === 'available'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-red-100 text-red-700'
+                    }`}
                   >
                     {slot.status.charAt(0).toUpperCase() + slot.status.slice(1)}
-                  </div>
+                  </span>
                 </div>
               ))}
             </div>
