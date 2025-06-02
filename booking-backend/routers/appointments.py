@@ -1,20 +1,20 @@
 # routers/appointments.py
 
 from fastapi import APIRouter, HTTPException
-from uuid import uuid4
 from supabase_client import supabase
-from schemas import AppointmentCreate, BookingInfo
-from datetime import timedelta
-
-# import calendar.py
+from schemas import AppointmentCreate, BookingInfo, AppointmentStatusUpdate
+from datetime import datetime, timedelta
 from services.calendar import create_event_from_booking
+from pydantic import BaseModel
 
 router = APIRouter(tags=["Appointments"])
 
+class RescheduleData(BaseModel):
+    date: str  # e.g., "2025-05-15"
+    time: str  # e.g., "10:00"
+
 @router.post("/create_appointments")
 async def create_appointment(info: AppointmentCreate):
-    #new_id = str(uuid4())
-    # 根據doctor_id查doctor_name，根據treatment_id查treatment_name
     doctor_resp = supabase.table("doctors").select("name").eq("doctor_id", info.doctor_id).execute()
     if not doctor_resp or not doctor_resp.data:
         raise HTTPException(status_code=404, detail="Doctor not found")
@@ -22,11 +22,10 @@ async def create_appointment(info: AppointmentCreate):
     treatment_resp = supabase.table("treatments").select("name").eq("treatment_id", info.treatment_id).execute()
     if not treatment_resp or not treatment_resp.data:
         raise HTTPException(status_code=404, detail="Treatment not found")
-    treatment_name = treatment_resp.data[0]["name"]    
+    treatment_name = treatment_resp.data[0]["name"]
 
     print(f"Doctor Name: {doctor_name}, Treatment Name: {treatment_name}")
 
-    # Step 1: 建立 Google Calendar 活動，取得 event_id
     booking_info = BookingInfo(
         doctor_name=doctor_name,
         treatment=treatment_name,
@@ -39,11 +38,8 @@ async def create_appointment(info: AppointmentCreate):
         event_id = create_event_from_booking(booking_info)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create Google Calendar event: {str(e)}")
-   
 
-    # Step 2: 儲存預約資訊到 appointments 表格
     response = supabase.table("appointments").insert({
-        #"appointment_id": new_id,
         "patient_id": info.patient_id,
         "doctor_id": info.doctor_id,
         "treatment_id": info.treatment_id,
@@ -53,16 +49,135 @@ async def create_appointment(info: AppointmentCreate):
         "event_id": event_id
     }).execute()
 
-    # Step 3: 更新對應 availability 的 is_bookable 為 false
-    # 查找符合時間區間的那筆 Doctor_Availability
-
     supabase.table("doctor_availability").update({
         "is_bookable": False
     }).eq("doctor_id", info.doctor_id).lte("available_start", info.appointment_time.isoformat()).gte("available_end", info.appointment_time.isoformat()).execute()
 
- 
     if not response or not response.data:
         raise HTTPException(status_code=500, detail="Failed to save appointment info to database")
+
+    return {"status": "success"}
+
+@router.get("/appointments")
+async def get_appointments():
+    response = supabase.table("appointments").select("*").execute()
+    if not response or not response.data:
+        return []
+
+    appointments = []
+    for appt in response.data:
+        patient_resp = supabase.table("patients").select("name").eq("patient_id", appt["patient_id"]).execute()
+        treatment_resp = supabase.table("treatments").select("name").eq("treatment_id", appt["treatment_id"]).execute()
+
+        patient_name = patient_resp.data[0]["name"] if patient_resp and patient_resp.data else "Unknown"
+        treatment_name = treatment_resp.data[0]["name"] if treatment_resp and treatment_resp.data else "Unknown"
+
+        appt_time = datetime.fromisoformat(appt["appointment_time"].replace("Z", "+00:00"))
+
+        appointments.append({
+            "id": appt["appointment_id"],
+            "patientName": patient_name,
+            "type": treatment_name,
+            "date": appt_time.strftime("%Y-%m-%d"),
+            "time": appt_time.strftime("%I:%M %p"),
+            "status": appt["status"]
+        })
+
+    return appointments
+
+@router.post("/appointments/{id}/confirm")
+async def confirm_appointment(id: int):
+    # Fetch current appointment to check status
+    response = supabase.table("appointments").select("status").eq("appointment_id", id).execute()
+    if not response or not response.data:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    current_status = response.data[0]["status"]
+    if current_status not in ["Pending", "Confirmed"]:  # Only allow transition from Pending
+        raise HTTPException(status_code=400, detail="Cannot confirm an appointment that is not Pending")
+
+    update_response = supabase.table("appointments").update({"status": "Confirmed"}).eq("appointment_id", id).execute()
+    if not update_response or not update_response.data:
+        raise HTTPException(status_code=500, detail="Failed to confirm appointment")
+    return {"status": "success"}
+
+@router.post("/appointments/{id}/deny")
+async def deny_appointment(id: int):
+    # Fetch current appointment to check status
+    response = supabase.table("appointments").select("*").eq("appointment_id", id).execute()
+    if not response or not response.data:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    appt = response.data[0]
+    if appt["status"] not in ["Pending", "Confirmed"]:  # Only allow transition from Pending or Confirmed
+        raise HTTPException(status_code=400, detail="Cannot deny an appointment that is not Pending or Confirmed")
+
+    supabase.table("appointments").update({"status": "Cancelled"}).eq("appointment_id", id).execute()
+    
+    supabase.table("doctor_availability").update({
+        "is_bookable": True
+    }).eq("doctor_id", appt["doctor_id"]).lte("available_start", appt["appointment_time"]).gte("available_end", appt["appointment_time"]).execute()
     
     return {"status": "success"}
 
+@router.post("/appointments/{id}/cancel")
+async def cancel_appointment(id: int):
+    response = supabase.table("appointments").select("*").eq("appointment_id", id).execute()
+    if not response or not response.data:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    
+    appt = response.data[0]
+    if appt["status"] not in ["Confirmed"]:  # Only allow cancellation from Confirmed
+        raise HTTPException(status_code=400, detail="Cannot cancel an appointment that is not Confirmed")
+
+    supabase.table("appointments").update({"status": "Cancelled"}).eq("appointment_id", id).execute()
+    
+    supabase.table("doctor_availability").update({
+        "is_bookable": True
+    }).eq("doctor_id", appt["doctor_id"]).lte("available_start", appt["appointment_time"]).gte("available_end", appt["appointment_time"]).execute()
+    
+    return {"status": "success"}
+
+@router.post("/appointments/{id}/reschedule")
+async def reschedule_appointment(id: int, data: RescheduleData):
+    appt_resp = supabase.table("appointments").select("*").eq("appointment_id", id).execute()
+    if not appt_resp or not appt_resp.data:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    appt = appt_resp.data[0]
+
+    doctor_resp = supabase.table("doctors").select("name").eq("doctor_id", appt["doctor_id"]).execute()
+    treatment_resp = supabase.table("treatments").select("name").eq("treatment_id", appt["treatment_id"]).execute()
+    doctor_name = doctor_resp.data[0]["name"] if doctor_resp and doctor_resp.data else "Unknown"
+    treatment_name = treatment_resp.data[0]["name"] if treatment_resp and treatment_resp.data else "Unknown"
+
+    new_time = datetime.fromisoformat(f"{data.date}T{data.time}:00+00:00")
+    booking_info = BookingInfo(
+        doctor_name=doctor_name,
+        treatment=treatment_name,
+        start_time=new_time.isoformat(),
+        end_time=(new_time + timedelta(hours=1)).isoformat(),
+        note=apt["notes"]
+    )
+
+    try:
+        event_id = create_event_from_booking(booking_info)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create Google Calendar event: {str(e)}")
+
+    response = supabase.table("appointments").update({
+        "appointment_time": new_time.isoformat(),
+        "event_id": event_id
+    }).eq("appointment_id", id).execute()
+
+    if not response or not response.data:
+        raise HTTPException(status_code=500, detail="Failed to reschedule appointment")
+
+    supabase.table("doctor_availability").update({
+        "is_bookable": True
+    }).eq("doctor_id", appt["doctor_id"]).lte("available_start", appt["appointment_time"]).gte("available_end", appt["appointment_time"]).execute()
+
+    supabase.table("doctor_availability").update({
+        "is_bookable": False
+    }).eq("doctor_id", appt["doctor_id"]).lte("available_start", new_time.isoformat()).gte("available_end", new_time.isoformat()).execute()
+
+    return {"status": "success"}

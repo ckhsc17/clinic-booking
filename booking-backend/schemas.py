@@ -135,3 +135,8 @@ class BookingInfo(BaseModel):
     start_time: str  # e.g. '2025-04-22T15:00:00+08:00'
     end_time: str    # e.g. '2025-04-22T15:30:00+08:00'
     note: Optional[str] = None
+
+# Add to schemas.py
+class RescheduleData(BaseModel):
+    date: str  # e.g., "2025-05-15"
+    time: str  # e.g., "10:00"
