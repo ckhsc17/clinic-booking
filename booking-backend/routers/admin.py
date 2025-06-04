@@ -19,9 +19,11 @@ async def get_all_patient_full_summary():
         return []
 
     user_ids = [p["patient_id"] for p in patients]
+    print("user_ids:", user_ids[:4])
 
     # 查詢所有 appointments
     appt_res = supabase.table("appointments").select("*").in_("patient_id", user_ids).execute()
+    print("appt_res:", appt_res)
     appointments = appt_res.data or []
 
     # 查詢所有 doctors
@@ -41,8 +43,9 @@ async def get_all_patient_full_summary():
     # 組合每位病人完整資訊
     result = []
     for p in patients:
-        uid = p["user_id"]
-        appts = appt_map.get(uid, [])
+        uid = p["user_id"] # 利於admin前端排序
+        pid = p["patient_id"]
+        appts = appt_map.get(pid, [])
 
         # appointments 陣列排序後格式化
         formatted_appointments = sorted([

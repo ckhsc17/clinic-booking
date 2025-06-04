@@ -109,7 +109,10 @@ const DoctorSchedulePage: React.FC = () => {
         console.log("Fetching schedule for doctor_id:", doctorId);
         const startDateStr = format(dateRange[0].startDate, 'yyyy-MM-dd');
         const endDateStr = format(dateRange[0].endDate, 'yyyy-MM-dd');
-        const scheduleUrl = `https://booking-backend-prod-260019038661.asia-east1.run.app/api/doctors/availability?doctor_id=${doctorId}&start_date=${startDateStr}&end_date=${endDateStr}`;
+        const doctorName = doctorData.name;
+        console.log("Doctor name:", doctorName);
+
+        const scheduleUrl = `http://localhost:8000/api/admin_get_doctor_available_times?name=${doctorName}`; //&start_date=${startDateStr}&end_date=${endDateStr}
         console.log("Schedule request URL:", scheduleUrl);
         const scheduleResponse = await fetch(scheduleUrl, {
           method: 'GET',

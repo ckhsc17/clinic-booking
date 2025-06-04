@@ -60,7 +60,7 @@ export default function PatientProfile() {
 
   const handleSave = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/patients/update_info", {
+      const res = await fetch("https://booking-backend-prod-260019038661.asia-east1.run.app/api/patients/update_info", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
