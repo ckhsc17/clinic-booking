@@ -39,7 +39,7 @@ class DoctorBase(BaseModel):
 class DoctorCreate(DoctorBase): pass
 
 class DoctorAvailabilityCreate(BaseModel):
-    doctor_id: int
+    doctor_id: Optional[int]
     available_start: datetime
     available_end: datetime
     is_bookable: Optional[bool] = True

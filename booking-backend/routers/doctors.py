@@ -81,6 +81,7 @@ async def get_doctor_available_times(
 
         return DoctorAvailabilityResponse(
             doctor_id=doctor_id,
+            doctor_name=None,
             available_times=available_times
         )
 
