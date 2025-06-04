@@ -50,7 +50,7 @@ async def callback(request: Request):
             user_msg = event["message"]["text"]
             if user_msg == "我要預約":
                 user_id = event["source"]["userId"]          # 取得 LINE 使用者 ID
-                print("使用者 ID:", user_id)
+                print("我要預約使用者 ID:", user_id)
 
                 flex_message = FlexSendMessage(
                     alt_text="預約選項",
@@ -614,7 +614,7 @@ async def callback(request: Request):
             elif user_msg == "查詢紀錄":
                 print("收到查詢紀錄請求")
                 user_id = event["source"]["userId"]
-                print("使用者 ID:", user_id)
+                print("查詢紀錄使用者 ID:", user_id)
 
                 try:
                     # 呼叫自己的 server backend API

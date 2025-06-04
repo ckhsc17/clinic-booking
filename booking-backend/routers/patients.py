@@ -23,12 +23,12 @@ async def verify_user(user_id: str = Query(..., description="LINE UserId")):
 
 @router.get("/patients/records", response_model=PatientRecordResponse)
 async def get_patient_record(
-    user_id: str = Query(..., description="LINE UserId")
+    patient_id: str = Query(..., description="LINE UserId")
 ):
     # 1️⃣ 確認病患存在（以 patient_id 欄位儲存 LINE user_id）
     patient_res = supabase.table("patients") \
         .select("patient_id") \
-        .eq("patient_id", user_id) \
+        .eq("patient_id", patient_id) \
         .maybe_single() \
         .execute()
     if not patient_res or not patient_res.data:
@@ -38,7 +38,7 @@ async def get_patient_record(
     #.eq("status", "completed") \
     appt_res = supabase.table("appointments") \
         .select("appointment_id, appointment_time, treatment_id") \
-        .eq("patient_id", user_id) \
+        .eq("patient_id", patient_id) \
         .order("appointment_time", desc=True) \
         .limit(1) \
         .execute()
@@ -69,7 +69,7 @@ async def get_patient_record(
     # 4️⃣ 查 drug_remain 取剩餘藥量
     rem_res = supabase.table("drug_remain") \
         .select("medicine_id, remaining_quantity, unit") \
-        .eq("user_id", user_id) \
+        .eq("user_id", patient_id) \
         .execute()
     print(rem_res)
 
