@@ -19,7 +19,7 @@ def notify_linebot_push(patient_id: str, message: str):
         response = requests.post(
             url="https://linebot-backend-prod-260019038661.asia-east1.run.app/push/appointment_success",
             json={
-                "patient_id": patient_id,
+                "user_id": patient_id,
                 "message": message
             },
             timeout=5
