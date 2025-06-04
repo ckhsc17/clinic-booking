@@ -23,6 +23,7 @@ export default function LineRedirect() {
         console.log("API 回傳資料：", data);
 
         const isMember = data.status === "success";
+        localStorage.setItem("user_id", lineId);
         localStorage.setItem("isMember", String(isMember));
         console.log("isMember:", isMember);
 

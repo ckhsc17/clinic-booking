@@ -18,7 +18,7 @@ export default function ConfirmModalClient() {
   const date = searchParams.get('date');
   const time = searchParams.get('time');
   const userId = localStorage.getItem('user_id');
-  const treatmentId = 1; // 這裡可以根據實際情況設置，待處理
+  const treatmentId = 1; // 這裡可以根據實際情況設置，待處理->應該要讓user選擇療程
   const [confirmed, setConfirmed] = useState(false);
 
   //const [loading, setLoading] = useState(false);
@@ -73,7 +73,7 @@ export default function ConfirmModalClient() {
       setConfirmed(true);
       // 1.5s 後導回首頁
       setTimeout(() => {
-        router.push('/');
+        router.push('/consult');
       }, 1500);
 
       // specify a different type
@@ -100,7 +100,7 @@ export default function ConfirmModalClient() {
   const timeStamp = formatDate(date);
 
   return (
-    <Modal onClose={() => router.push('/')} showCloseButton={false}>
+    <Modal onClose={() => router.push('/consult')} showCloseButton={false}>
       {confirmed ? (
         <div className="flex flex-col items-center justify-center">
           <svg
