@@ -39,7 +39,7 @@ export default function SchedulePage() {
     }
 
     fetch(
-      `http://localhost:8000/api/doctors/availability?doctor_id=${doctorId}`
+      `https://booking-backend-prod-260019038661.asia-east1.run.app/api/doctors/availability?doctor_id=${doctorId}`
     )
       .then((res) => res.json())
       .then((data: { available_times: AvailableTime[] }) => {
