@@ -41,7 +41,7 @@ export default function SchedulePage() {
     console.log("patientId:", patientId)
 
     fetch(
-      `https://booking-backend-prod-260019038661.asia-east1.run.app/api/doctors/availability/?doctor_id=${doctorId}&patient_id=${patientId}`
+      `https://booking-backend-prod-260019038661.asia-east1.run.app/api/doctors/availability?doctor_id=${doctorId}&patient_id=${patientId}`
     )
       .then((res) => res.json())
       .then((data: { available_times: AvailableTime[] }) => {
