@@ -626,7 +626,8 @@ async def callback(request: Request):
 
                     # 這裡好像應該直接回傳尚未註冊（5/29）
                     if resp.status_code == 404:
-                        print("🔍 使用者不存在，建立預設資料中...")
+                        print("🔍 使用者不存在，請先進行諮詢")
+                        '''
                         
                         # 1. 查詢使用者 LINE 資料
                         profile = line_bot_api.get_profile(user_id)
@@ -646,6 +647,7 @@ async def callback(request: Request):
                                 "role": "Normal"
                             }
                         )
+                        '''
                         
                     elif resp.status_code == 200:
                         record = resp.json()
