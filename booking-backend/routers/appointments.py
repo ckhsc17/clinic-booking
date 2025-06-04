@@ -6,12 +6,30 @@ from schemas import AppointmentCreate, BookingInfo, AppointmentStatusUpdate
 from datetime import datetime, timedelta
 from services.calendar import create_event_from_booking
 from pydantic import BaseModel
+import requests
 
 router = APIRouter(tags=["Appointments"])
 
 class RescheduleData(BaseModel):
     date: str  # e.g., "2025-05-15"
     time: str  # e.g., "10:00"
+
+def notify_linebot_push(patient_id: str, message: str):
+    try:
+        response = requests.post(
+            url="https://linebot-backend-prod-260019038661.asia-east1.run.app/push/appointment_success",
+            json={
+                "patient_id": patient_id,
+                "message": message
+            },
+            timeout=5
+        )
+        if response.status_code == 200:
+            print("✅ 成功通知 LINE Bot")
+        else:
+            print(f"❌ 通知失敗：{response.status_code} - {response.text}")
+    except Exception as e:
+        print("❌ 呼叫 linebot-backend 發生錯誤：", e)
 
 def update_doctor_availability_after_booking(info):
     appointment_time = info.appointment_time
@@ -134,6 +152,11 @@ async def create_appointment(info: AppointmentCreate):
 
     if not response or not response.data:
         raise HTTPException(status_code=500, detail="Failed to save appointment info to database")
+    
+    # 呼叫linebot backend api發送預約成功通知
+    #linebot
+    notify_linebot_push(info.patient_id, "預約成功，請準時抵達！")
+
 
     return {"status": "success"}
 

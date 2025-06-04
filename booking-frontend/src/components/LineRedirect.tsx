@@ -13,6 +13,7 @@ export default function LineRedirect() {
 
     if (!lineId) {
       console.error("line_id 未提供");
+      setTimeout(() => router.replace("/consult"), 1000);
       return;
     }
 

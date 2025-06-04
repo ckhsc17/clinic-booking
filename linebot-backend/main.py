@@ -689,7 +689,7 @@ async def callback(request: Request):
 
 
 # ✅ 提供 /push API 被其他服務（如 booking）呼叫
-@app.post("/push")
+@app.post("/push/appointment_success")
 def push_message(data: PushRequest):
     try:
         line_bot_api.push_message(data.user_id, TextSendMessage(text=data.message))
@@ -697,6 +697,7 @@ def push_message(data: PushRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+#發送預約成功通知
 
 @app.get("/")
 def root():
