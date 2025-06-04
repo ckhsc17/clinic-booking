@@ -12,6 +12,15 @@ from schemas import PatientRecordResponse
 
 router = APIRouter()
 
+@router.get("/patients/verify")
+async def verify_user(user_id: str = Query(..., description="LINE UserId")):
+    response = supabase.table("patients").select("*").eq("patient_id", user_id).execute()
+    if response.data:
+        return {"status": "success"}
+    else:
+        return {"status": "fail"}
+
+
 @router.get("/patients/records", response_model=PatientRecordResponse)
 async def get_patient_record(
     user_id: str = Query(..., description="LINE UserId")

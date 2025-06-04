@@ -8,29 +8,35 @@ export default function LineRedirect() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    //const lineId = "abc351519"; // 測試用，正式版可改為 searchParams.get("line_id");
-    const lineId = searchParams.get("user_id");
+    const lineId = searchParams.get("line_id");
+    console.log("hi user line id =", lineId);
 
     if (!lineId) {
-      console.error("No line user id provided.");
-      setLoading(false);
+      console.error("line_id 未提供");
       return;
     }
 
-    console.log("uesr line id = ", lineId);
+    const fetchAndNavigate = async () => {
+      try {
+        const res = await fetch(`http://localhost:8000/api/patients/verify?user_id=${lineId}`);
+        const data = await res.json();
+        console.log("API 回傳資料：", data);
 
-    fetch(`https://booking-backend-prod-260019038661.asia-east1.run.app/api/patients/records?user_id=${lineId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        const isMember = data.isMember;
+        const isMember = data.status === "success";
         localStorage.setItem("isMember", String(isMember));
-        router.replace(isMember ? `/doctor` : `/consult?line_id=${lineId}`);
-      })
-      .catch((err) => {
+        console.log("isMember:", isMember);
+
+        // 確保 fetch 處理完再導頁
+        router.replace(`/consult`);
+      } catch (err) {
         console.error("API error:", err);
         setLoading(false);
-      });
+      }
+    };
+
+    fetchAndNavigate();
   }, [searchParams, router]);
+
 
   if (loading) {
     return <p className="text-center mt-10">載入中...</p>;

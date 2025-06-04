@@ -72,7 +72,7 @@ async def callback(request: Request):
                                         "type": "uri",
                                         "label": "我要預約",
                                         # 將 user_id 帶到前端
-                                        "uri": f"https://booking-frontend-staging-260019038661.asia-east1.run.app?user_id={user_id}"
+                                        "uri": f"https://booking-frontend-staging-260019038661.asia-east1.run.app?line_id={user_id}"
                                     }
                                 },
                                 {

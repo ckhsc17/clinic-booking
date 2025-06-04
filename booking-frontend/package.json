@@ -11,6 +11,7 @@
   "dependencies": {
     "@fullcalendar/daygrid": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
+    "@line/liff": "^2.26.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.10.5",
     "lucide-react": "^0.510.0",
