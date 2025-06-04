@@ -18,7 +18,7 @@ export default function LineRedirect() {
 
     const fetchAndNavigate = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/patients/verify?user_id=${lineId}`);
+        const res = await fetch(`https://booking-backend-prod-260019038661.asia-east1.run.app/api/patients/verify?user_id=${lineId}`);
         const data = await res.json();
         console.log("API 回傳資料：", data);
 

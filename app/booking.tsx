@@ -38,7 +38,7 @@ export default function BookingPage() {
     const datetime = new Date(date);
     datetime.setHours(selectedTime, 0, 0, 0);
 
-    const res = await fetch("http://localhost:8000/book", {
+    const res = await fetch("https://booking-backend-prod-260019038661.asia-east1.run.app/book", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
