@@ -22,7 +22,7 @@ const DoctorsPage: React.FC = () => {
     const fetchDoctors = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/doctors');
+        const response = await fetch('https://booking-backend-prod-260019038661.asia-east1.run.app/api/doctors');
         if (!response.ok) {
           throw new Error(`Failed to fetch doctors: ${response.statusText}`);
         }

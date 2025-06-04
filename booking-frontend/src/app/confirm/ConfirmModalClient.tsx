@@ -53,7 +53,7 @@ export default function ConfirmModalClient() {
     };
 
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/create_appointments', {
+      const res = await fetch('https://booking-backend-prod-260019038661.asia-east1.run.app/api/create_appointments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
