@@ -31,17 +31,14 @@ body {
   font-family: inherit;
 }
 
-
+/* 日期方塊美化 */
 .react-datepicker__day {
   width: 40px;
   height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-}
 
-/* 日期方塊美化 */
-.react-datepicker__day {
   margin: 4px;
   border-radius: 10px !important;
   background-color: transparent;
@@ -51,6 +48,11 @@ body {
   font-size: 0.9rem;  /* 字體大小 */
   font-weight: 1000;   /* 可選加粗 */
 }
+
+/* .react-datepicker__day--keyboard-selected {
+  background-color: #d4b7a5 !important;
+  color: white !important;
+} */
 
 /* 當天 hover 效果 */
 .react-datepicker__day:hover {
@@ -64,29 +66,47 @@ body {
 .react-datepicker__day--selected {
   background-color: #d4b7a5 !important;
   color: white !important;
+  border-radius: 9999px;
 }
 
-/* 今天的標記 */
-.react-datepicker__day--today {
+/* .react-datepicker__day--today.react-datepicker__day--disabled {
   font-weight: 500;
-  /* border: 1px solid #d4b7a5; */
-  /* color */
-}
+  background-color: #fdf1e3;
+  border: 2px dashed #d4b7a5; 
+  color: #d4b7a5;
+  opacity: 1 !important;
+} */
 
 /* 禁用日期 */
-.react-datepicker__day--disabled {
+/* .react-datepicker__day--disabled {
   color: #ccc !important;
   opacity: 0.5;
-  font-weight: 500;   /* 可選加粗 */
+  font-weight: 500;   
+} */
+
+/* 今天以前的灰樣式 */
+.react-datepicker__day.disabled-future {
+  /* background-color: #f0f0f0; */
+  color: #999999;
+  cursor: not-allowed;
+  border-radius: 6px;
+}
+
+/* 未來但不可預約的灰樣式 */
+.react-datepicker__day.disabled-past {
+  background-color: #fbefef;
+  color: #ffffff;
+  cursor: not-allowed;
+  border-radius: 6px;
 }
 
 /* 星期幾字號 + 顏色 */
-.react-datepicker__day-name {
+/* .react-datepicker__day-name {
   font-size: 1.1rem;
   font-weight: bold;
   color: #d4b7a5;
   padding: 10px 0;
-}
+} */
 
 .react-datepicker__month-container {
   border: none !important;
