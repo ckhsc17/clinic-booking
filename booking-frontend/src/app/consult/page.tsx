@@ -110,7 +110,7 @@ export default function ConsultForm() {
           placeholder="姓名"
           value={form.name}
           onChange={handleChange}
-          className="p-3 bg-[#fff5e5] border rounded w-full"
+          className="p-3 bg-[#ffffff] border rounded w-full"
         />
         <input
           type="text"
@@ -118,7 +118,7 @@ export default function ConsultForm() {
           placeholder="電話"
           value={form.phone}
           onChange={handleChange}
-          className="p-3 bg-[#fff5e5] border rounded w-full"
+          className="p-3 bg-[#ffffff] border rounded w-full"
         />
         <input
           type="email"
@@ -126,13 +126,13 @@ export default function ConsultForm() {
           placeholder="Email"
           value={form.email}
           onChange={handleChange}
-          className="p-3 bg-[#fff5e5] border rounded w-full"
+          className="p-3 bg-[#ffffff] border rounded w-full"
         />
         <select
           name="time"
           value={form.time}
           onChange={handleChange}
-          className="p-3 bg-[#fff5e5] border rounded w-full"
+          className="p-3 bg-[#ffffff] border rounded w-full"
         >
           <option value="">希望預約時段</option>
           {timeSlots.map((slot) => (
@@ -161,7 +161,7 @@ export default function ConsultForm() {
           value={form.message}
           onChange={handleChange}
           placeholder="您的其他要求或建議"
-          className="col-span-1 md:col-span-2 p-3 bg-[#fff5e5] border rounded w-full min-h-[100px]"
+          className="col-span-1 md:col-span-2 p-3 bg-[#ffffff] border rounded w-full min-h-[100px]"
         />
         <div className="col-span-1 md:col-span-2">
           <label className="block font-medium text-gray-700 mb-2">
